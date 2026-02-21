@@ -51,7 +51,7 @@ export function Contact() {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
               <a
-                href="mailto:safa@safaselim.com"
+                href="mailto:safaselim.ss@gmail.com"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -70,7 +70,7 @@ export function Contact() {
                 }
               >
                 <Mail size={18} style={{ color: 'var(--accent)', flexShrink: 0 }} />
-                safa@safaselim.com
+                safaselim.ss@gmail.com
               </a>
 
               <a
@@ -180,7 +180,7 @@ export function Contact() {
             >
               Prefer email? Send me a message and I&apos;ll get back within 24 hours.
             </p>
-            <a href="mailto:safa@safaselim.com" className="btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
+            <a href="mailto:safaselim.ss@gmail.com" className="btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
               Send Email
             </a>
           </div>

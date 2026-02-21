@@ -1,11 +1,13 @@
 'use client';
 
 import { useFadeIn } from '@/hooks/useFadeIn';
+import { ExternalLink } from 'lucide-react';
 
 const experiences = [
   {
     company: 'adesso Turkey',
     project: 'material.one',
+    projectUrl: 'https://material.one/',
     role: 'Senior Frontend Engineer',
     period: '2022 – Present',
     location: 'Istanbul, Turkey',
@@ -22,6 +24,7 @@ const experiences = [
   {
     company: 'Digacon',
     project: 'Distrelec',
+    projectUrl: 'https://www.distrelec.com/global/',
     role: 'Senior Frontend Engineer',
     period: '2020 – 2022',
     location: 'Remote',
@@ -38,6 +41,7 @@ const experiences = [
   {
     company: 'Clinerion',
     project: 'Patient Network Explorer',
+    projectUrl: 'https://trinetx.com/press-releases/clinerion/',
     role: 'Frontend Engineer',
     period: '2019 – 2020',
     location: 'Basel, Switzerland (Remote)',
@@ -53,6 +57,7 @@ const experiences = [
   {
     company: 'BluLogix',
     project: 'Billing Platform',
+    projectUrl: 'https://blulogix.com/',
     role: 'Frontend Engineer',
     period: '2018 – 2019',
     location: 'Remote',
@@ -68,6 +73,7 @@ const experiences = [
   {
     company: 'Pluscor',
     project: 'Enterprise ERP',
+    projectUrl: null,
     role: 'Frontend Developer',
     period: '2017 – 2018',
     location: 'Turkey',
@@ -157,13 +163,42 @@ export function Experience() {
                           fontWeight: 700,
                           color: 'var(--foreground)',
                           letterSpacing: '-0.01em',
+                          display: 'flex',
+                          alignItems: 'center',
+                          flexWrap: 'wrap',
+                          gap: '0.375rem',
                         }}
                       >
                         {exp.company}
                         {exp.project && (
-                          <span style={{ color: 'var(--accent)', fontWeight: 600 }}>
-                            {' '}· {exp.project}
-                          </span>
+                          <>
+                            <span style={{ color: 'var(--card-border)', fontWeight: 400 }}>·</span>
+                            {exp.projectUrl ? (
+                              <a
+                                href={exp.projectUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                  color: 'var(--accent)',
+                                  fontWeight: 600,
+                                  textDecoration: 'none',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '0.25rem',
+                                  transition: 'opacity 0.15s ease',
+                                }}
+                                onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.opacity = '0.75')}
+                                onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.opacity = '1')}
+                              >
+                                {exp.project}
+                                <ExternalLink size={13} style={{ opacity: 0.7 }} />
+                              </a>
+                            ) : (
+                              <span style={{ color: 'var(--accent)', fontWeight: 600 }}>
+                                {exp.project}
+                              </span>
+                            )}
+                          </>
                         )}
                       </h3>
                       <p
