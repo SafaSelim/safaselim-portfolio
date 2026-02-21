@@ -1,0 +1,326 @@
+# PRODUCT REQUIREMENTS DOCUMENT (PRD)
+
+Project: Safa Selim Portfolio
+Version: 2.0
+Owner: Safa Selim
+Stack: Next.js + TypeScript + Vercel
+Architecture: Single Scroll Landing Page
+Design Direction: Modern Tech (Dark-First)
+
+------------------------------------------------------------
+1. PRODUCT VISION
+------------------------------------------------------------
+
+Build a clean, modern, high-performance portfolio that communicates:
+
+• Senior Angular expertise
+• Enterprise-scale system experience
+• Architecture and state management depth
+• Release management leadership
+• Technical confidence without gimmicks
+
+The site must feel:
+- Structured
+- Minimal
+- Technical
+- Mature
+- Fast
+
+No heavy gaming effects.
+No cartoon visuals.
+No visual noise.
+
+------------------------------------------------------------
+2. TARGET AUDIENCE
+------------------------------------------------------------
+
+• Recruiters
+• Engineering Managers
+• Technical Leads
+• Enterprise Clients
+
+Primary Goal:
+A recruiter should understand the profile within 60 seconds.
+
+------------------------------------------------------------
+3. SITE ARCHITECTURE
+------------------------------------------------------------
+
+Single Scroll Landing Page Structure:
+
+[Navbar]
+[Hero]
+[About]
+[Experience Timeline]
+[Skills]
+[Featured Projects]
+[Contact]
+[Footer]
+
+Navigation scrolls to sections (anchor-based).
+
+------------------------------------------------------------
+4. THEME SYSTEM
+------------------------------------------------------------
+
+Dark Mode: Default
+Light Mode: Optional toggle
+
+Requirements:
+
+[x] Dark theme default
+[x] Light theme toggle in navbar
+[x] Detect system preference
+[x] Persist user choice in localStorage
+[x] Maintain accessibility contrast (WCAG AA)
+[x] Ensure animations work in both themes
+
+Color Direction:
+
+Dark Background: deep neutral (not pure black)
+Light Background: soft off-white (not pure #fff)
+
+Accent Color:
+Single modern tech accent (electric blue OR muted cyan OR subtle violet)
+
+No multi-color gradients.
+No neon overload.
+
+------------------------------------------------------------
+5. TYPOGRAPHY SYSTEM
+------------------------------------------------------------
+
+Style: Modern geometric sans-serif
+
+Requirements:
+
+[x] Strong bold H1 (hero name)
+[x] Semi-bold section headings
+[x] Regular body text
+[x] No thin weights
+[x] Clear vertical rhythm
+[x] Mobile readability verified
+
+Typography Feel:
+Confident.
+Technical.
+Structured.
+
+------------------------------------------------------------
+6. HERO SECTION REQUIREMENTS
+------------------------------------------------------------
+
+Must communicate authority immediately.
+
+Content:
+
+[x] Full Name: Safa Selim
+[x] Title: Senior Angular Frontend Engineer
+[x] 1–2 line positioning statement
+[x] CTA: View Projects
+[x] CTA: Contact Me
+[x] GitHub link
+[x] LinkedIn link
+
+Visual:
+
+[x] Large strong typography
+[x] Subtle background depth/parallax
+[x] Clean spacing
+[x] No heavy animation
+[x] No large 3D in v1
+
+Optional (Phase 2):
+[ ] Subtle floating geometry (lazy loaded)
+[ ] Motion reduced fallback
+
+------------------------------------------------------------
+7. ABOUT SECTION
+------------------------------------------------------------
+
+Purpose:
+Summarize senior-level positioning.
+
+Must include:
+
+[x] 6+ years experience
+[x] Angular v4–v19 expertise
+[x] Monorepo architecture leadership
+[x] Enterprise system scaling
+[x] Release cycle management
+
+Tone:
+Impact-driven.
+Clear.
+Metric-oriented.
+
+------------------------------------------------------------
+8. EXPERIENCE SECTION (TIMELINE)
+------------------------------------------------------------
+
+Each company block must include:
+
+[x] Company name
+[x] Role
+[x] Period
+[x] Core responsibility
+[x] Technologies used
+[x] Measurable impact
+
+Highlighted Roles:
+
+adesso Turkey – material.one
+- 10 interconnected enterprise apps
+- Angular 19 + NGRX
+- Storybook system
+- Keycloak auth
+- Monthly production releases
+
+Digacon – Distrelec
+- JSP → Angular 12 migration
+- 25 country domains
+- 20+ language support
+- High-traffic European markets
+
+Clinerion
+- 95% parser accuracy
+- Medical data integration
+
+BluLogix
+- AngularJS → Angular migration
+- Component library system
+
+Pluscor
+- Angular + DevExpress
+- ColdFusion backend
+- API integrations
+
+------------------------------------------------------------
+9. SKILLS SECTION
+------------------------------------------------------------
+
+Group by categories:
+
+Frontend Core
+[x] Angular (v2–v20)
+[x] TypeScript
+[x] SCSS
+
+State Management
+[x] NGRX
+[x] Redux
+
+Architecture
+[x] Monorepo
+[x] Component-driven design
+
+Backend Knowledge
+[x] ColdFusion
+[x] MSSQL
+[x] Java
+
+Authentication
+[x] Keycloak
+
+Optimization
+[x] A/B Testing
+[x] Performance tuning
+
+------------------------------------------------------------
+10. PROJECTS SECTION
+------------------------------------------------------------
+
+Featured Projects (3–5 max)
+
+Each project must include:
+
+[x] Project name
+[x] Short description
+[x] Problem statement
+[x] Solution approach
+[x] Tech stack
+[x] Your role
+[x] Key impact
+[ ] Screenshot or visual
+[x] Optional GitHub link
+
+Projects must emphasize:
+Architecture decisions.
+Scalability.
+System complexity.
+
+------------------------------------------------------------
+11. PARALLAX IMPLEMENTATION (MINIMAL)
+------------------------------------------------------------
+
+Modern Tech feel without distraction.
+
+[x] Subtle hero background depth
+[x] Slight vertical offset on scroll
+[x] Fade-in on section reveal
+[x] Smooth 150–250ms transitions
+[x] Disable heavy motion on mobile
+[x] Respect reduced motion setting
+
+No dramatic scroll hijacking.
+No exaggerated movement.
+
+------------------------------------------------------------
+12. OPTIONAL PHASE 2 – SUBTLE 3D
+------------------------------------------------------------
+
+Only after v1 stable.
+
+[ ] Install react-three-fiber
+[ ] Create simple floating shape
+[ ] Lazy load component
+[ ] Ensure performance unaffected
+[ ] Provide reduced motion fallback
+[ ] Validate mobile performance
+
+3D must be decorative, not dominant.
+
+------------------------------------------------------------
+13. PERFORMANCE REQUIREMENTS
+------------------------------------------------------------
+
+Lighthouse Desktop ≥ 95
+Lighthouse Mobile ≥ 85
+
+LCP < 2.5s
+CLS < 0.1
+Minimal layout shift
+Optimized images (next/image)
+Bundle size controlled
+
+------------------------------------------------------------
+14. DEPLOYMENT REQUIREMENTS
+------------------------------------------------------------
+
+[ ] GitHub repository created
+[ ] Connected to Vercel
+[ ] Auto deployment verified
+[ ] Production environment tested
+[ ] Domain configured (if applicable)
+
+------------------------------------------------------------
+15. SUCCESS CRITERIA
+------------------------------------------------------------
+
+[x] Recruiter understands profile in 60 seconds
+[x] Site feels senior-level
+[x] No visual gimmicks
+[x] Smooth and modern
+[x] Fast loading
+[x] Clear contact path
+
+------------------------------------------------------------
+16. FUTURE ITERATIONS
+------------------------------------------------------------
+
+[ ] Blog about Angular architecture
+[ ] Release management case study
+[ ] Micro-frontend write-up
+[ ] Dark/light animation refinement
+[ ] More interactive hero
+[ ] Project filtering
