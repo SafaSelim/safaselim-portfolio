@@ -11,6 +11,8 @@ const HeroScene = dynamic(() => import('@/components/HeroScene'), { ssr: false }
 
 export function Hero() {
   const root = useRef<HTMLElement>(null);
+  const nameRef = useRef<HTMLHeadingElement>(null);
+  const glowRef = useRef<HTMLDivElement>(null);
   const { scrollTo } = useLenis();
   const ctaPrimary = useMagnetic<HTMLAnchorElement>(0.35);
   const ctaGhost = useMagnetic<HTMLAnchorElement>(0.35);
@@ -56,6 +58,50 @@ export function Hero() {
     return () => ctx.revert();
   }, []);
 
+  // Cursor-driven 3D tilt on the name + spotlight glow that follows the pointer.
+  useEffect(() => {
+    if (prefersReducedMotion() || window.matchMedia('(pointer: coarse)').matches) return;
+    const el = root.current;
+    const name = nameRef.current;
+    const glow = glowRef.current;
+    if (!el || !name || !glow) return;
+
+    gsap.set(name, { transformPerspective: 900, transformOrigin: 'center center' });
+    const rotY = gsap.quickTo(name, 'rotationY', { duration: 0.7, ease: 'power3' });
+    const rotX = gsap.quickTo(name, 'rotationX', { duration: 0.7, ease: 'power3' });
+    const gx = gsap.quickTo(glow, 'x', { duration: 0.5, ease: 'power3' });
+    const gy = gsap.quickTo(glow, 'y', { duration: 0.5, ease: 'power3' });
+    const clamp = gsap.utils.clamp(-1, 1);
+
+    let shown = false;
+    const onMove = (e: PointerEvent) => {
+      const rect = el.getBoundingClientRect();
+      if (!shown) {
+        shown = true;
+        gsap.to(glow, { opacity: 0.22, duration: 0.6 });
+      }
+      const relX = clamp((e.clientX - (rect.left + rect.width / 2)) / (rect.width / 2));
+      const relY = clamp((e.clientY - (rect.top + rect.height / 2)) / (rect.height / 2));
+      rotY(relX * 6);
+      rotX(relY * -6);
+      gx(e.clientX - rect.left - 320);
+      gy(e.clientY - rect.top - 320);
+    };
+    const onLeave = () => {
+      rotY(0);
+      rotX(0);
+      gsap.to(glow, { opacity: 0, duration: 0.5 });
+      shown = false;
+    };
+
+    el.addEventListener('pointermove', onMove);
+    el.addEventListener('pointerleave', onLeave);
+    return () => {
+      el.removeEventListener('pointermove', onMove);
+      el.removeEventListener('pointerleave', onLeave);
+    };
+  }, []);
+
   return (
     <section
       id="top"
@@ -80,6 +126,25 @@ export function Hero() {
           pointerEvents: 'none',
           background:
             'radial-gradient(120% 90% at 50% 8%, transparent 40%, var(--bg) 100%)',
+        }}
+      />
+
+      {/* cursor spotlight glow */}
+      <div
+        ref={glowRef}
+        aria-hidden
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '640px',
+          height: '640px',
+          zIndex: 1,
+          pointerEvents: 'none',
+          opacity: 0,
+          background: 'radial-gradient(circle at center, var(--accent) 0%, transparent 62%)',
+          mixBlendMode: 'screen',
+          willChange: 'transform, opacity',
         }}
       />
 
@@ -114,6 +179,7 @@ export function Hero() {
         </div>
 
         <h1
+          ref={nameRef}
           className="display"
           style={{ fontSize: 'clamp(3.4rem, 13vw, 12rem)', marginBottom: '0' }}
         >
