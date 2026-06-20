@@ -10,12 +10,14 @@ const projects = [
     name: 'material.one',
     tagline: 'Enterprise monorepo · 10 interconnected apps',
     description:
-      'A unified monorepo hosting 10 enterprise Angular applications with a shared design system, centralized state, and an automated monthly release pipeline.',
-    problem:
-      'Isolated enterprise apps with duplicated code, inconsistent UX, and fragile, unpredictable releases.',
-    solution:
-      'Shared component libraries in Storybook, centralized NGRX patterns, Keycloak SSO, and a structured release process across every app.',
-    impact: ['10 apps unified', 'Monthly release cadence', 'Storybook design system'],
+      'Lead frontend development and release management across 10 interconnected enterprise applications within a monorepo architecture.',
+    highlights: [
+      'Manage monthly production deployments with coordinated release cycles for stable, predictable delivery',
+      'Develop scalable features using Angular 19 and NGRX for complex state management',
+      'Build and maintain reusable UI components in Storybook to standardize design systems',
+      'Customize and manage Keycloak-based authentication flows across multiple applications',
+    ],
+    impact: ['10 apps', 'Monthly releases', 'Storybook system'],
     tech: ['Angular 19', 'NGRX', 'Monorepo', 'Storybook', 'Keycloak'],
     url: 'https://material.one/',
   },
@@ -24,26 +26,30 @@ const projects = [
     name: 'Distrelec Commerce',
     tagline: 'JSP → Angular 12 · 25 country domains',
     description:
-      'Full migration of a high-traffic B2B electronics platform from legacy JSP to Angular 12, serving 25 European country domains with 20+ languages.',
-    problem:
-      'A legacy JSP frontend that couldn’t scale to modern UX, localization, and traffic demands across 25 markets.',
-    solution:
-      'Phased migration to Angular 12 with an i18n-first architecture, lazy-loaded country modules, and reusable commerce components.',
-    impact: ['25 domains migrated', '20+ languages', 'A/B-tested conversions'],
-    tech: ['Angular 12', 'i18n', 'RxJS', 'Google Optimize'],
+      'Contributed to migrating a legacy JSP-based e-commerce platform to Angular 12, modernizing the frontend across 25 country-specific domains for European markets.',
+    highlights: [
+      'Managed and maintained 20+ language translation files for a multi-market European user base',
+      'Built reusable Angular components: idle-timeout, dynamic volume pricing formatter, image magnifier, product gallery preview',
+      'Supported high-traffic e-commerce operations across multiple European regions',
+      'Ran A/B testing and geo-targeting experiments with Google Optimize to improve engagement and conversion',
+    ],
+    impact: ['25 domains', '20+ languages', 'High-traffic commerce'],
+    tech: ['Angular 12', 'i18n', 'Google Optimize', 'A/B Testing'],
     url: 'https://www.distrelec.com/',
   },
   {
     index: '03',
     name: 'ClinicalTrials Parser',
-    tagline: 'Medical data integration · 95% accuracy',
+    tagline: 'Clinical research data · 95% accuracy',
     description:
-      'Enhanced a clinical-trials criteria parser and the surrounding frontend to integrate complex medical research data with high reliability.',
-    problem:
-      'Inconsistent parsing of clinical eligibility criteria limited the reliability of research data integration.',
-    solution:
-      'Refined parsing logic and frontend–backend integration to push accuracy and processing efficiency to production-grade levels.',
-    impact: ['95% parser accuracy', 'Agile delivery', 'Reliable data pipelines'],
+      'Enhanced the ClinicalTrials.com criteria parser and integrated frontend systems for clinical research data integration.',
+    highlights: [
+      'Increased parsing accuracy and success rate to 95%',
+      'Improved data processing efficiency and reliability for clinical research data integration',
+      'Integrated frontend systems with backend services for consistent, high-performance applications',
+      'Collaborated in Agile teams to deliver enterprise-grade medical data solutions',
+    ],
+    impact: ['95% parser accuracy', 'Agile delivery'],
     tech: ['Angular', 'TypeScript', 'REST APIs', 'Agile'],
     url: null,
   },
@@ -52,13 +58,15 @@ const projects = [
     name: 'BluLogix Billing',
     tagline: 'AngularJS → Angular 10 · Component library',
     description:
-      'Migration of a multi-tenant SaaS billing platform from AngularJS to Angular 10, paired with a reusable component library and complex dynamic forms.',
-    problem:
-      'A legacy AngularJS codebase with technical debt and inconsistent UI slowing feature delivery.',
-    solution:
-      'Complete framework migration plus a shared component library and NGRX-driven dynamic forms and modal systems.',
-    impact: ['Zero billing regressions', 'Reusable library', 'NGRX dynamic forms'],
-    tech: ['Angular 10', 'AngularJS', 'NGRX', 'Component Library'],
+      'Contributed to the AngularJS → Angular 10 migration and built a reusable component library for a SaaS billing platform.',
+    highlights: [
+      'Migrated from AngularJS to Angular 10, improving long-term maintainability and scalability',
+      'Developed a reusable component library to accelerate feature delivery and ensure UI consistency',
+      'Engineered complex dynamic forms using Angular Forms and NGRX for robust state management',
+      'Designed flexible modal systems to enhance usability and interface consistency',
+    ],
+    impact: ['Component library', 'NGRX dynamic forms'],
+    tech: ['AngularJS', 'Angular 10', 'Angular Forms', 'NGRX'],
     url: 'https://blulogix.com/',
   },
 ];
@@ -134,16 +142,11 @@ export function Projects() {
 
               <div className="proj-detail">
                 <p className="proj-desc">{p.description}</p>
-                <div className="proj-cols">
-                  <div>
-                    <span className="mono-label">Problem</span>
-                    <p>{p.problem}</p>
-                  </div>
-                  <div>
-                    <span className="mono-label">Solution</span>
-                    <p>{p.solution}</p>
-                  </div>
-                </div>
+                <ul className="proj-highlights">
+                  {p.highlights.map((h) => (
+                    <li key={h}>{h}</li>
+                  ))}
+                </ul>
                 <div className="proj-impact">
                   {p.impact.map((it) => (
                     <span key={it} className="proj-impact__item">
@@ -192,13 +195,18 @@ export function Projects() {
         .proj-detail > * { grid-column: 2; }
         .proj-card:hover .proj-detail,
         .proj-card:focus-within .proj-detail {
-          max-height: 600px; opacity: 1; margin-top: 1.6rem;
+          max-height: 900px; opacity: 1; margin-top: 1.6rem;
         }
-        .proj-desc { color: var(--fg-soft); max-width: 65ch; line-height: 1.7; }
-        .proj-cols {
-          display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1.6rem;
+        .proj-desc { color: var(--fg-soft); max-width: 70ch; line-height: 1.7; }
+        .proj-highlights { list-style: none; margin-top: 1.4rem; display: grid; gap: 0.55rem; max-width: 70ch; }
+        .proj-highlights li {
+          position: relative; padding-left: 1.4rem; color: var(--fg-muted);
+          font-size: 0.92rem; line-height: 1.6;
         }
-        .proj-cols p { color: var(--fg-muted); font-size: 0.9rem; line-height: 1.65; margin-top: 0.5rem; max-width: 42ch; }
+        .proj-highlights li::before {
+          content: '✦'; position: absolute; left: 0; top: 0; color: var(--accent);
+          font-size: 0.7rem; line-height: 1.7;
+        }
         .proj-impact { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.6rem; }
         .proj-impact__item {
           font-family: var(--font-mono); font-size: 0.74rem; color: var(--accent);
@@ -211,7 +219,6 @@ export function Projects() {
           .proj-top, .proj-detail { grid-template-columns: 1fr; gap: 0.6rem; }
           .proj-detail > * { grid-column: 1; }
           .proj-index { padding-top: 0; }
-          .proj-cols { grid-template-columns: 1fr; gap: 1.25rem; }
         }
       `}</style>
     </section>

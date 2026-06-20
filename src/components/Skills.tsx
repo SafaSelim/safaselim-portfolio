@@ -4,20 +4,48 @@ import { useReveal } from '@/hooks/useReveal';
 
 const groups = [
   {
-    title: 'Frontend',
-    items: ['Angular (v2–v20)', 'TypeScript', 'JavaScript', 'RxJS', 'SCSS', 'Ionic', 'Material UI', 'DevExtreme'],
+    title: 'Frontend Technologies',
+    items: [
+      'Angular (v2–v20)',
+      'TypeScript',
+      'JavaScript',
+      'HTML',
+      'CSS',
+      'SCSS',
+      'Ionic UI',
+      'GWT',
+      'Material UI',
+      'Bootstrap',
+      'DevExtreme',
+    ],
   },
   {
-    title: 'State & Architecture',
-    items: ['NGRX', 'Redux', 'Monorepo', 'Component-Driven Design', 'Micro-frontends'],
+    title: 'State Management',
+    items: ['NGRX', 'Redux'],
   },
   {
-    title: 'Tooling & Auth',
-    items: ['Storybook', 'Keycloak', 'Git', 'SVN', 'A/B Testing', 'Google Optimize'],
+    title: 'Architecture',
+    items: ['Monorepo', 'Component-Driven Development'],
   },
   {
-    title: 'Backend & Data',
-    items: ['ColdFusion', 'MSSQL', 'Java', 'MySQL', 'RESTful APIs'],
+    title: 'Backend Technologies',
+    items: ['ColdFusion', 'MSSQL', 'Java', 'MySQL'],
+  },
+  {
+    title: 'Tools',
+    items: ['Storybook', 'Git', 'SVN'],
+  },
+  {
+    title: 'Authentication',
+    items: ['Keycloak'],
+  },
+  {
+    title: 'Methodologies',
+    items: ['Agile/Scrum', 'Responsive Design', 'User Experience (UX)'],
+  },
+  {
+    title: 'Testing & Optimization',
+    items: ['A/B Testing', 'Google Optimize'],
   },
 ];
 
