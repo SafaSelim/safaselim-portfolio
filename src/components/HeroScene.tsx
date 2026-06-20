@@ -1,128 +1,171 @@
 'use client';
 
-import { useRef, useMemo } from 'react';
+import { useMemo, useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Points, PointMaterial } from '@react-three/drei';
+import { useTheme } from 'next-themes';
 import * as THREE from 'three';
 
-// Floating torus knot — the main 3D centerpiece
-function TorusKnot() {
-  const meshRef = useRef<THREE.Mesh>(null);
+const vertexShader = /* glsl */ `
+  uniform float uTime;
+  uniform vec2 uMouse;
+  uniform float uSize;
+  uniform float uAmp;
+  varying float vElevation;
+  varying float vDist;
 
-  useFrame((state) => {
-    if (!meshRef.current) return;
-    meshRef.current.rotation.x = state.clock.elapsedTime * 0.12;
-    meshRef.current.rotation.y = state.clock.elapsedTime * 0.18;
-  });
+  void main() {
+    vec3 pos = position;
 
-  return (
-    <mesh ref={meshRef} position={[0, 0, 0]}>
-      <torusKnotGeometry args={[1.4, 0.38, 200, 24, 2, 3]} />
-      <meshStandardMaterial
-        color="#3b82f6"
-        emissive="#1d4ed8"
-        emissiveIntensity={0.4}
-        roughness={0.15}
-        metalness={0.9}
-        wireframe={false}
-      />
-    </mesh>
-  );
-}
+    // layered travelling waves
+    float e =
+        sin(pos.x * 0.55 + uTime * 0.8) * 0.6
+      + cos(pos.y * 0.4 - uTime * 0.6) * 0.5
+      + sin((pos.x + pos.y) * 0.3 + uTime * 0.4) * 0.4;
 
-// Wireframe shell on top for the tech feel
-function TorusKnotWire() {
-  const meshRef = useRef<THREE.Mesh>(null);
+    // mouse ripple
+    float md = distance(pos.xy, uMouse * 7.0);
+    e += smoothstep(4.5, 0.0, md) * 1.4 * sin(md - uTime * 2.2);
 
-  useFrame((state) => {
-    if (!meshRef.current) return;
-    meshRef.current.rotation.x = state.clock.elapsedTime * 0.12;
-    meshRef.current.rotation.y = state.clock.elapsedTime * 0.18;
-  });
+    pos.z += e * uAmp;
+    vElevation = e;
 
-  return (
-    <mesh ref={meshRef} position={[0, 0, 0]}>
-      <torusKnotGeometry args={[1.42, 0.39, 120, 16, 2, 3]} />
-      <meshBasicMaterial color="#60a5fa" wireframe opacity={0.15} transparent />
-    </mesh>
-  );
-}
+    vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+    vDist = -mvPosition.z;
+    gl_Position = projectionMatrix * mvPosition;
+    gl_PointSize = uSize * (1.0 / vDist) * (1.0 + e * 0.25);
+  }
+`;
 
-// Particle field
-function ParticleField() {
-  const count = 1800;
+const fragmentShader = /* glsl */ `
+  uniform vec3 uColorA;
+  uniform vec3 uColorB;
+  uniform float uOpacity;
+  varying float vElevation;
+  varying float vDist;
+
+  void main() {
+    float d = distance(gl_PointCoord, vec2(0.5));
+    if (d > 0.5) discard;
+    float alpha = smoothstep(0.5, 0.1, d);
+    vec3 color = mix(uColorA, uColorB, smoothstep(-1.2, 1.6, vElevation));
+    float fog = smoothstep(26.0, 6.0, vDist);
+    gl_FragColor = vec4(color, alpha * uOpacity * fog);
+  }
+`;
+
+function ParticleField({ isDark, reduced }: { isDark: boolean; reduced: boolean }) {
+  const matRef = useRef<THREE.ShaderMaterial>(null);
+  const mouse = useRef(new THREE.Vector2(0, 0));
+  const { viewport, size } = useThree();
+
+  const isMobile = size.width < 768;
+  const sep = isMobile ? 0.7 : 0.5;
+  const count = isMobile ? 60 : 110;
+
   const positions = useMemo(() => {
-    const arr = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      const r = 4 + Math.random() * 6;
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos(2 * Math.random() - 1);
-      arr[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-      arr[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
-      arr[i * 3 + 2] = r * Math.cos(phi);
+    const arr = new Float32Array(count * count * 3);
+    let i = 0;
+    const half = (count * sep) / 2;
+    for (let xi = 0; xi < count; xi++) {
+      for (let yi = 0; yi < count; yi++) {
+        arr[i++] = xi * sep - half;
+        arr[i++] = yi * sep - half;
+        arr[i++] = 0;
+      }
     }
     return arr;
+  }, [count, sep]);
+
+  const uniforms = useMemo(
+    () => ({
+      uTime: { value: 0 },
+      uMouse: { value: new THREE.Vector2(0, 0) },
+      uSize: { value: isMobile ? 26 : 34 },
+      uAmp: { value: 1.0 },
+      uColorA: { value: new THREE.Color() },
+      uColorB: { value: new THREE.Color() },
+      uOpacity: { value: 0 },
+    }),
+    [isMobile]
+  );
+
+  useEffect(() => {
+    const a = uniforms.uColorA.value as THREE.Color;
+    const b = uniforms.uColorB.value as THREE.Color;
+    if (isDark) {
+      a.set('#ff7a34');
+      b.set('#f5efe6');
+    } else {
+      a.set('#d85a17');
+      b.set('#2a2018');
+    }
+  }, [isDark, uniforms]);
+
+  useEffect(() => {
+    const onMove = (e: PointerEvent) => {
+      mouse.current.set(
+        (e.clientX / window.innerWidth) * 2 - 1,
+        -(e.clientY / window.innerHeight) * 2 + 1
+      );
+    };
+    window.addEventListener('pointermove', onMove);
+    return () => window.removeEventListener('pointermove', onMove);
   }, []);
 
-  const pointsRef = useRef<THREE.Points>(null);
-
-  useFrame((state) => {
-    if (!pointsRef.current) return;
-    pointsRef.current.rotation.y = state.clock.elapsedTime * 0.03;
-    pointsRef.current.rotation.x = state.clock.elapsedTime * 0.015;
+  useFrame((_, delta) => {
+    const m = matRef.current;
+    if (!m) return;
+    const u = m.uniforms;
+    if (!reduced) u.uTime.value += Math.min(delta, 0.05);
+    (u.uMouse.value as THREE.Vector2).lerp(mouse.current, 0.05);
+    u.uOpacity.value = THREE.MathUtils.lerp(u.uOpacity.value, isDark ? 0.95 : 0.85, 0.03);
   });
 
   return (
-    <Points ref={pointsRef} positions={positions} stride={3}>
-      <PointMaterial
+    <points
+      rotation={[-Math.PI / 2.7, 0, Math.PI / 14]}
+      position={[0, -2.2, 0]}
+      scale={viewport.width > 8 ? 1 : 0.85}
+    >
+      <bufferGeometry>
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+      </bufferGeometry>
+      <shaderMaterial
+        ref={matRef}
+        vertexShader={vertexShader}
+        fragmentShader={fragmentShader}
+        uniforms={uniforms}
         transparent
-        color="#93c5fd"
-        size={0.025}
-        sizeAttenuation
         depthWrite={false}
-        opacity={0.7}
+        blending={isDark ? THREE.AdditiveBlending : THREE.NormalBlending}
       />
-    </Points>
+    </points>
   );
 }
 
-// Mouse-reactive camera rig
-function CameraRig() {
-  const { camera, gl } = useThree();
-  const mouse = useRef({ x: 0, y: 0 });
+export default function HeroScene() {
+  const { resolvedTheme } = useTheme();
+  const [reduced, setReduced] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  useFrame(() => {
-    camera.position.x += (mouse.current.x * 1.2 - camera.position.x) * 0.04;
-    camera.position.y += (-mouse.current.y * 0.8 - camera.position.y) * 0.04;
-    camera.lookAt(0, 0, 0);
-  });
+  // Hydration guard: WebGL canvas must only mount client-side.
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+    setReduced(window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }, []);
 
-  gl.domElement.onmousemove = (e: MouseEvent) => {
-    const rect = gl.domElement.getBoundingClientRect();
-    mouse.current.x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
-    mouse.current.y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
-  };
+  if (!mounted) return null;
+  const isDark = resolvedTheme !== 'light';
 
-  return null;
-}
-
-export function HeroScene() {
   return (
     <Canvas
-      camera={{ position: [0, 0, 6], fov: 50 }}
-      gl={{ antialias: true, alpha: true }}
-      style={{ position: 'absolute', inset: 0, pointerEvents: 'auto' }}
-      dpr={[1, 1.5]}
+      camera={{ position: [0, 4.5, 11], fov: 55 }}
+      dpr={[1, 1.8]}
+      gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+      style={{ width: '100%', height: '100%' }}
     >
-      <ambientLight intensity={0.3} />
-      <pointLight position={[5, 5, 5]} intensity={2} color="#3b82f6" />
-      <pointLight position={[-5, -5, -5]} intensity={1} color="#8b5cf6" />
-      <spotLight position={[0, 8, 0]} intensity={1.5} color="#60a5fa" angle={0.4} penumbra={1} />
-
-      <TorusKnot />
-      <TorusKnotWire />
-      <ParticleField />
-      <CameraRig />
+      <ParticleField isDark={isDark} reduced={reduced} />
     </Canvas>
   );
 }

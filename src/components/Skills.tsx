@@ -1,178 +1,101 @@
 'use client';
 
-import { useFadeIn } from '@/hooks/useFadeIn';
+import { useReveal } from '@/hooks/useReveal';
 
-const skillGroups = [
+const groups = [
   {
-    category: 'Frontend Core',
-    icon: '⬡',
-    skills: [
-      { name: 'Angular', level: 'Expert' },
-      { name: 'TypeScript', level: 'Expert' },
-      { name: 'SCSS / CSS', level: 'Expert' },
-      { name: 'RxJS', level: 'Expert' },
-      { name: 'HTML5', level: 'Expert' },
-    ],
+    title: 'Frontend',
+    items: ['Angular (v2–v20)', 'TypeScript', 'JavaScript', 'RxJS', 'SCSS', 'Ionic', 'Material UI', 'DevExtreme'],
   },
   {
-    category: 'State Management',
-    icon: '◈',
-    skills: [
-      { name: 'NGRX', level: 'Expert' },
-      { name: 'Redux', level: 'Advanced' },
-      { name: 'Signals', level: 'Advanced' },
-      { name: 'Services / BehaviorSubject', level: 'Expert' },
-    ],
+    title: 'State & Architecture',
+    items: ['NGRX', 'Redux', 'Monorepo', 'Component-Driven Design', 'Micro-frontends'],
   },
   {
-    category: 'Architecture',
-    icon: '◻',
-    skills: [
-      { name: 'Monorepo (Nx)', level: 'Expert' },
-      { name: 'Component-driven design', level: 'Expert' },
-      { name: 'Storybook', level: 'Advanced' },
-      { name: 'Micro-frontends', level: 'Advanced' },
-      { name: 'Design Systems', level: 'Expert' },
-    ],
+    title: 'Tooling & Auth',
+    items: ['Storybook', 'Keycloak', 'Git', 'SVN', 'A/B Testing', 'Google Optimize'],
   },
   {
-    category: 'Backend Knowledge',
-    icon: '◯',
-    skills: [
-      { name: 'ColdFusion', level: 'Intermediate' },
-      { name: 'MSSQL', level: 'Intermediate' },
-      { name: 'Java', level: 'Intermediate' },
-      { name: 'REST APIs', level: 'Advanced' },
-    ],
-  },
-  {
-    category: 'Authentication',
-    icon: '◆',
-    skills: [
-      { name: 'Keycloak', level: 'Advanced' },
-      { name: 'OAuth 2.0', level: 'Advanced' },
-      { name: 'JWT', level: 'Advanced' },
-    ],
-  },
-  {
-    category: 'Optimization & Testing',
-    icon: '◉',
-    skills: [
-      { name: 'A/B Testing', level: 'Advanced' },
-      { name: 'Performance tuning', level: 'Expert' },
-      { name: 'Jasmine / Karma', level: 'Advanced' },
-      { name: 'Lighthouse', level: 'Advanced' },
-    ],
+    title: 'Backend & Data',
+    items: ['ColdFusion', 'MSSQL', 'Java', 'MySQL', 'RESTful APIs'],
   },
 ];
 
-const levelColor: Record<string, string> = {
-  Expert: 'var(--accent)',
-  Advanced: '#10b981',
-  Intermediate: '#f59e0b',
-};
+const languages = [
+  { name: 'English', level: 'Fluent' },
+  { name: 'Turkish', level: 'Native' },
+  { name: 'Spanish', level: 'Intermediate' },
+  { name: 'Japanese', level: 'Basic' },
+];
 
 export function Skills() {
-  const ref = useFadeIn();
+  const ref = useReveal<HTMLDivElement>('.will-reveal', { stagger: 0.08 });
 
   return (
-    <section
-      id="skills"
-      style={{
-        backgroundColor: 'var(--section-alt)',
-        padding: '6rem 0',
-      }}
-    >
-      <div
-        ref={ref}
-        className="fade-in"
-        style={{
-          maxWidth: '1100px',
-          margin: '0 auto',
-          padding: '0 1.5rem',
-        }}
-      >
-        <h2 className="section-heading">Skills</h2>
-        <span className="accent-bar" />
+    <section id="skills" className="section-pad">
+      <div ref={ref} className="container">
+        <span className="eyebrow will-reveal" style={{ display: 'block', marginBottom: '1rem' }}>
+          (03) — Capabilities
+        </span>
+        <h2 className="section-title will-reveal" style={{ marginBottom: 'clamp(2.5rem, 6vw, 4rem)' }}>
+          The <span className="italic-accent">toolkit</span>.
+        </h2>
 
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '1.25rem',
-          }}
-        >
-          {skillGroups.map((group) => (
-            <div key={group.category} className="card" style={{ padding: '1.5rem' }}>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.625rem',
-                  marginBottom: '1.25rem',
-                }}
-              >
-                <span
-                  style={{
-                    fontSize: '1rem',
-                    color: 'var(--accent)',
-                    fontFamily: 'monospace',
-                  }}
-                >
-                  {group.icon}
-                </span>
-                <h3
-                  style={{
-                    fontSize: '0.875rem',
-                    fontWeight: 700,
-                    color: 'var(--foreground)',
-                    letterSpacing: '0.04em',
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  {group.category}
-                </h3>
+        <div className="skills-grid">
+          {groups.map((g) => (
+            <div key={g.title} className="skill-group will-reveal">
+              <div className="skill-group__head">
+                <span className="mono-label">{g.title}</span>
+                <span className="hairline" style={{ flex: 1 }} />
               </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
-                {group.skills.map((skill) => (
-                  <div
-                    key={skill.name}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: '0.875rem',
-                        color: 'var(--foreground)',
-                        fontWeight: 500,
-                      }}
-                    >
-                      {skill.name}
-                    </span>
-                    <span
-                      style={{
-                        fontSize: '0.7rem',
-                        fontWeight: 600,
-                        color: levelColor[skill.level] || 'var(--muted)',
-                        backgroundColor: `${levelColor[skill.level]}15`,
-                        padding: '0.15rem 0.5rem',
-                        borderRadius: '4px',
-                        letterSpacing: '0.03em',
-                      }}
-                    >
-                      {skill.level}
-                    </span>
-                  </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                {g.items.map((it) => (
+                  <span key={it} className="tag" data-cursor="hover">
+                    {it}
+                  </span>
                 ))}
               </div>
             </div>
           ))}
         </div>
+
+        <div className="lang-row will-reveal">
+          <span className="mono-label" style={{ whiteSpace: 'nowrap' }}>
+            Languages
+          </span>
+          <div className="lang-list">
+            {languages.map((l) => (
+              <div key={l.name} className="lang-item">
+                <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.15rem' }}>{l.name}</span>
+                <span style={{ color: 'var(--fg-muted)', fontSize: '0.8rem', fontFamily: 'var(--font-mono)' }}>
+                  {l.level}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
+
+      <style>{`
+        .skills-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: clamp(2rem, 5vw, 3.5rem);
+        }
+        .skill-group__head {
+          display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem;
+        }
+        .lang-row {
+          display: flex; gap: 2.5rem; align-items: center; flex-wrap: wrap;
+          margin-top: clamp(3rem, 7vw, 5rem);
+          padding-top: 2rem; border-top: 1px solid var(--line-strong);
+        }
+        .lang-list { display: flex; flex-wrap: wrap; gap: 2.5rem; }
+        .lang-item { display: flex; flex-direction: column; gap: 0.2rem; }
+        @media (max-width: 720px) {
+          .skills-grid { grid-template-columns: 1fr; }
+        }
+      `}</style>
     </section>
   );
 }
