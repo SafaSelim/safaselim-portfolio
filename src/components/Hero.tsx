@@ -78,14 +78,14 @@ export function Hero() {
       const rect = el.getBoundingClientRect();
       if (!shown) {
         shown = true;
-        gsap.to(glow, { opacity: 0.22, duration: 0.6 });
+        gsap.to(glow, { opacity: 0.3, duration: 0.6 });
       }
       const relX = clamp((e.clientX - (rect.left + rect.width / 2)) / (rect.width / 2));
       const relY = clamp((e.clientY - (rect.top + rect.height / 2)) / (rect.height / 2));
       rotY(relX * 6);
       rotX(relY * -6);
-      gx(e.clientX - rect.left - 320);
-      gy(e.clientY - rect.top - 320);
+      gx(e.clientX - rect.left - 120);
+      gy(e.clientY - rect.top - 120);
     };
     const onLeave = () => {
       rotY(0);
@@ -137,12 +137,12 @@ export function Hero() {
           position: 'absolute',
           top: 0,
           left: 0,
-          width: '640px',
-          height: '640px',
+          width: '240px',
+          height: '240px',
           zIndex: 1,
           pointerEvents: 'none',
           opacity: 0,
-          background: 'radial-gradient(circle at center, var(--accent) 0%, transparent 62%)',
+          background: 'radial-gradient(circle at center, var(--accent) 0%, transparent 65%)',
           mixBlendMode: 'screen',
           willChange: 'transform, opacity',
         }}
