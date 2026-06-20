@@ -6,9 +6,9 @@ export const PALETTES = [
   { key: 'amber', label: 'Amber', swatch: '#ff7a34' },
   { key: 'cobalt', label: 'Cobalt', swatch: '#6a7cff' },
   { key: 'emerald', label: 'Emerald', swatch: '#2dd4a7' },
-  { key: 'violet', label: 'Violet', swatch: '#b07bff' },
-  { key: 'crimson', label: 'Crimson', swatch: '#ff5b47' },
-  { key: 'lime', label: 'Lime', swatch: '#c4f82e' },
+  { key: 'sunset', label: 'Sunset', swatch: 'linear-gradient(120deg,#ff8a3d,#ff3d7f,#b06bff)' },
+  { key: 'aurora', label: 'Aurora', swatch: 'linear-gradient(120deg,#2dd4a7,#34b3ff,#6a7cff)' },
+  { key: 'spectrum', label: 'Spectrum', swatch: 'linear-gradient(120deg,#c4f82e,#2dd4a7,#6a7cff)' },
 ] as const;
 
 export type PaletteKey = (typeof PALETTES)[number]['key'];

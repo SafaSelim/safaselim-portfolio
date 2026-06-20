@@ -40,6 +40,7 @@ const vertexShader = /* glsl */ `
 const fragmentShader = /* glsl */ `
   uniform vec3 uColorA;
   uniform vec3 uColorB;
+  uniform vec3 uColorC;
   uniform float uOpacity;
   varying float vElevation;
   varying float vDist;
@@ -48,7 +49,8 @@ const fragmentShader = /* glsl */ `
     float d = distance(gl_PointCoord, vec2(0.5));
     if (d > 0.5) discard;
     float alpha = smoothstep(0.5, 0.1, d);
-    vec3 color = mix(uColorA, uColorB, smoothstep(-1.2, 1.6, vElevation));
+    float t = smoothstep(-1.2, 1.6, vElevation);
+    vec3 color = t < 0.5 ? mix(uColorA, uColorB, t * 2.0) : mix(uColorB, uColorC, (t - 0.5) * 2.0);
     float fog = smoothstep(26.0, 6.0, vDist);
     gl_FragColor = vec4(color, alpha * uOpacity * fog);
   }
@@ -93,18 +95,20 @@ function ParticleField({
       uAmp: { value: 1.0 },
       uColorA: { value: new THREE.Color() },
       uColorB: { value: new THREE.Color() },
+      uColorC: { value: new THREE.Color() },
       uOpacity: { value: 0 },
     }),
     [isMobile]
   );
 
   useEffect(() => {
-    const accent =
-      getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#ff7a34';
-    const a = uniforms.uColorA.value as THREE.Color;
-    const b = uniforms.uColorB.value as THREE.Color;
-    a.set(accent);
-    b.set(isDark ? '#f5efe6' : '#2a2018');
+    const cs = getComputedStyle(document.documentElement);
+    const c1 = cs.getPropertyValue('--accent').trim() || '#ff7a34';
+    const c2 = cs.getPropertyValue('--accent-2').trim() || c1;
+    const c3 = cs.getPropertyValue('--accent-3').trim() || c1;
+    (uniforms.uColorA.value as THREE.Color).set(c1);
+    (uniforms.uColorB.value as THREE.Color).set(c2);
+    (uniforms.uColorC.value as THREE.Color).set(c3);
   }, [isDark, palette, uniforms]);
 
   useEffect(() => {

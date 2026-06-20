@@ -4,7 +4,6 @@ import './globals.css';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { PaletteProvider } from '@/components/PaletteProvider';
 import { SmoothScrollProvider } from '@/components/SmoothScrollProvider';
-import { Cursor } from '@/components/Cursor';
 import { Grain } from '@/components/Grain';
 
 const fraunces = Fraunces({
@@ -90,7 +89,6 @@ export default function RootLayout({
         <ThemeProvider>
           <PaletteProvider>
             <Grain />
-            <Cursor />
             <SmoothScrollProvider>{children}</SmoothScrollProvider>
           </PaletteProvider>
         </ThemeProvider>

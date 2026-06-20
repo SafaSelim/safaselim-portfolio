@@ -15,6 +15,9 @@
   --accent: #d85a17;
   --accent-bright: #ff7a34;
   --accent-soft: rgba(216, 90, 23, 0.1);
+  --accent-2: #e23b28;
+  --accent-3: #e0890f;
+  --grad: linear-gradient(100deg, #d85a17, #e23b28, #e0890f);
   --on-accent: #ffffff;
   --line: rgba(26, 20, 15, 0.12);
   --line-strong: rgba(26, 20, 15, 0.22);
@@ -41,6 +44,9 @@
   --accent: #ff7a34;
   --accent-bright: #ff924f;
   --accent-soft: rgba(255, 122, 52, 0.13);
+  --accent-2: #ff5640;
+  --accent-3: #ffb14e;
+  --grad: linear-gradient(100deg, #ff7a34, #ff5640, #ffb14e);
   --on-accent: #1a0f06;
   --line: rgba(245, 239, 230, 0.1);
   --line-strong: rgba(245, 239, 230, 0.2);
@@ -54,16 +60,24 @@
    dark rule = .dark scope (cooler canvas + on-accent contrast).
    ============================================================ */
 
+/* --- Single-tone --- */
+
 [data-palette="cobalt"] {
   --accent: #3b4ee0;
   --accent-bright: #5b6bff;
   --accent-soft: rgba(59, 78, 224, 0.1);
+  --accent-2: #5b3ad0;
+  --accent-3: #1f8fd0;
+  --grad: linear-gradient(100deg, #3b4ee0, #5b3ad0, #1f8fd0);
   --on-accent: #ffffff;
 }
 .dark[data-palette="cobalt"] {
   --accent: #6a7cff;
   --accent-bright: #94a3ff;
   --accent-soft: rgba(106, 124, 255, 0.15);
+  --accent-2: #7a5cff;
+  --accent-3: #4fc3ff;
+  --grad: linear-gradient(100deg, #6a7cff, #7a5cff, #4fc3ff);
   --on-accent: #080b1a;
   --bg: #08090f;
   --bg-deep: #050610;
@@ -74,60 +88,86 @@
   --accent: #0a9d76;
   --accent-bright: #12b487;
   --accent-soft: rgba(10, 157, 118, 0.1);
+  --accent-2: #0a8fa0;
+  --accent-3: #3aa55f;
+  --grad: linear-gradient(100deg, #0a9d76, #0a8fa0, #3aa55f);
   --on-accent: #ffffff;
 }
 .dark[data-palette="emerald"] {
   --accent: #2dd4a7;
   --accent-bright: #5ee9c2;
   --accent-soft: rgba(45, 212, 167, 0.14);
+  --accent-2: #2bbbd9;
+  --accent-3: #7cf0a0;
+  --grad: linear-gradient(100deg, #2dd4a7, #2bbbd9, #7cf0a0);
   --on-accent: #04130d;
   --bg: #070c0a;
   --bg-deep: #040806;
   --bg-elev: #0e1512;
 }
 
-[data-palette="violet"] {
-  --accent: #7c3aed;
-  --accent-bright: #9d5cff;
-  --accent-soft: rgba(124, 58, 237, 0.1);
+/* --- Multi-color combos (2–3 colors together) --- */
+
+[data-palette="sunset"] {
+  --accent: #e2631a;
+  --accent-bright: #ff7a34;
+  --accent-soft: rgba(226, 99, 26, 0.1);
+  --accent-2: #e23b6f;
+  --accent-3: #8b4ddb;
+  --grad: linear-gradient(100deg, #e2631a, #e23b6f, #8b4ddb);
   --on-accent: #ffffff;
 }
-.dark[data-palette="violet"] {
-  --accent: #b07bff;
-  --accent-bright: #c8a3ff;
-  --accent-soft: rgba(176, 123, 255, 0.15);
-  --on-accent: #140920;
-  --bg: #0b0810;
-  --bg-deep: #07050b;
-  --bg-elev: #12101d;
+.dark[data-palette="sunset"] {
+  --accent: #ff8a3d;
+  --accent-bright: #ffa45e;
+  --accent-soft: rgba(255, 138, 61, 0.14);
+  --accent-2: #ff3d7f;
+  --accent-3: #b06bff;
+  --grad: linear-gradient(100deg, #ff8a3d, #ff3d7f, #b06bff);
+  --on-accent: #1a0910;
+  --bg: #0c0a08;
+  --bg-deep: #080604;
+  --bg-elev: #15110c;
 }
 
-[data-palette="crimson"] {
-  --accent: #e23b28;
-  --accent-bright: #ff5640;
-  --accent-soft: rgba(226, 59, 40, 0.1);
+[data-palette="aurora"] {
+  --accent: #0a9d76;
+  --accent-bright: #12b487;
+  --accent-soft: rgba(10, 157, 118, 0.1);
+  --accent-2: #1f8fd0;
+  --accent-3: #3b4ee0;
+  --grad: linear-gradient(100deg, #0a9d76, #1f8fd0, #3b4ee0);
   --on-accent: #ffffff;
 }
-.dark[data-palette="crimson"] {
-  --accent: #ff5b47;
-  --accent-bright: #ff8475;
-  --accent-soft: rgba(255, 91, 71, 0.14);
-  --on-accent: #1a0908;
-  --bg: #0d0807;
-  --bg-deep: #080403;
-  --bg-elev: #160f0d;
+.dark[data-palette="aurora"] {
+  --accent: #2dd4a7;
+  --accent-bright: #5ee9c2;
+  --accent-soft: rgba(45, 212, 167, 0.14);
+  --accent-2: #34b3ff;
+  --accent-3: #6a7cff;
+  --grad: linear-gradient(100deg, #2dd4a7, #34b3ff, #6a7cff);
+  --on-accent: #04130d;
+  --bg: #08090f;
+  --bg-deep: #050610;
+  --bg-elev: #10121d;
 }
 
-[data-palette="lime"] {
+[data-palette="spectrum"] {
   --accent: #5f7a00;
   --accent-bright: #7d9e00;
   --accent-soft: rgba(95, 122, 0, 0.12);
-  --on-accent: #0c0f02;
+  --accent-2: #0a9d76;
+  --accent-3: #3b4ee0;
+  --grad: linear-gradient(100deg, #5f7a00, #0a9d76, #3b4ee0);
+  --on-accent: #ffffff;
 }
-.dark[data-palette="lime"] {
+.dark[data-palette="spectrum"] {
   --accent: #c4f82e;
   --accent-bright: #d6ff63;
   --accent-soft: rgba(196, 248, 46, 0.14);
+  --accent-2: #2dd4a7;
+  --accent-3: #6a7cff;
+  --grad: linear-gradient(100deg, #c4f82e, #2dd4a7, #6a7cff);
   --on-accent: #14160a;
   --bg: #0a0a0a;
   --bg-deep: #060606;
@@ -224,7 +264,10 @@ canvas {
 .italic-accent {
   font-style: italic;
   font-weight: 400;
-  color: var(--accent);
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 /* ============================================================
@@ -287,7 +330,7 @@ html:not(.reduced) .js-ready .will-reveal {
 }
 
 .btn-primary {
-  background: var(--accent);
+  background: var(--grad);
   color: var(--on-accent);
 }
 .btn-primary::after {
@@ -374,51 +417,6 @@ html:not(.reduced) .js-ready .will-reveal {
 @keyframes grain-shift {
   from { background-position: 0 0; }
   to { background-position: 160px 160px; }
-}
-
-/* ============================================================
-   Custom cursor
-   ============================================================ */
-
-.cursor-dot,
-.cursor-ring {
-  position: fixed;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: 9999;
-  border-radius: 50%;
-  mix-blend-mode: difference;
-}
-.cursor-dot {
-  width: 6px;
-  height: 6px;
-  background: #fff;
-  transform: translate(-50%, -50%);
-}
-.cursor-ring {
-  width: 40px;
-  height: 40px;
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  transform: translate(-50%, -50%);
-  transition: width 0.3s var(--ease-out), height 0.3s var(--ease-out),
-    background-color 0.3s var(--ease-out), opacity 0.3s var(--ease-out);
-}
-.cursor-ring.is-hover {
-  width: 64px;
-  height: 64px;
-  background: rgba(255, 255, 255, 0.12);
-}
-.cursor-ring.is-down {
-  width: 28px;
-  height: 28px;
-}
-
-@media (hover: none), (pointer: coarse) {
-  .cursor-dot,
-  .cursor-ring {
-    display: none;
-  }
 }
 
 /* ============================================================
