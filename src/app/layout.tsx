@@ -30,34 +30,35 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://safaselim.dev'),
-  title: 'Safa Selim — Senior Angular Frontend Engineer',
+  title: 'Safa Selim — Senior Software Engineer',
   description:
-    'Senior Angular Frontend Engineer with 6+ years building enterprise-scale web applications, monorepo architectures, NGRX state systems, and large-scale frontend migrations across European markets.',
+    'Senior Software Engineer with 6+ years building enterprise-scale web and mobile applications — Angular, React, Next.js, React Native and Node/Elysia backends, with deep experience in monorepo architecture and large-scale migrations across European markets.',
   keywords: [
     'Safa Selim',
+    'Senior Software Engineer',
+    'Frontend Engineer',
     'Angular',
-    'Senior Frontend Engineer',
+    'React',
+    'Next.js',
+    'React Native',
     'TypeScript',
-    'NGRX',
     'Monorepo',
     'Enterprise',
-    'Storybook',
-    'Frontend Architecture',
   ],
   authors: [{ name: 'Safa Selim' }],
   openGraph: {
-    title: 'Safa Selim — Senior Angular Frontend Engineer',
+    title: 'Safa Selim — Senior Software Engineer',
     description:
-      'Senior Angular Frontend Engineer with 6+ years building enterprise-scale web applications and monorepo architectures.',
+      'Senior Software Engineer with 6+ years building enterprise-scale web and mobile applications across European markets.',
     type: 'website',
     locale: 'en_US',
     siteName: 'Safa Selim',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Safa Selim — Senior Angular Frontend Engineer',
+    title: 'Safa Selim — Senior Software Engineer',
     description:
-      'Senior Angular Frontend Engineer with 6+ years building enterprise-scale web applications.',
+      'Senior Software Engineer with 6+ years building enterprise-scale web and mobile applications.',
   },
 };
 

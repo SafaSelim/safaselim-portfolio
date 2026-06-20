@@ -110,7 +110,7 @@ export function Hero() {
               boxShadow: '0 0 0 4px var(--accent-soft)',
             }}
           />
-          Senior Angular Frontend Engineer
+          Senior Software Engineer
         </div>
 
         <h1
@@ -137,8 +137,8 @@ export function Hero() {
             color: 'var(--fg-soft)',
           }}
         >
-          Architecting <span className="italic-accent">enterprise-scale</span> Angular
-          platforms for European markets.
+          Architecting <span className="italic-accent">enterprise-scale</span> web &amp;
+          mobile platforms for European markets.
         </p>
 
         <div
