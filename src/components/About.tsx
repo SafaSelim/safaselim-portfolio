@@ -5,7 +5,7 @@ import { gsap, registerGsap, ScrollTrigger, prefersReducedMotion } from '@/lib/m
 import { useReveal } from '@/hooks/useReveal';
 
 const stats = [
-  { value: 6, suffix: '+', label: 'Years building frontends' },
+  { value: 6, suffix: '+', label: 'Years of experience' },
   { value: 10, suffix: '', label: 'Enterprise apps in one monorepo' },
   { value: 25, suffix: '', label: 'Country domains shipped' },
   { value: 20, suffix: '+', label: 'Languages localized' },
@@ -64,10 +64,10 @@ export function About() {
               letterSpacing: '-0.02em',
             }}
           >
-            I&apos;m a senior frontend engineer who turns sprawling enterprise codebases
-            into <span className="italic-accent">structured, scalable</span> systems —
-            specializing in Angular, NGRX, and monorepo architecture, with a track record of
-            leading <span className="italic-accent">release management</span> across
+            I turn sprawling enterprise codebases into{' '}
+            <span className="italic-accent">structured, scalable</span> systems —
+            specializing in Angular, NGRX, and monorepo architecture, and owning{' '}
+            <span className="italic-accent">release management</span> across
             multi-application environments.
           </p>
 
@@ -80,9 +80,9 @@ export function About() {
                 marginBottom: '1.5rem',
               }}
             >
-              Over 6+ years I&apos;ve delivered performance-critical platforms used across
-              European markets — from migrating a 25-domain e-commerce site off legacy JSP to
-              standardizing design systems with Storybook and securing apps with Keycloak.
+              For 6+ years I&apos;ve shipped performance-critical platforms across European
+              markets — from lifting a 25-domain e-commerce site off legacy JSP to
+              standardizing design systems in Storybook and securing apps with Keycloak.
             </p>
             <ul style={{ listStyle: 'none', display: 'grid', gap: '0.6rem' }}>
               {[
