@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import { useTheme } from 'next-themes';
 import { Sun, Moon } from 'lucide-react';
 import { useLenis } from '@/components/SmoothScrollProvider';
-import { PaletteSwitcher } from '@/components/PaletteSwitcher';
 import { useMagnetic } from '@/hooks/useMagnetic';
 
 const links = [
@@ -125,8 +124,6 @@ export function Navbar() {
               </li>
             ))}
           </ul>
-
-          <PaletteSwitcher />
 
           <button
             ref={toggleRef}

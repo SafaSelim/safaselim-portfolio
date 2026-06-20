@@ -3,7 +3,6 @@
 import { useMemo, useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useTheme } from 'next-themes';
-import { usePalette } from '@/components/PaletteProvider';
 import * as THREE from 'three';
 
 const vertexShader = /* glsl */ `
@@ -56,15 +55,7 @@ const fragmentShader = /* glsl */ `
   }
 `;
 
-function ParticleField({
-  isDark,
-  reduced,
-  palette,
-}: {
-  isDark: boolean;
-  reduced: boolean;
-  palette: string;
-}) {
+function ParticleField({ isDark, reduced }: { isDark: boolean; reduced: boolean }) {
   const matRef = useRef<THREE.ShaderMaterial>(null);
   const mouse = useRef(new THREE.Vector2(0, 0));
   const { viewport, size } = useThree();
@@ -109,7 +100,7 @@ function ParticleField({
     (uniforms.uColorA.value as THREE.Color).set(c1);
     (uniforms.uColorB.value as THREE.Color).set(c2);
     (uniforms.uColorC.value as THREE.Color).set(c3);
-  }, [isDark, palette, uniforms]);
+  }, [isDark, uniforms]);
 
   useEffect(() => {
     const onMove = (e: PointerEvent) => {
@@ -155,7 +146,6 @@ function ParticleField({
 
 export default function HeroScene() {
   const { resolvedTheme } = useTheme();
-  const { palette } = usePalette();
   const [reduced, setReduced] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [active, setActive] = useState(true);
@@ -191,7 +181,7 @@ export default function HeroScene() {
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
         style={{ width: '100%', height: '100%' }}
       >
-        <ParticleField isDark={isDark} reduced={reduced} palette={palette} />
+        <ParticleField isDark={isDark} reduced={reduced} />
       </Canvas>
     </div>
   );
