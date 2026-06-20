@@ -3,6 +3,7 @@
 import { useMemo, useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useTheme } from 'next-themes';
+import { usePalette } from '@/components/PaletteProvider';
 import * as THREE from 'three';
 
 const vertexShader = /* glsl */ `
@@ -53,14 +54,22 @@ const fragmentShader = /* glsl */ `
   }
 `;
 
-function ParticleField({ isDark, reduced }: { isDark: boolean; reduced: boolean }) {
+function ParticleField({
+  isDark,
+  reduced,
+  palette,
+}: {
+  isDark: boolean;
+  reduced: boolean;
+  palette: string;
+}) {
   const matRef = useRef<THREE.ShaderMaterial>(null);
   const mouse = useRef(new THREE.Vector2(0, 0));
   const { viewport, size } = useThree();
 
   const isMobile = size.width < 768;
-  const sep = isMobile ? 0.7 : 0.5;
-  const count = isMobile ? 60 : 110;
+  const sep = isMobile ? 0.85 : 0.58;
+  const count = isMobile ? 46 : 88;
 
   const positions = useMemo(() => {
     const arr = new Float32Array(count * count * 3);
@@ -90,16 +99,13 @@ function ParticleField({ isDark, reduced }: { isDark: boolean; reduced: boolean 
   );
 
   useEffect(() => {
+    const accent =
+      getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#ff7a34';
     const a = uniforms.uColorA.value as THREE.Color;
     const b = uniforms.uColorB.value as THREE.Color;
-    if (isDark) {
-      a.set('#ff7a34');
-      b.set('#f5efe6');
-    } else {
-      a.set('#d85a17');
-      b.set('#2a2018');
-    }
-  }, [isDark, uniforms]);
+    a.set(accent);
+    b.set(isDark ? '#f5efe6' : '#2a2018');
+  }, [isDark, palette, uniforms]);
 
   useEffect(() => {
     const onMove = (e: PointerEvent) => {
@@ -145,8 +151,11 @@ function ParticleField({ isDark, reduced }: { isDark: boolean; reduced: boolean 
 
 export default function HeroScene() {
   const { resolvedTheme } = useTheme();
+  const { palette } = usePalette();
   const [reduced, setReduced] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [active, setActive] = useState(true);
+  const wrapRef = useRef<HTMLDivElement>(null);
 
   // Hydration guard: WebGL canvas must only mount client-side.
   useEffect(() => {
@@ -155,17 +164,31 @@ export default function HeroScene() {
     setReduced(window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   }, []);
 
+  // Pause rendering whenever the hero is scrolled out of view.
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([entry]) => setActive(entry.isIntersecting), {
+      threshold: 0,
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [mounted]);
+
   if (!mounted) return null;
   const isDark = resolvedTheme !== 'light';
 
   return (
-    <Canvas
-      camera={{ position: [0, 4.5, 11], fov: 55 }}
-      dpr={[1, 1.8]}
-      gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
-      style={{ width: '100%', height: '100%' }}
-    >
-      <ParticleField isDark={isDark} reduced={reduced} />
-    </Canvas>
+    <div ref={wrapRef} style={{ width: '100%', height: '100%' }}>
+      <Canvas
+        frameloop={active ? 'always' : 'never'}
+        camera={{ position: [0, 4.5, 11], fov: 55 }}
+        dpr={[1, 1.5]}
+        gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+        style={{ width: '100%', height: '100%' }}
+      >
+        <ParticleField isDark={isDark} reduced={reduced} palette={palette} />
+      </Canvas>
+    </div>
   );
 }

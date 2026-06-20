@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Fraunces, Space_Grotesk, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/ThemeProvider';
+import { PaletteProvider } from '@/components/PaletteProvider';
 import { SmoothScrollProvider } from '@/components/SmoothScrollProvider';
 import { Cursor } from '@/components/Cursor';
 import { Grain } from '@/components/Grain';
@@ -76,13 +77,22 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var p=localStorage.getItem('portfolio-palette');if(p)document.documentElement.dataset.palette=p;}catch(e){}`,
+          }}
+        />
+      </head>
       <body
         className={`${fraunces.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} antialiased`}
       >
         <ThemeProvider>
-          <Grain />
-          <Cursor />
-          <SmoothScrollProvider>{children}</SmoothScrollProvider>
+          <PaletteProvider>
+            <Grain />
+            <Cursor />
+            <SmoothScrollProvider>{children}</SmoothScrollProvider>
+          </PaletteProvider>
         </ThemeProvider>
       </body>
     </html>

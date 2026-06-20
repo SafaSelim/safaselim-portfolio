@@ -15,6 +15,7 @@
   --accent: #d85a17;
   --accent-bright: #ff7a34;
   --accent-soft: rgba(216, 90, 23, 0.1);
+  --on-accent: #ffffff;
   --line: rgba(26, 20, 15, 0.12);
   --line-strong: rgba(26, 20, 15, 0.22);
   --grain-opacity: 0.04;
@@ -40,10 +41,97 @@
   --accent: #ff7a34;
   --accent-bright: #ff924f;
   --accent-soft: rgba(255, 122, 52, 0.13);
+  --on-accent: #1a0f06;
   --line: rgba(245, 239, 230, 0.1);
   --line-strong: rgba(245, 239, 230, 0.2);
   --grain-opacity: 0.055;
   --shadow: 0 40px 90px -40px rgba(0, 0, 0, 0.8);
+}
+
+/* ============================================================
+   Accent palettes (set via [data-palette] on <html>)
+   "amber" is the base defined above. Light rule = :root scope,
+   dark rule = .dark scope (cooler canvas + on-accent contrast).
+   ============================================================ */
+
+[data-palette="cobalt"] {
+  --accent: #3b4ee0;
+  --accent-bright: #5b6bff;
+  --accent-soft: rgba(59, 78, 224, 0.1);
+  --on-accent: #ffffff;
+}
+.dark[data-palette="cobalt"] {
+  --accent: #6a7cff;
+  --accent-bright: #94a3ff;
+  --accent-soft: rgba(106, 124, 255, 0.15);
+  --on-accent: #080b1a;
+  --bg: #08090f;
+  --bg-deep: #050610;
+  --bg-elev: #10121d;
+}
+
+[data-palette="emerald"] {
+  --accent: #0a9d76;
+  --accent-bright: #12b487;
+  --accent-soft: rgba(10, 157, 118, 0.1);
+  --on-accent: #ffffff;
+}
+.dark[data-palette="emerald"] {
+  --accent: #2dd4a7;
+  --accent-bright: #5ee9c2;
+  --accent-soft: rgba(45, 212, 167, 0.14);
+  --on-accent: #04130d;
+  --bg: #070c0a;
+  --bg-deep: #040806;
+  --bg-elev: #0e1512;
+}
+
+[data-palette="violet"] {
+  --accent: #7c3aed;
+  --accent-bright: #9d5cff;
+  --accent-soft: rgba(124, 58, 237, 0.1);
+  --on-accent: #ffffff;
+}
+.dark[data-palette="violet"] {
+  --accent: #b07bff;
+  --accent-bright: #c8a3ff;
+  --accent-soft: rgba(176, 123, 255, 0.15);
+  --on-accent: #140920;
+  --bg: #0b0810;
+  --bg-deep: #07050b;
+  --bg-elev: #12101d;
+}
+
+[data-palette="crimson"] {
+  --accent: #e23b28;
+  --accent-bright: #ff5640;
+  --accent-soft: rgba(226, 59, 40, 0.1);
+  --on-accent: #ffffff;
+}
+.dark[data-palette="crimson"] {
+  --accent: #ff5b47;
+  --accent-bright: #ff8475;
+  --accent-soft: rgba(255, 91, 71, 0.14);
+  --on-accent: #1a0908;
+  --bg: #0d0807;
+  --bg-deep: #080403;
+  --bg-elev: #160f0d;
+}
+
+[data-palette="lime"] {
+  --accent: #5f7a00;
+  --accent-bright: #7d9e00;
+  --accent-soft: rgba(95, 122, 0, 0.12);
+  --on-accent: #0c0f02;
+}
+.dark[data-palette="lime"] {
+  --accent: #c4f82e;
+  --accent-bright: #d6ff63;
+  --accent-soft: rgba(196, 248, 46, 0.14);
+  --on-accent: #14160a;
+  --bg: #0a0a0a;
+  --bg-deep: #060606;
+  --bg-elev: #121212;
 }
 
 * {
@@ -200,10 +288,7 @@ html:not(.reduced) .js-ready .will-reveal {
 
 .btn-primary {
   background: var(--accent);
-  color: #fff;
-}
-.dark .btn-primary {
-  color: #1a0f06;
+  color: var(--on-accent);
 }
 .btn-primary::after {
   content: '';
@@ -236,11 +321,8 @@ html:not(.reduced) .js-ready .will-reveal {
   z-index: -1;
 }
 .btn-ghost:hover {
-  color: #fff;
+  color: var(--on-accent);
   border-color: var(--accent);
-}
-.dark .btn-ghost:hover {
-  color: #1a0f06;
 }
 .btn-ghost:hover::after {
   transform: translateY(0);
@@ -274,27 +356,24 @@ html:not(.reduced) .js-ready .will-reveal {
 
 .grain {
   position: fixed;
-  inset: -150%;
-  width: 400%;
-  height: 400%;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
   z-index: 9998;
   opacity: var(--grain-opacity);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
   mix-blend-mode: overlay;
-  will-change: transform;
-  animation: grain-shift 0.6s steps(2) infinite;
+  animation: grain-shift 6s steps(8) infinite;
 }
 .dark .grain {
   mix-blend-mode: soft-light;
 }
 
 @keyframes grain-shift {
-  0% { transform: translate(0, 0); }
-  25% { transform: translate(-2%, 1%); }
-  50% { transform: translate(1%, -2%); }
-  75% { transform: translate(-1%, 2%); }
-  100% { transform: translate(2%, -1%); }
+  from { background-position: 0 0; }
+  to { background-position: 160px 160px; }
 }
 
 /* ============================================================
