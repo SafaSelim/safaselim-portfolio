@@ -1,160 +1,161 @@
 'use client';
 
-import { useFadeIn } from '@/hooks/useFadeIn';
+import { useEffect, useRef } from 'react';
+import { gsap, registerGsap, ScrollTrigger, prefersReducedMotion } from '@/lib/motion';
+import { useReveal } from '@/hooks/useReveal';
 
 const stats = [
-  { value: '6+', label: 'Years Experience' },
-  { value: '10+', label: 'Enterprise Apps' },
-  { value: '25', label: 'Country Deployments' },
-  { value: 'v2–v20', label: 'Angular Versions' },
+  { value: 6, suffix: '+', label: 'Years of experience' },
+  { value: 10, suffix: '', label: 'Enterprise apps in one monorepo' },
+  { value: 25, suffix: '', label: 'Country domains shipped' },
+  { value: 20, suffix: '+', label: 'Languages localized' },
 ];
 
-const highlights = [
-  {
-    title: 'Enterprise Angular Expertise',
-    description:
-      'Delivered production systems across Angular v2 through v20, covering major breaking changes and architectural shifts over a decade of the framework.',
-  },
-  {
-    title: 'Monorepo Architecture',
-    description:
-      'Led the design and development of monorepo systems with 10+ interconnected enterprise applications, shared component libraries, and unified CI/CD pipelines.',
-  },
-  {
-    title: 'State Management at Scale',
-    description:
-      'Implemented NGRX and Redux across complex multi-domain applications — designing scalable store architecture, effects, selectors, and entity adapters.',
-  },
-  {
-    title: 'Release Cycle Leadership',
-    description:
-      'Managed monthly production releases across high-traffic platforms, coordinating cross-functional teams, QA cycles, and deployment strategies.',
-  },
-];
+function Counter({ value, suffix }: { value: number; suffix: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    registerGsap();
+    const el = ref.current;
+    if (!el) return;
+    if (prefersReducedMotion()) {
+      el.textContent = `${value}${suffix}`;
+      return;
+    }
+    const obj = { n: 0 };
+    const st = ScrollTrigger.create({
+      trigger: el,
+      start: 'top 88%',
+      once: true,
+      onEnter: () => {
+        gsap.to(obj, {
+          n: value,
+          duration: 1.6,
+          ease: 'power2.out',
+          onUpdate: () => {
+            el.textContent = `${Math.round(obj.n)}${suffix}`;
+          },
+        });
+      },
+    });
+    return () => st.kill();
+  }, [value, suffix]);
+
+  return <span ref={ref}>0{suffix}</span>;
+}
 
 export function About() {
-  const ref = useFadeIn();
+  const ref = useReveal<HTMLDivElement>('.will-reveal', { stagger: 0.1 });
 
   return (
-    <section
-      id="about"
-      style={{
-        backgroundColor: 'var(--section-alt)',
-        padding: '6rem 0',
-      }}
-    >
-      <div
-        ref={ref}
-        className="fade-in"
-        style={{
-          maxWidth: '1100px',
-          margin: '0 auto',
-          padding: '0 1.5rem',
-        }}
-      >
-        <h2 className="section-heading">About</h2>
-        <span className="accent-bar" />
+    <section id="about" className="section-pad">
+      <div ref={ref} className="container">
+        <span className="eyebrow will-reveal" style={{ display: 'block', marginBottom: '2.5rem' }}>
+          (01) — About
+        </span>
 
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '2rem',
-            marginBottom: '3.5rem',
-          }}
-        >
-          <div style={{ gridColumn: 'span 2' }}>
+        <div className="about-grid">
+          <p
+            className="display will-reveal"
+            style={{
+              fontSize: 'clamp(1.6rem, 3.6vw, 3rem)',
+              fontWeight: 400,
+              lineHeight: 1.18,
+              letterSpacing: '-0.02em',
+            }}
+          >
+            I turn sprawling enterprise codebases into{' '}
+            <span className="italic-accent">structured, scalable</span> systems —
+            specializing in Angular, NGRX, and monorepo architecture, and owning{' '}
+            <span className="italic-accent">release management</span> across
+            multi-application environments.
+          </p>
+
+          <div className="about-side will-reveal">
             <p
               style={{
-                fontSize: '1.05rem',
-                color: 'var(--muted)',
-                lineHeight: 1.8,
-                marginBottom: '1rem',
+                color: 'var(--fg-muted)',
+                fontSize: '1rem',
+                lineHeight: 1.75,
+                marginBottom: '1.5rem',
               }}
             >
-              I&apos;m a Senior Angular Frontend Engineer with over 6 years of hands-on experience
-              building complex, enterprise-grade web applications. My work spans from JSP-to-Angular
-              migrations serving 25 country domains, to designing monorepo architectures that power
-              10 interconnected enterprise products.
+              For 6+ years I&apos;ve shipped performance-critical platforms across European
+              markets — from lifting a 25-domain e-commerce site off legacy JSP to
+              standardizing design systems in Storybook and securing apps with Keycloak.
             </p>
-            <p
-              style={{
-                fontSize: '1.05rem',
-                color: 'var(--muted)',
-                lineHeight: 1.8,
-              }}
-            >
-              I specialize in scalable system design, state management architecture, and
-              release engineering — translating complex business requirements into clean,
-              maintainable frontend systems that teams can build on for years.
-            </p>
+            <ul style={{ listStyle: 'none', display: 'grid', gap: '0.6rem' }}>
+              {[
+                'Angular v4 → v19 across the full release timeline',
+                'Monorepo architecture & shared component libraries',
+                'NGRX state management at enterprise scale',
+                'Release management for multi-app environments',
+              ].map((t) => (
+                <li
+                  key={t}
+                  style={{
+                    display: 'flex',
+                    gap: '0.7rem',
+                    alignItems: 'flex-start',
+                    fontSize: '0.92rem',
+                    color: 'var(--fg-soft)',
+                  }}
+                >
+                  <span style={{ color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>↳</span>
+                  {t}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
 
-        {/* Stats */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
-            gap: '1rem',
-            marginBottom: '3.5rem',
-          }}
-        >
-          {stats.map((stat) => (
-            <div
-              key={stat.label}
-              className="card"
-              style={{
-                padding: '1.25rem 1.5rem',
-                textAlign: 'center',
-              }}
-            >
+        <div className="stats-grid will-reveal">
+          {stats.map((s) => (
+            <div key={s.label} style={{ borderTop: '1px solid var(--line-strong)', paddingTop: '1.2rem' }}>
               <div
+                className="display"
                 style={{
-                  fontSize: '1.75rem',
-                  fontWeight: 800,
+                  fontSize: 'clamp(2.6rem, 6vw, 4.5rem)',
+                  fontWeight: 500,
+                  lineHeight: 1,
                   color: 'var(--accent)',
-                  letterSpacing: '-0.03em',
-                  marginBottom: '0.25rem',
                 }}
               >
-                {stat.value}
+                <Counter value={s.value} suffix={s.suffix} />
               </div>
-              <div style={{ fontSize: '0.8rem', color: 'var(--muted)', fontWeight: 500 }}>
-                {stat.label}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Highlight grid */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-            gap: '1.25rem',
-          }}
-        >
-          {highlights.map((item) => (
-            <div key={item.title} className="card" style={{ padding: '1.5rem' }}>
-              <h3
+              <p
                 style={{
-                  fontSize: '0.95rem',
-                  fontWeight: 700,
-                  color: 'var(--foreground)',
-                  marginBottom: '0.625rem',
-                  letterSpacing: '-0.01em',
+                  marginTop: '0.6rem',
+                  fontSize: '0.85rem',
+                  color: 'var(--fg-muted)',
+                  maxWidth: '18ch',
                 }}
               >
-                {item.title}
-              </h3>
-              <p style={{ fontSize: '0.875rem', color: 'var(--muted)', lineHeight: 1.7 }}>
-                {item.description}
+                {s.label}
               </p>
             </div>
           ))}
         </div>
       </div>
+
+      <style>{`
+        .about-grid {
+          display: grid;
+          grid-template-columns: 1.4fr 1fr;
+          gap: clamp(2rem, 6vw, 5rem);
+          align-items: start;
+        }
+        .stats-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: clamp(1.5rem, 4vw, 3rem);
+          margin-top: clamp(3.5rem, 8vw, 6rem);
+        }
+        @media (max-width: 880px) {
+          .about-grid { grid-template-columns: 1fr; }
+          .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+        }
+      `}</style>
     </section>
   );
 }

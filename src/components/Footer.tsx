@@ -1,77 +1,61 @@
-import { Github, Linkedin } from 'lucide-react';
+'use client';
+
+import { useLenis } from '@/components/SmoothScrollProvider';
 
 export function Footer() {
+  const { scrollTo } = useLenis();
+  const year = 2026;
+
   return (
-    <footer
-      style={{
-        borderTop: '1px solid var(--card-border)',
-        backgroundColor: 'var(--background)',
-        padding: '2rem 0',
-      }}
-    >
+    <footer style={{ background: 'var(--bg-deep)', borderTop: '1px solid var(--line)' }}>
       <div
-        style={{
-          maxWidth: '1100px',
-          margin: '0 auto',
-          padding: '0 1.5rem',
-          display: 'flex',
-          flexWrap: 'wrap',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          gap: '1rem',
-        }}
+        className="container"
+        style={{ paddingBlock: '2.5rem' }}
       >
-        <div>
-          <span
-            style={{
-              fontWeight: 700,
-              fontSize: '1rem',
-              color: 'var(--foreground)',
-              letterSpacing: '-0.01em',
-            }}
-          >
-            Safa<span style={{ color: 'var(--accent)' }}>.</span>
-          </span>
-          <p style={{ fontSize: '0.8rem', color: 'var(--muted)', marginTop: '0.25rem' }}>
-            Senior Angular Frontend Engineer
+        <div className="footer-edu">
+          <span className="mono-label">Education</span>
+          <p style={{ color: 'var(--fg-soft)', maxWidth: '60ch', lineHeight: 1.6 }}>
+            B.Sc. Computer Engineering — Çanakkale Onsekiz Mart University (2014–2018).
+            Senior project: Quantum Key Distribution (campus-level implementation study).
           </p>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-          <a
-            href="https://github.com/safaselim"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="GitHub"
-            style={{
-              color: 'var(--muted)',
-              textDecoration: 'none',
-              transition: 'color 0.15s ease',
-              display: 'flex',
-            }}
+        <div className="footer-bar">
+          <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem' }}>
+            Safa Selim<span style={{ color: 'var(--accent)' }}>.</span>
+          </span>
+          <span className="mono-label" style={{ fontSize: '0.7rem' }}>
+            © {year} — Designed & built with Next.js, GSAP & Three.js
+          </span>
+          <button
+            onClick={() => scrollTo(0)}
+            className="footer-top"
+            aria-label="Back to top"
           >
-            <Github size={18} />
-          </a>
-          <a
-            href="https://linkedin.com/in/safaselim"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="LinkedIn"
-            style={{
-              color: 'var(--muted)',
-              textDecoration: 'none',
-              transition: 'color 0.15s ease',
-              display: 'flex',
-            }}
-          >
-            <Linkedin size={18} />
-          </a>
+            Back to top ↑
+          </button>
         </div>
-
-        <p style={{ fontSize: '0.78rem', color: 'var(--muted)' }}>
-          © {new Date().getFullYear()} Safa Selim. Built with Next.js.
-        </p>
       </div>
+
+      <style>{`
+        .footer-edu {
+          display: grid; grid-template-columns: 160px 1fr; gap: 1.5rem;
+          padding-bottom: 2.5rem; margin-bottom: 2rem; border-bottom: 1px solid var(--line);
+        }
+        .footer-bar {
+          display: flex; align-items: center; justify-content: space-between;
+          flex-wrap: wrap; gap: 1rem;
+        }
+        .footer-top {
+          background: none; border: none; cursor: pointer; color: var(--fg-soft);
+          font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.05em;
+          transition: color 0.25s ease;
+        }
+        .footer-top:hover { color: var(--accent); }
+        @media (max-width: 640px) {
+          .footer-edu { grid-template-columns: 1fr; gap: 0.5rem; }
+        }
+      `}</style>
     </footer>
   );
 }

@@ -1,282 +1,191 @@
 'use client';
 
-import { useFadeIn } from '@/hooks/useFadeIn';
-import { ExternalLink } from 'lucide-react';
+import { useEffect, useRef } from 'react';
+import { ArrowUpRight } from 'lucide-react';
+import { gsap, registerGsap, prefersReducedMotion } from '@/lib/motion';
 
 const experiences = [
   {
     company: 'adesso Turkey',
     project: 'material.one',
     projectUrl: 'https://material.one/',
-    role: 'Senior Frontend Engineer',
-    period: '2022 – Present',
-    location: 'Istanbul, Turkey',
+    role: 'Frontend Developer & Release Manager',
+    period: 'Nov 2023 — Present',
     description:
-      'Led frontend architecture for a suite of 10 interconnected enterprise web applications within a unified monorepo ecosystem.',
+      'Lead frontend development and release management for 10 interconnected enterprise applications in a single monorepo.',
     impact: [
-      'Architected and maintained 10 enterprise apps sharing a unified component library',
-      'Managed monthly production release cycles with coordinated QA and deployment',
-      'Built and maintained a Storybook design system consumed across all products',
-      'Integrated Keycloak for enterprise-grade authentication across applications',
+      'Own monthly production releases end-to-end, coordinating cross-team cycles for predictable, low-risk delivery',
+      'Ship scalable features in Angular 19 with NGRX for complex state management',
+      'Maintain a Storybook component library that standardizes the design system across every app',
+      'Design and manage shared Keycloak authentication flows spanning multiple applications',
+      'Raised deployment reliability through structured release processes and tighter cross-team coordination',
     ],
-    tech: ['Angular 19', 'NGRX', 'TypeScript', 'Storybook', 'Keycloak', 'Monorepo', 'SCSS'],
+    tech: ['Angular 19', 'NGRX', 'Monorepo', 'Storybook', 'Keycloak'],
   },
   {
     company: 'Digacon',
     project: 'Distrelec',
-    projectUrl: 'https://www.distrelec.com/global/',
-    role: 'Senior Frontend Engineer',
-    period: '2020 – 2022',
-    location: 'Remote',
+    projectUrl: 'https://www.distrelec.com/',
+    role: 'Frontend Developer',
+    period: 'May 2022 — Sep 2023',
     description:
-      'Led the migration of a high-traffic B2B e-commerce platform from JSP to Angular 12, serving 25 country domains across Europe.',
+      'Helped migrate a legacy JSP e-commerce platform to Angular 12, modernizing the frontend across 25 country-specific domains.',
     impact: [
-      'Migrated legacy JSP codebase to Angular 12 — zero downtime across 25 country domains',
-      'Implemented 20+ language localization with dynamic content switching',
-      'Optimized platform for high-traffic European markets',
-      'Established reusable component patterns that reduced development time by ~30%',
+      'Maintained 20+ localization files powering a multi-market European user base',
+      'Built reusable components — idle-timeout, dynamic volume pricing, image magnifier, gallery preview — reused across the catalog',
+      'Kept high-traffic commerce operations smooth across multiple European regions',
+      'Ran A/B and geo-targeting experiments in Google Optimize to lift engagement and conversion',
     ],
-    tech: ['Angular 12', 'TypeScript', 'SCSS', 'i18n', 'RxJS', 'REST APIs'],
+    tech: ['Angular 12', 'i18n', 'Google Optimize', 'A/B Testing', 'SCSS'],
   },
   {
-    company: 'Clinerion',
-    project: 'Patient Network Explorer',
-    projectUrl: 'https://trinetx.com/press-releases/clinerion/',
-    role: 'Frontend Engineer',
-    period: '2019 – 2020',
-    location: 'Basel, Switzerland (Remote)',
-    description:
-      'Developed frontend for a medical data platform integrating complex patient records and clinical trial matching.',
-    impact: [
-      'Achieved 95% parser accuracy for medical data integration pipelines',
-      'Built complex data visualization dashboards for clinical trial matching',
-      'Collaborated with medical data scientists to translate requirements into UI',
-    ],
-    tech: ['Angular', 'TypeScript', 'D3.js', 'SCSS', 'RESTful APIs'],
-  },
-  {
-    company: 'BluLogix',
-    project: 'Billing Platform',
-    projectUrl: 'https://blulogix.com/',
-    role: 'Frontend Engineer',
-    period: '2018 – 2019',
-    location: 'Remote',
-    description:
-      'Led the migration from AngularJS to Angular and built a reusable component library for a SaaS billing platform.',
-    impact: [
-      'Completed AngularJS → Angular migration with zero regression in billing workflows',
-      'Created a component library that standardized UI across 5 product modules',
-      'Reduced codebase size by 40% through refactoring and component consolidation',
-    ],
-    tech: ['Angular', 'AngularJS', 'TypeScript', 'SCSS', 'Component Library'],
-  },
-  {
-    company: 'Pluscor',
-    project: 'Enterprise ERP',
+    company: 'Clinerion LTD',
+    project: 'ClinicalTrials Parser',
     projectUrl: null,
     role: 'Frontend Developer',
-    period: '2017 – 2018',
-    location: 'Turkey',
+    period: 'Aug 2021 — May 2022',
     description:
-      'Built frontend modules for an enterprise ERP system with Angular and DevExpress components, integrating with ColdFusion backend APIs.',
+      'Improved the ClinicalTrials.com criteria parser and the surrounding frontend for clinical research data.',
     impact: [
-      'Delivered 8 enterprise ERP modules on schedule',
-      'Integrated DevExpress grid and reporting components for complex data workflows',
-      'Collaborated closely with ColdFusion backend team on API design',
+      'Lifted parser accuracy and success rate to 95%',
+      'Improved processing efficiency and reliability across the data-integration pipeline',
+      'Integrated the frontend with backend services for consistent, high-performance delivery',
+      'Delivered enterprise-grade medical data features in cross-functional Agile teams',
     ],
-    tech: ['Angular', 'DevExpress', 'TypeScript', 'ColdFusion API', 'MSSQL', 'SCSS'],
+    tech: ['Angular', 'TypeScript', 'REST APIs', 'Agile'],
+  },
+  {
+    company: 'BluLogix LLC',
+    project: 'Billing Platform',
+    projectUrl: 'https://blulogix.com/',
+    role: 'Frontend Developer',
+    period: 'Jul 2020 — Jun 2021',
+    description:
+      'Helped migrate a SaaS billing platform from AngularJS to Angular 10 and built its reusable component library.',
+    impact: [
+      'Moved the codebase from AngularJS to Angular 10 for long-term maintainability and scalability',
+      'Built a reusable component library that sped up feature delivery and kept the UI consistent',
+      'Engineered complex dynamic forms with Angular Forms and NGRX for robust state management',
+      'Designed flexible modal systems for a more usable, consistent interface',
+    ],
+    tech: ['AngularJS', 'Angular 10', 'Angular Forms', 'NGRX'],
+  },
+  {
+    company: 'Pluscor INC & Ortak',
+    project: 'Enterprise Apps',
+    projectUrl: null,
+    role: 'Software Developer',
+    period: 'Apr 2019 — Jun 2020',
+    description:
+      'Built full-stack apps across web and cross-platform mobile, wiring in third-party APIs end-to-end.',
+    impact: [
+      'Built frontend apps with Angular 8, DevExpress, and Material UI',
+      'Implemented backend logic in ColdFusion (Lucee) and MSSQL',
+      'Integrated Google and Microsoft Calendar APIs into scheduling workflows',
+      'Shipped DHL shipment tracking and automated PDF export',
+      'Built cross-platform mobile apps with Angular (v4–v6) and Ionic (v3–v4)',
+    ],
+    tech: ['Angular 8', 'DevExpress', 'Material UI', 'ColdFusion', 'MSSQL', 'Ionic'],
   },
 ];
 
 export function Experience() {
-  const ref = useFadeIn();
+  const root = useRef<HTMLDivElement>(null);
+  const lineRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    registerGsap();
+    const el = root.current;
+    if (!el || prefersReducedMotion()) return;
+
+    const ctx = gsap.context(() => {
+      // progress line fill
+      gsap.fromTo(
+        lineRef.current,
+        { scaleY: 0 },
+        {
+          scaleY: 1,
+          ease: 'none',
+          transformOrigin: 'top',
+          scrollTrigger: { trigger: el, start: 'top 60%', end: 'bottom 80%', scrub: true },
+        }
+      );
+
+      gsap.utils.toArray<HTMLElement>('.exp-row').forEach((row) => {
+        gsap.from(row, {
+          y: 60,
+          opacity: 0,
+          duration: 1,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: row, start: 'top 82%' },
+        });
+        const dot = row.querySelector('.exp-dot');
+        if (dot) {
+          gsap.from(dot, {
+            scale: 0,
+            duration: 0.6,
+            ease: 'back.out(2)',
+            scrollTrigger: { trigger: row, start: 'top 75%' },
+          });
+        }
+      });
+    }, el);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <section
-      id="experience"
-      style={{
-        padding: '6rem 0',
-        backgroundColor: 'var(--background)',
-      }}
-    >
-      <div
-        ref={ref}
-        className="fade-in"
-        style={{
-          maxWidth: '1100px',
-          margin: '0 auto',
-          padding: '0 1.5rem',
-        }}
-      >
-        <h2 className="section-heading">Experience</h2>
-        <span className="accent-bar" />
+    <section id="experience" className="section-pad" style={{ background: 'var(--bg-deep)' }}>
+      <div ref={root} className="container">
+        <div className="exp-head">
+          <span className="eyebrow">(02) — Experience</span>
+          <h2 className="section-title" style={{ marginTop: '1rem' }}>
+            Six years,<br />
+            <span className="italic-accent">five</span> teams.
+          </h2>
+        </div>
 
-        <div style={{ position: 'relative' }}>
-          {/* Timeline line */}
-          <div
-            aria-hidden
-            style={{
-              position: 'absolute',
-              left: '0',
-              top: '12px',
-              bottom: '0',
-              width: '2px',
-              backgroundColor: 'var(--card-border)',
-              marginLeft: '7px',
-            }}
-          />
+        <div className="exp-timeline">
+          <div className="exp-line-track" aria-hidden>
+            <div ref={lineRef} className="exp-line-fill" />
+          </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem', paddingLeft: '2.5rem' }}>
+          <div className="exp-list">
             {experiences.map((exp, i) => (
-              <div key={i} style={{ position: 'relative' }}>
-                {/* Timeline dot */}
-                <div
-                  aria-hidden
-                  style={{
-                    position: 'absolute',
-                    left: '-2.5rem',
-                    top: '14px',
-                    width: '16px',
-                    height: '16px',
-                    borderRadius: '50%',
-                    backgroundColor: i === 0 ? 'var(--accent)' : 'var(--card-bg)',
-                    border: '2px solid var(--accent)',
-                    boxShadow: i === 0 ? '0 0 0 4px rgba(59, 130, 246, 0.15)' : 'none',
-                  }}
-                />
-
-                <div className="card" style={{ padding: '1.75rem' }}>
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexWrap: 'wrap',
-                      justifyContent: 'space-between',
-                      alignItems: 'flex-start',
-                      gap: '0.5rem',
-                      marginBottom: '0.25rem',
-                    }}
-                  >
-                    <div>
-                      <h3
+              <article key={i} className="exp-row">
+                <span className="exp-dot" aria-hidden />
+                <div className="exp-period mono-label">{exp.period}</div>
+                <div className="exp-body">
+                  <h3 className="exp-title">
+                    {exp.company}
+                    <span style={{ color: 'var(--line-strong)' }}> / </span>
+                    {exp.projectUrl ? (
+                      <a
+                        href={exp.projectUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         style={{
-                          fontSize: '1.1rem',
-                          fontWeight: 700,
-                          color: 'var(--foreground)',
-                          letterSpacing: '-0.01em',
-                          display: 'flex',
-                          alignItems: 'center',
-                          flexWrap: 'wrap',
-                          gap: '0.375rem',
-                        }}
-                      >
-                        {exp.company}
-                        {exp.project && (
-                          <>
-                            <span style={{ color: 'var(--card-border)', fontWeight: 400 }}>·</span>
-                            {exp.projectUrl ? (
-                              <a
-                                href={exp.projectUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{
-                                  color: 'var(--accent)',
-                                  fontWeight: 600,
-                                  textDecoration: 'none',
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  gap: '0.25rem',
-                                  transition: 'opacity 0.15s ease',
-                                }}
-                                onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.opacity = '0.75')}
-                                onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.opacity = '1')}
-                              >
-                                {exp.project}
-                                <ExternalLink size={13} style={{ opacity: 0.7 }} />
-                              </a>
-                            ) : (
-                              <span style={{ color: 'var(--accent)', fontWeight: 600 }}>
-                                {exp.project}
-                              </span>
-                            )}
-                          </>
-                        )}
-                      </h3>
-                      <p
-                        style={{
-                          fontSize: '0.9rem',
-                          color: 'var(--muted)',
-                          fontWeight: 500,
-                          marginTop: '0.125rem',
-                        }}
-                      >
-                        {exp.role}
-                      </p>
-                    </div>
-                    <div style={{ textAlign: 'right' }}>
-                      <span
-                        style={{
-                          fontSize: '0.8rem',
-                          fontWeight: 600,
                           color: 'var(--accent)',
-                          backgroundColor: 'rgba(59, 130, 246, 0.08)',
-                          padding: '0.25rem 0.625rem',
-                          borderRadius: '6px',
-                          display: 'block',
-                          marginBottom: '0.25rem',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.15rem',
                         }}
                       >
-                        {exp.period}
-                      </span>
-                      <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>
-                        {exp.location}
-                      </span>
-                    </div>
-                  </div>
-
-                  <p
-                    style={{
-                      fontSize: '0.9rem',
-                      color: 'var(--muted)',
-                      lineHeight: 1.7,
-                      marginTop: '0.75rem',
-                      marginBottom: '1rem',
-                    }}
-                  >
-                    {exp.description}
-                  </p>
-
-                  <ul style={{ listStyle: 'none', marginBottom: '1.25rem' }}>
-                    {exp.impact.map((item, j) => (
-                      <li
-                        key={j}
-                        style={{
-                          fontSize: '0.875rem',
-                          color: 'var(--muted)',
-                          lineHeight: 1.6,
-                          padding: '0.25rem 0',
-                          paddingLeft: '1rem',
-                          position: 'relative',
-                        }}
-                      >
-                        <span
-                          aria-hidden
-                          style={{
-                            position: 'absolute',
-                            left: 0,
-                            top: '0.6rem',
-                            width: '5px',
-                            height: '5px',
-                            borderRadius: '50%',
-                            backgroundColor: 'var(--accent)',
-                            opacity: 0.7,
-                          }}
-                        />
-                        {item}
-                      </li>
+                        {exp.project}
+                        <ArrowUpRight size={18} />
+                      </a>
+                    ) : (
+                      <span style={{ color: 'var(--accent)' }}>{exp.project}</span>
+                    )}
+                  </h3>
+                  <p className="exp-role">{exp.role}</p>
+                  <p className="exp-desc">{exp.description}</p>
+                  <ul className="exp-impact">
+                    {exp.impact.map((it) => (
+                      <li key={it}>{it}</li>
                     ))}
                   </ul>
-
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.375rem' }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginTop: '1.1rem' }}>
                     {exp.tech.map((t) => (
                       <span key={t} className="tag">
                         {t}
@@ -284,11 +193,47 @@ export function Experience() {
                     ))}
                   </div>
                 </div>
-              </div>
+              </article>
             ))}
           </div>
         </div>
       </div>
+
+      <style>{`
+        .exp-head { max-width: 60ch; margin-bottom: clamp(3rem, 7vw, 5rem); }
+        .exp-timeline { position: relative; padding-left: 2.5rem; }
+        .exp-line-track {
+          position: absolute; left: 6px; top: 8px; bottom: 8px; width: 2px;
+          background: var(--line);
+        }
+        .exp-line-fill { width: 100%; height: 100%; background: var(--accent); transform: scaleY(0); }
+        .exp-list { display: flex; flex-direction: column; gap: clamp(3rem, 7vw, 5.5rem); }
+        .exp-row { position: relative; display: grid; grid-template-columns: 200px 1fr; gap: 2.5rem; }
+        .exp-dot {
+          position: absolute; left: calc(-2.5rem + 1px); top: 6px;
+          width: 14px; height: 14px; border-radius: 50%;
+          background: var(--bg-deep); border: 2px solid var(--accent);
+        }
+        .exp-period { padding-top: 4px; }
+        .exp-title {
+          font-family: var(--font-display); font-weight: 500;
+          font-size: clamp(1.5rem, 3vw, 2.3rem); line-height: 1.05; letter-spacing: -0.02em;
+        }
+        .exp-role { color: var(--fg-soft); font-weight: 500; margin-top: 0.4rem; font-size: 0.95rem; }
+        .exp-desc { color: var(--fg-muted); margin-top: 0.9rem; max-width: 60ch; line-height: 1.7; }
+        .exp-impact { list-style: none; margin-top: 1.1rem; display: grid; gap: 0.5rem; max-width: 62ch; }
+        .exp-impact li {
+          position: relative; padding-left: 1.4rem; color: var(--fg-soft);
+          font-size: 0.92rem; line-height: 1.55;
+        }
+        .exp-impact li::before {
+          content: '✦'; position: absolute; left: 0; top: 0; color: var(--accent);
+          font-size: 0.7rem; line-height: 1.6;
+        }
+        @media (max-width: 760px) {
+          .exp-row { grid-template-columns: 1fr; gap: 0.6rem; }
+        }
+      `}</style>
     </section>
   );
 }
