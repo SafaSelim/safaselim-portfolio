@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { ArrowDownRight, Github, Linkedin } from 'lucide-react';
 import { gsap, registerGsap, SplitText, prefersReducedMotion } from '@/lib/motion';
@@ -8,6 +8,10 @@ import { useLenis } from '@/components/SmoothScrollProvider';
 import { useMagnetic } from '@/hooks/useMagnetic';
 
 const HeroScene = dynamic(() => import('@/components/HeroScene'), { ssr: false });
+
+// Run the intro setup before paint on the client (avoids a flash of
+// un-split text) while falling back to useEffect during SSR.
+const useIsoLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 export function Hero() {
   const root = useRef<HTMLElement>(null);
@@ -17,7 +21,7 @@ export function Hero() {
   const ctaPrimary = useMagnetic<HTMLAnchorElement>(0.35);
   const ctaGhost = useMagnetic<HTMLAnchorElement>(0.35);
 
-  useEffect(() => {
+  useIsoLayoutEffect(() => {
     registerGsap();
     const el = root.current;
     if (!el) return;
@@ -32,7 +36,11 @@ export function Hero() {
       const tl = gsap.timeline({ defaults: { ease: 'power4.out' }, delay: 0.25 });
 
       el.querySelectorAll<HTMLElement>('[data-split="lines"]').forEach((node) => {
-        const split = new SplitText(node, { type: 'lines', linesClass: 'split-line' });
+        const split = new SplitText(node, {
+          type: 'lines',
+          linesClass: 'split-line',
+          mask: 'lines',
+        });
         splits.push(split);
         gsap.set(split.lines, { yPercent: 115 });
         tl.to(split.lines, { yPercent: 0, duration: 1.15, stagger: 0.09 }, node.dataset.at ?? '<0.12');

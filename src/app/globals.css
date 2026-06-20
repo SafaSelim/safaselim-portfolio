@@ -11,9 +11,8 @@
   --bg-elev: #fbf7ef;
   --fg: #1a140f;
   --fg-soft: #4b4136;
-  --fg-muted: #8a7c6b;
+  --fg-muted: #6b5d4d;
   --accent: #d85a17;
-  --accent-bright: #ff7a34;
   --accent-soft: rgba(216, 90, 23, 0.1);
   --accent-2: #e23b28;
   --accent-3: #e0890f;
@@ -42,7 +41,6 @@
   --fg-soft: #cabfae;
   --fg-muted: #8a7d6c;
   --accent: #ff7a34;
-  --accent-bright: #ff924f;
   --accent-soft: rgba(255, 122, 52, 0.13);
   --accent-2: #ff5640;
   --accent-3: #ffb14e;
@@ -327,17 +325,6 @@ html:not(.reduced) .js-ready .will-reveal {
   height: 1px;
   width: 100%;
   background: var(--line);
-}
-
-.surface {
-  background: var(--bg-elev);
-  border: 1px solid var(--line);
-  border-radius: 20px;
-}
-
-.noise-divider {
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--line-strong), transparent);
 }
 
 /* ============================================================

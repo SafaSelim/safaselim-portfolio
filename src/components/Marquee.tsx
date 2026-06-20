@@ -56,15 +56,23 @@ export function Marquee() {
         duration: 28,
         repeat: -1,
       });
-      // speed up / nudge direction with scroll velocity
-      let dir = 1;
+      // flip direction based on scroll direction, then settle back to forward
+      let lastY = window.scrollY;
+      let settle: ReturnType<typeof setTimeout>;
       const onScroll = () => {
-        const v = (window.scrollY % 1000) - dir;
-        dir = window.scrollY;
-        tween.timeScale(v < 0 ? -1 : 1);
+        const y = window.scrollY;
+        if (y !== lastY) {
+          tween.timeScale(y < lastY ? -1 : 1);
+          lastY = y;
+          clearTimeout(settle);
+          settle = setTimeout(() => tween.timeScale(1), 150);
+        }
       };
       window.addEventListener('scroll', onScroll, { passive: true });
-      return () => window.removeEventListener('scroll', onScroll);
+      return () => {
+        clearTimeout(settle);
+        window.removeEventListener('scroll', onScroll);
+      };
     });
     return () => ctx.revert();
   }, []);

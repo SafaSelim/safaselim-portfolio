@@ -78,7 +78,7 @@ export function Skills() {
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                 {g.items.map((it) => (
-                  <span key={it} className="tag" data-cursor="hover">
+                  <span key={it} className="tag">
                     {it}
                   </span>
                 ))}

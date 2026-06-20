@@ -60,7 +60,7 @@ export function Contact() {
             marginBottom: '1.5rem',
           }}
         >
-          Available for senior frontend & release-management roles.
+          Available for senior engineering & release-management roles.
         </p>
 
         <a

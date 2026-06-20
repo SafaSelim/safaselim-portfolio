@@ -122,7 +122,7 @@ export function Projects() {
 
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           {projects.map((p) => (
-            <article key={p.index} className="proj-card" data-cursor="hover">
+            <article key={p.index} className="proj-card">
               <div className="proj-top">
                 <span className="proj-index mono-label">{p.index}</span>
                 <div className="proj-headline">
