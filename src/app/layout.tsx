@@ -28,8 +28,11 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://safaselim.dev'),
+  metadataBase: new URL('https://www.safaselim.com'),
   title: 'Safa Selim — Senior Software Engineer',
+  alternates: {
+    canonical: '/',
+  },
   description:
     'Senior Software Engineer with 6+ years building enterprise-scale web and mobile applications — Angular, React, Next.js, React Native and Node/Elysia backends, with deep experience in monorepo architecture and large-scale migrations across European markets.',
   keywords: [
@@ -70,6 +73,28 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
+const personJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Safa Selim',
+  url: 'https://www.safaselim.com',
+  jobTitle: 'Senior Software Engineer',
+  description:
+    'Senior Software Engineer with 6+ years building enterprise-scale web and mobile applications across the frontend and backend.',
+  knowsAbout: [
+    'Software Engineering',
+    'Frontend Engineering',
+    'Backend Engineering',
+    'TypeScript',
+    'Angular',
+    'React',
+    'Next.js',
+    'React Native',
+    'Node.js',
+    'Monorepo Architecture',
+  ],
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -78,6 +103,12 @@ export default function RootLayout({
       <body
         className={`${fraunces.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} antialiased`}
       >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(personJsonLd).replace(/</g, '\\u003c'),
+          }}
+        />
         <ThemeProvider>
           <Grain />
           <SmoothScrollProvider>{children}</SmoothScrollProvider>
