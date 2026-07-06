@@ -180,6 +180,11 @@ function Particles({ reduced }: { reduced: boolean }) {
 
   const fillPending = useRef(true);
 
+  // buffers are recreated when count changes — request a refill
+  useEffect(() => {
+    fillPending.current = true;
+  }, [count]);
+
   /** Fill attribute buffers for the current form. No-ops (returns false) until geometry exists. */
   const fillCurrent = () => {
     const g = geo.current;
@@ -314,18 +319,30 @@ function Particles({ reduced }: { reduced: boolean }) {
     (uniforms.uMouse.value as THREE.Vector2).lerp(mouse.current, 0.08);
   });
 
-  const zeros = useMemo(() => new Float32Array(count * 3), [count]);
-  const zeros1 = useMemo(() => new Float32Array(count), [count]);
+  // Stable array identities: fresh arrays per render (e.g. via .slice()) would
+  // make R3F reconstruct the BufferAttributes on every re-render, zeroing out
+  // data written by fillCurrent()/morphTo().
+  const buffers = useMemo(
+    () => ({
+      pos: new Float32Array(count * 3),
+      tA: new Float32Array(count * 3),
+      tB: new Float32Array(count * 3),
+      rA: new Float32Array(count),
+      rB: new Float32Array(count),
+      order: new Float32Array(count),
+    }),
+    [count]
+  );
 
   return (
     <points frustumCulled={false}>
       <bufferGeometry ref={geo}>
-        <bufferAttribute attach="attributes-position" args={[zeros, 3]} />
-        <bufferAttribute attach="attributes-aTargetA" args={[zeros.slice(), 3]} />
-        <bufferAttribute attach="attributes-aTargetB" args={[zeros.slice(), 3]} />
-        <bufferAttribute attach="attributes-aRampA" args={[zeros1.slice(), 1]} />
-        <bufferAttribute attach="attributes-aRampB" args={[zeros1.slice(), 1]} />
-        <bufferAttribute attach="attributes-aOrder" args={[zeros1.slice(), 1]} />
+        <bufferAttribute attach="attributes-position" args={[buffers.pos, 3]} />
+        <bufferAttribute attach="attributes-aTargetA" args={[buffers.tA, 3]} />
+        <bufferAttribute attach="attributes-aTargetB" args={[buffers.tB, 3]} />
+        <bufferAttribute attach="attributes-aRampA" args={[buffers.rA, 1]} />
+        <bufferAttribute attach="attributes-aRampB" args={[buffers.rB, 1]} />
+        <bufferAttribute attach="attributes-aOrder" args={[buffers.order, 1]} />
         <bufferAttribute attach="attributes-aSeed" args={[seeds.seed, 1]} />
         <bufferAttribute attach="attributes-aScale" args={[seeds.scale, 1]} />
       </bufferGeometry>
