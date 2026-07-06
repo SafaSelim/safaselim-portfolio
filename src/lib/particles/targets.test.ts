@@ -3,9 +3,7 @@ import {
   textToPoints,
   nameTarget,
   globeTarget,
-  threadTarget,
-  latticeTarget,
-  constellationTarget,
+  sideThreadTarget,
   ringTarget,
   type AlphaGrid,
 } from './targets';
@@ -63,21 +61,26 @@ function checkShape(t: { positions: Float32Array; ramp: Float32Array; order: Flo
 describe('geometry targets', () => {
   it.each([
     ['globe', globeTarget],
-    ['thread', threadTarget],
-    ['lattice', latticeTarget],
-    ['constellation', constellationTarget],
+    ['sideThread', sideThreadTarget],
     ['ring', ringTarget],
   ])('%s produces well-formed TargetSet', (_, fn) => {
     checkShape(fn(N, AREA));
   });
 
   it('targets stay inside the area bounds (with 10% margin)', () => {
-    for (const fn of [globeTarget, latticeTarget, constellationTarget, ringTarget]) {
+    for (const fn of [globeTarget, sideThreadTarget, ringTarget]) {
       const t = fn(N, AREA);
       for (let i = 0; i < N; i++) {
         expect(Math.abs(t.positions[i * 3])).toBeLessThanOrEqual(AREA.w * 0.55);
         expect(Math.abs(t.positions[i * 3 + 1])).toBeLessThanOrEqual(AREA.h * 0.55);
       }
+    }
+  });
+
+  it('sideThread hugs the right edge: all x positions beyond 30% of width', () => {
+    const t = sideThreadTarget(N, AREA);
+    for (let i = 0; i < N; i++) {
+      expect(t.positions[i * 3]).toBeGreaterThan(AREA.w * 0.3);
     }
   });
 
@@ -101,8 +104,8 @@ describe('geometry targets', () => {
   });
 
   it('deterministic: same input, same output', () => {
-    const a = constellationTarget(N, AREA).positions;
-    const b = constellationTarget(N, AREA).positions;
+    const a = sideThreadTarget(N, AREA).positions;
+    const b = sideThreadTarget(N, AREA).positions;
     expect(Array.from(a)).toEqual(Array.from(b));
   });
 });

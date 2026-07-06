@@ -6,8 +6,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { gsap, registerGsap, ScrollTrigger, prefersReducedMotion } from '@/lib/motion';
 import {
-  textToPoints, nameTarget, globeTarget, threadTarget,
-  latticeTarget, constellationTarget, ringTarget,
+  textToPoints, nameTarget, globeTarget, sideThreadTarget, ringTarget,
   type Area, type TargetSet,
 } from '@/lib/particles/targets';
 
@@ -39,13 +38,13 @@ const vertexShader = /* glsl */ `
 
   void main() {
     // staggered morph: each particle starts at a slightly different time
-    float m = easeInOut(clamp(uMix * 1.35 - aSeed * 0.35, 0.0, 1.0));
+    float m = easeInOut(clamp(uMix * 1.6 - aSeed * 0.6, 0.0, 1.0));
     vec3 pos = mix(aTargetA, aTargetB, m);
 
     // swirl during transit
     float sw = sin(m * 3.14159);
-    pos.x += sin(aSeed * 40.0 + uTime * 0.8) * sw * uArea.x * 0.03;
-    pos.y += cos(aSeed * 36.0 + uTime * 0.7) * sw * uArea.y * 0.03;
+    pos.x += sin(aSeed * 40.0 + uTime * 0.8) * sw * uArea.x * 0.05;
+    pos.y += cos(aSeed * 36.0 + uTime * 0.7) * sw * uArea.y * 0.05;
 
     // ambient dust for not-yet-written particles (hero write-in)
     vec3 dust = vec3(
@@ -136,9 +135,10 @@ function buildForm(i: number, count: number, area: Area): TargetSet {
   switch (i) {
     case 0: return sampleName(count, area);
     case 1: return globeTarget(count, area);
-    case 2: return threadTarget(count, area);
-    case 3: return latticeTarget(count, area);
-    case 4: return constellationTarget(count, area);
+    // forms 2–4: one persistent side ribbon behind the mid sections
+    case 2:
+    case 3:
+    case 4: return sideThreadTarget(count, area);
     default: return ringTarget(count, area);
   }
 }
@@ -210,6 +210,27 @@ function Particles({ reduced }: { reduced: boolean }) {
   };
 
   /**
+   * Get (building if needed) the target set for form `i` at the current area.
+   * Forms 2–4 share one persistent side-ribbon set: built once, aliased to all
+   * three slots so morphs between them are visual no-ops (intended — the
+   * ribbon persists through the mid sections until the Contact ring).
+   */
+  const ensureForm = (i: number): TargetSet => {
+    const cached = targetsRef.current[i];
+    if (cached) return cached;
+    if (i >= 2 && i <= 4) {
+      const ribbon =
+        targetsRef.current[2] ?? targetsRef.current[3] ?? targetsRef.current[4] ??
+        buildForm(i, count, areaRef.current);
+      targetsRef.current[2] = targetsRef.current[3] = targetsRef.current[4] = ribbon;
+      return ribbon;
+    }
+    const t = buildForm(i, count, areaRef.current);
+    targetsRef.current[i] = t;
+    return t;
+  };
+
+  /**
    * (Re)generate targets and (re)fill attributes for the current form.
    * Only the current form is built synchronously (boot cost); the remaining
    * forms are built in a deferred pass to keep main-thread work off boot.
@@ -219,14 +240,12 @@ function Particles({ reduced }: { reduced: boolean }) {
     areaRef.current = area;
     uniforms.uArea.value.set(area.w, area.h);
     targetsRef.current = new Array<TargetSet | undefined>(FORM_COUNT);
-    targetsRef.current[formRef.current] = buildForm(formRef.current, count, area);
+    ensureForm(formRef.current);
     fillPending.current = true;
     fillCurrent();
     if (idleHandle.current) window.clearTimeout(idleHandle.current);
     idleHandle.current = window.setTimeout(() => {
-      for (let i = 0; i < FORM_COUNT; i++) {
-        if (!targetsRef.current[i]) targetsRef.current[i] = buildForm(i, count, area);
-      }
+      for (let i = 0; i < FORM_COUNT; i++) ensureForm(i);
     }, 350);
   };
 
@@ -236,12 +255,8 @@ function Particles({ reduced }: { reduced: boolean }) {
     const g = geo.current;
     if (!g) return;
     // deferred pass may not have run yet — build missing forms on demand
-    const from =
-      targetsRef.current[formRef.current] ??
-      (targetsRef.current[formRef.current] = buildForm(formRef.current, count, areaRef.current));
-    const to =
-      targetsRef.current[next] ??
-      (targetsRef.current[next] = buildForm(next, count, areaRef.current));
+    const from = ensureForm(formRef.current);
+    const to = ensureForm(next);
     formRef.current = next;
     (g.getAttribute('aTargetA') as THREE.BufferAttribute).copyArray(from.positions).needsUpdate = true;
     (g.getAttribute('aRampA') as THREE.BufferAttribute).copyArray(from.ramp).needsUpdate = true;
@@ -252,7 +267,7 @@ function Particles({ reduced }: { reduced: boolean }) {
       uniforms.uMix.value = 1;
     } else {
       uniforms.uMix.value = 0;
-      gsap.to(uniforms.uMix, { value: 1, duration: 1.5, ease: 'expo.inOut', overwrite: true });
+      gsap.to(uniforms.uMix, { value: 1, duration: 2.8, ease: 'power2.inOut', overwrite: true });
     }
   };
 

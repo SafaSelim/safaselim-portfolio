@@ -92,62 +92,17 @@ export function globeTarget(count: number, area: Area): TargetSet {
   return t;
 }
 
-/** Flowing sine path across the width. Ramp = progress along the path. */
-export function threadTarget(count: number, area: Area): TargetSet {
+/** Sinuous vertical ribbon along the right edge. Ramp/order = top→bottom progress. */
+export function sideThreadTarget(count: number, area: Area): TargetSet {
   const t = makeSet(count);
+  const x0 = area.w * 0.42;
   for (let i = 0; i < count; i++) {
     const u = i / count;
-    const x = (u - 0.5) * area.w * 1.05;
-    const y =
-      Math.sin(u * 6.5) * area.h * 0.18 +
-      Math.sin(u * 17 + rand(i) * 6.28) * area.h * 0.03 +
-      (rand(i + 3e4) - 0.5) * area.h * 0.05;
-    t.positions[i * 3] = x;
-    t.positions[i * 3 + 1] = y;
+    t.positions[i * 3] = x0 + Math.sin(u * 9 + rand(i) * 0.9) * area.w * 0.025 + (rand(i + 4e4) - 0.5) * area.w * 0.014;
+    t.positions[i * 3 + 1] = (0.5 - u) * area.h * 1.04;
     t.positions[i * 3 + 2] = (rand(i + 7e4) - 0.5) * 0.4;
     t.ramp[i] = u;
     t.order[i] = u;
-  }
-  return t;
-}
-
-/** Ordered grid filling ~84% x 72% of the area. Ramp = column position. */
-export function latticeTarget(count: number, area: Area): TargetSet {
-  const t = makeSet(count);
-  const cols = Math.max(2, Math.ceil(Math.sqrt((count * area.w) / area.h)));
-  const rows = Math.max(2, Math.ceil(count / cols));
-  for (let i = 0; i < count; i++) {
-    const cx = i % cols, cy = Math.floor(i / cols);
-    t.positions[i * 3] = (cx / (cols - 1) - 0.5) * area.w * 0.84;
-    t.positions[i * 3 + 1] = (Math.min(cy, rows - 1) / (rows - 1) - 0.5) * area.h * 0.72;
-    t.positions[i * 3 + 2] = 0;
-    t.ramp[i] = cx / (cols - 1);
-    t.order[i] = i / count;
-  }
-  return t;
-}
-
-/** 4 gaussian-ish clusters (one per project). Ramp = cluster id. */
-export function constellationTarget(count: number, area: Area): TargetSet {
-  const t = makeSet(count);
-  const centers: Array<[number, number]> = [
-    [-0.3 * area.w, 0.22 * area.h],
-    [0.28 * area.w, 0.3 * area.h],
-    [-0.22 * area.w, -0.26 * area.h],
-    [0.32 * area.w, -0.2 * area.h],
-  ];
-  const spread = Math.min(area.w, area.h) * 0.12;
-  for (let i = 0; i < count; i++) {
-    const c = i % 4;
-    const [cx, cy] = centers[c];
-    // sum of two rands ≈ triangular distribution (denser center)
-    const ox = (rand(i) + rand(i + 1e4) - 1) * spread * 1.6;
-    const oy = (rand(i + 2e4) + rand(i + 3e4) - 1) * spread * 1.6;
-    t.positions[i * 3] = cx + ox;
-    t.positions[i * 3 + 1] = cy + oy;
-    t.positions[i * 3 + 2] = (rand(i + 8e4) - 0.5) * 0.6;
-    t.ramp[i] = c / 3;
-    t.order[i] = i / count;
   }
   return t;
 }
