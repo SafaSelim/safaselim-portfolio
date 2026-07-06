@@ -53,7 +53,7 @@ const vertexShader = /* glsl */ `
       cos(uTime * 0.28 + aSeed * 119.0) * uArea.y * 0.36 * (fract(aSeed * 7.31) - 0.5) * 2.0,
       0.0
     );
-    float written = smoothstep(aOrder + 0.02, aOrder - 0.02, uWrite);
+    float written = smoothstep(aOrder - 0.02, aOrder + 0.02, uWrite);
     pos = mix(dust, pos, written);
 
     // idle breathing
@@ -279,6 +279,8 @@ function Particles({ reduced }: { reduced: boolean }) {
       window.clearTimeout(fallback);
       triggers.forEach((t) => t.kill());
       mo.disconnect();
+      gsap.killTweensOf(uniforms.uWrite);
+      gsap.killTweensOf(uniforms.uMix);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [count, reduced]);
