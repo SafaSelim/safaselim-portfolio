@@ -56,73 +56,72 @@ const languages = [
   { name: 'Japanese', level: 'Basic' },
 ];
 
+const tiers = [
+  { className: 'tier-1', items: ['Angular v2–v20', 'TypeScript', 'NGRX', 'Monorepo'] },
+  { className: 'tier-2', items: ['Storybook', 'Keycloak', 'Ionic', 'SCSS', 'Component-Driven Design'] },
+  { className: 'tier-3', items: ['Redux', 'Java', 'MSSQL', 'A/B Testing', 'Agile/Scrum', 'Material UI'] },
+];
+
 export function Skills() {
   const ref = useReveal<HTMLDivElement>('.will-reveal', { stagger: 0.08 });
 
   return (
     <section id="skills" className="section-pad">
       <div ref={ref} className="container">
-        <span className="eyebrow will-reveal" style={{ display: 'block', marginBottom: '1rem' }}>
-          (03) — Capabilities
+        <span className="section-index will-reveal" style={{ display: 'block', marginBottom: '1rem' }}>
+          03 — Stack
         </span>
         <h2 className="section-title will-reveal" style={{ marginBottom: 'clamp(2.5rem, 6vw, 4rem)' }}>
-          The <span className="italic-accent">toolkit</span>.
+          The toolkit<span style={{ color: 'var(--accent)' }}>.</span>
         </h2>
 
-        <div className="skills-grid">
+        <div className="skill-wall will-reveal" aria-label="Core skills">
+          {tiers.map((tier) => (
+            <p key={tier.className} className={`display-lg ${tier.className}`}>
+              {tier.items.map((it, i) => (
+                <span key={it} className="skill-item">
+                  {it}
+                  {i < tier.items.length - 1 && <span className="skill-sep" aria-hidden> / </span>}
+                </span>
+              ))}
+            </p>
+          ))}
+        </div>
+
+        <div className="skill-groups will-reveal">
           {groups.map((g) => (
-            <div key={g.title} className="skill-group will-reveal">
-              <div className="skill-group__head">
-                <span className="mono-label">{g.title}</span>
-                <span className="hairline" style={{ flex: 1 }} />
-              </div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                {g.items.map((it) => (
-                  <span key={it} className="tag">
-                    {it}
-                  </span>
-                ))}
-              </div>
+            <div key={g.title}>
+              <span className="mono-label" style={{ display: 'block', marginBottom: '0.6rem' }}>{g.title}</span>
+              <p style={{ color: 'var(--fg-muted)', fontSize: '0.9rem', lineHeight: 1.7 }}>{g.items.join(' · ')}</p>
             </div>
           ))}
         </div>
 
         <div className="lang-row will-reveal">
-          <span className="mono-label" style={{ whiteSpace: 'nowrap' }}>
-            Languages
-          </span>
-          <div className="lang-list">
-            {languages.map((l) => (
-              <div key={l.name} className="lang-item">
-                <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.15rem' }}>{l.name}</span>
-                <span style={{ color: 'var(--fg-muted)', fontSize: '0.8rem', fontFamily: 'var(--font-mono)' }}>
-                  {l.level}
-                </span>
-              </div>
-            ))}
-          </div>
+          <span className="mono-label">Languages</span>
+          <p style={{ color: 'var(--fg-soft)', fontSize: '0.95rem' }}>
+            {languages.map((l) => `${l.name} (${l.level})`).join(' · ')}
+          </p>
         </div>
       </div>
 
       <style>{`
-        .skills-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: clamp(2rem, 5vw, 3.5rem);
-        }
-        .skill-group__head {
-          display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem;
+        .skill-wall p { font-size: clamp(1.5rem, 4.6vw, 3.8rem); color: var(--fg); }
+        .skill-wall .tier-2 { opacity: 0.65; }
+        .skill-wall .tier-3 { opacity: 0.35; }
+        .skill-item { transition: color 0.3s var(--ease-out); }
+        .skill-item:hover { color: var(--accent); }
+        .skill-sep { color: var(--line-strong); }
+        .skill-groups {
+          display: grid; grid-template-columns: repeat(2, 1fr);
+          gap: 1.6rem 3rem; margin-top: clamp(3rem, 7vw, 5rem);
+          border-top: 1px solid var(--line); padding-top: 2rem;
         }
         .lang-row {
-          display: flex; gap: 2.5rem; align-items: center; flex-wrap: wrap;
-          margin-top: clamp(3rem, 7vw, 5rem);
-          padding-top: 2rem; border-top: 1px solid var(--line-strong);
+          display: flex; gap: 2rem; align-items: baseline;
+          border-top: 1px solid var(--line); margin-top: 2rem; padding-top: 1.4rem;
         }
-        .lang-list { display: flex; flex-wrap: wrap; gap: 2.5rem; }
-        .lang-item { display: flex; flex-direction: column; gap: 0.2rem; }
-        @media (max-width: 720px) {
-          .skills-grid { grid-template-columns: 1fr; }
-        }
+        @media (max-width: 700px) { .skill-groups { grid-template-columns: 1fr; } }
       `}</style>
     </section>
   );
