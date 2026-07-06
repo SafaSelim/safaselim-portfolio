@@ -178,19 +178,29 @@ function Particles({ reduced }: { reduced: boolean }) {
     };
   }, [isMobile]);
 
-  /** (Re)generate all target sets and (re)fill attributes for the current form. */
-  const rebuild = () => {
-    const area: Area = { w: viewport.width, h: viewport.height };
-    uniforms.uArea.value.set(area.w, area.h);
-    targetsRef.current = buildTargets(count, area);
+  const fillPending = useRef(true);
+
+  /** Fill attribute buffers for the current form. No-ops (returns false) until geometry exists. */
+  const fillCurrent = () => {
     const g = geo.current;
-    if (!g) return;
+    if (!g || !targetsRef.current.length) return false;
     const t = targetsRef.current[formRef.current];
     (g.getAttribute('aTargetA') as THREE.BufferAttribute).copyArray(t.positions).needsUpdate = true;
     (g.getAttribute('aTargetB') as THREE.BufferAttribute).copyArray(t.positions).needsUpdate = true;
     (g.getAttribute('aRampA') as THREE.BufferAttribute).copyArray(t.ramp).needsUpdate = true;
     (g.getAttribute('aRampB') as THREE.BufferAttribute).copyArray(t.ramp).needsUpdate = true;
     (g.getAttribute('aOrder') as THREE.BufferAttribute).copyArray(t.order).needsUpdate = true;
+    fillPending.current = false;
+    return true;
+  };
+
+  /** (Re)generate all target sets and (re)fill attributes for the current form. */
+  const rebuild = () => {
+    const area: Area = { w: viewport.width, h: viewport.height };
+    uniforms.uArea.value.set(area.w, area.h);
+    targetsRef.current = buildTargets(count, area);
+    fillPending.current = true;
+    fillCurrent();
   };
 
   /** Swap targetB → targetA, load form `next` into B, tween uMix. */
@@ -299,6 +309,7 @@ function Particles({ reduced }: { reduced: boolean }) {
   }, [viewport.width, viewport.height]);
 
   useFrame((_, delta) => {
+    if (fillPending.current) fillCurrent();
     if (!reduced) uniforms.uTime.value += Math.min(delta, 0.05);
     (uniforms.uMouse.value as THREE.Vector2).lerp(mouse.current, 0.08);
   });
