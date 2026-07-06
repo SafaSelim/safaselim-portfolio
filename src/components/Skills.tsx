@@ -75,7 +75,7 @@ export function Skills() {
           The toolkit<span style={{ color: 'var(--accent)' }}>.</span>
         </h2>
 
-        <div className="skill-wall will-reveal" aria-label="Core skills">
+        <div className="skill-wall will-reveal" role="group" aria-label="Core skills">
           {tiers.map((tier) => (
             <p key={tier.className} className={`display-lg ${tier.className}`}>
               {tier.items.map((it, i) => (

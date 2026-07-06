@@ -130,15 +130,17 @@ function sampleName(count: number, area: Area): TargetSet {
   return t;
 }
 
-function buildTargets(count: number, area: Area): TargetSet[] {
-  return [
-    sampleName(count, area),
-    globeTarget(count, area),
-    threadTarget(count, area),
-    latticeTarget(count, area),
-    constellationTarget(count, area),
-    ringTarget(count, area),
-  ];
+const FORM_COUNT = 6;
+
+function buildForm(i: number, count: number, area: Area): TargetSet {
+  switch (i) {
+    case 0: return sampleName(count, area);
+    case 1: return globeTarget(count, area);
+    case 2: return threadTarget(count, area);
+    case 3: return latticeTarget(count, area);
+    case 4: return constellationTarget(count, area);
+    default: return ringTarget(count, area);
+  }
 }
 
 function Particles({ reduced }: { reduced: boolean }) {
@@ -146,7 +148,9 @@ function Particles({ reduced }: { reduced: boolean }) {
   const geo = useRef<THREE.BufferGeometry>(null);
   const { viewport, size } = useThree();
   const formRef = useRef(0);
-  const targetsRef = useRef<TargetSet[]>([]);
+  const targetsRef = useRef<(TargetSet | undefined)[]>([]);
+  const areaRef = useRef<Area>({ w: 10, h: 6 });
+  const idleHandle = useRef<number | undefined>(undefined);
   const mouse = useRef(new THREE.Vector2(-999, -999));
 
   const isMobile = size.width < 768 || window.matchMedia('(pointer: coarse)').matches;
@@ -188,11 +192,12 @@ function Particles({ reduced }: { reduced: boolean }) {
     fillPending.current = true;
   }, [count]);
 
-  /** Fill attribute buffers for the current form. No-ops (returns false) until geometry exists. */
+  /** Fill attribute buffers for the current form. No-ops (returns false) until geometry + target exist. */
   const fillCurrent = () => {
     const g = geo.current;
-    if (!g || !targetsRef.current.length) return false;
+    if (!g) return false;
     const t = targetsRef.current[formRef.current];
+    if (!t) return false;
     (g.getAttribute('aTargetA') as THREE.BufferAttribute).copyArray(t.positions).needsUpdate = true;
     (g.getAttribute('aTargetB') as THREE.BufferAttribute).copyArray(t.positions).needsUpdate = true;
     (g.getAttribute('aRampA') as THREE.BufferAttribute).copyArray(t.ramp).needsUpdate = true;
@@ -202,13 +207,25 @@ function Particles({ reduced }: { reduced: boolean }) {
     return true;
   };
 
-  /** (Re)generate all target sets and (re)fill attributes for the current form. */
+  /**
+   * (Re)generate targets and (re)fill attributes for the current form.
+   * Only the current form is built synchronously (boot cost); the remaining
+   * forms are built in a deferred pass to keep main-thread work off boot.
+   */
   const rebuild = (w = viewport.width, h = viewport.height) => {
     const area: Area = { w, h };
+    areaRef.current = area;
     uniforms.uArea.value.set(area.w, area.h);
-    targetsRef.current = buildTargets(count, area);
+    targetsRef.current = new Array<TargetSet | undefined>(FORM_COUNT);
+    targetsRef.current[formRef.current] = buildForm(formRef.current, count, area);
     fillPending.current = true;
     fillCurrent();
+    if (idleHandle.current) window.clearTimeout(idleHandle.current);
+    idleHandle.current = window.setTimeout(() => {
+      for (let i = 0; i < FORM_COUNT; i++) {
+        if (!targetsRef.current[i]) targetsRef.current[i] = buildForm(i, count, area);
+      }
+    }, 350);
   };
 
   /** Swap targetB → targetA, load form `next` into B, tween uMix. */
@@ -216,8 +233,13 @@ function Particles({ reduced }: { reduced: boolean }) {
     if (next === formRef.current || !targetsRef.current.length) return;
     const g = geo.current;
     if (!g) return;
-    const from = targetsRef.current[formRef.current];
-    const to = targetsRef.current[next];
+    // deferred pass may not have run yet — build missing forms on demand
+    const from =
+      targetsRef.current[formRef.current] ??
+      (targetsRef.current[formRef.current] = buildForm(formRef.current, count, areaRef.current));
+    const to =
+      targetsRef.current[next] ??
+      (targetsRef.current[next] = buildForm(next, count, areaRef.current));
     formRef.current = next;
     (g.getAttribute('aTargetA') as THREE.BufferAttribute).copyArray(from.positions).needsUpdate = true;
     (g.getAttribute('aRampA') as THREE.BufferAttribute).copyArray(from.ramp).needsUpdate = true;
@@ -297,6 +319,7 @@ function Particles({ reduced }: { reduced: boolean }) {
       window.clearTimeout(fallback);
       triggers.forEach((t) => t.kill());
       mo.disconnect();
+      window.clearTimeout(idleHandle.current);
       gsap.killTweensOf(uniforms.uWrite);
       gsap.killTweensOf(uniforms.uMix);
     };
