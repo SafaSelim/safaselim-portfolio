@@ -105,13 +105,6 @@ canvas {
    Typography
    ============================================================ */
 
-.display {
-  font-family: var(--font-display);
-  font-weight: 500;
-  line-height: 0.94;
-  letter-spacing: -0.02em;
-}
-
 .display-xl {
   font-family: var(--font-display);
   font-weight: 400;
