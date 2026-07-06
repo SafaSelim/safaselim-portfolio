@@ -13,6 +13,8 @@ const LINKS = [
 
 export function MenuOverlay({ open, onClose }: { open: boolean; onClose: () => void }) {
   const root = useRef<HTMLDivElement>(null);
+  const prevFocusRef = useRef<HTMLElement | null>(null);
+  const firstRun = useRef(true);
 
   const { scrollTo } = useLenis();
 
@@ -25,6 +27,11 @@ export function MenuOverlay({ open, onClose }: { open: boolean; onClose: () => v
 
   // enter/exit animation
   useEffect(() => {
+    // Skip the pointless close tween on first mount (overlay starts closed).
+    if (firstRun.current) {
+      firstRun.current = false;
+      if (!open) return;
+    }
     const el = root.current;
     if (!el) return;
     if (prefersReducedMotion()) {
@@ -43,9 +50,10 @@ export function MenuOverlay({ open, onClose }: { open: boolean; onClose: () => v
     }
   }, [open]);
 
-  // esc close + focus trap
+  // esc close + focus trap + focus restore on close
   useEffect(() => {
     if (!open) return;
+    prevFocusRef.current = document.activeElement as HTMLElement | null;
     const el = root.current;
     const focusables = el?.querySelectorAll<HTMLElement>('a, button');
     focusables?.[0]?.focus();
@@ -59,7 +67,10 @@ export function MenuOverlay({ open, onClose }: { open: boolean; onClose: () => v
       }
     };
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      prevFocusRef.current?.focus?.();
+    };
   }, [open, onClose]);
 
   return (
@@ -68,7 +79,6 @@ export function MenuOverlay({ open, onClose }: { open: boolean; onClose: () => v
       role="dialog"
       aria-modal="true"
       aria-label="Menu"
-      aria-hidden={!open}
       inert={!open}
       style={{
         position: 'fixed', inset: 0, zIndex: 90,
