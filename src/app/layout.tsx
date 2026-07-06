@@ -1,28 +1,26 @@
 import type { Metadata, Viewport } from 'next';
-import { Fraunces, Space_Grotesk, JetBrains_Mono } from 'next/font/google';
+import { Archivo_Black, Inter, IBM_Plex_Mono } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { SmoothScrollProvider } from '@/components/SmoothScrollProvider';
 import { Grain } from '@/components/Grain';
 
-const fraunces = Fraunces({
+const archivoBlack = Archivo_Black({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '900'],
-  style: ['normal', 'italic'],
+  weight: '400',
   variable: '--font-display',
   display: 'swap',
 });
 
-const spaceGrotesk = Space_Grotesk({
+const inter = Inter({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
   variable: '--font-sans',
   display: 'swap',
 });
 
-const jetbrainsMono = JetBrains_Mono({
+const ibmPlexMono = IBM_Plex_Mono({
   subsets: ['latin'],
-  weight: ['400', '500', '700'],
+  weight: ['400', '500', '600'],
   variable: '--font-mono',
   display: 'swap',
 });
@@ -66,8 +64,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: dark)', color: '#0c0a08' },
-    { media: '(prefers-color-scheme: light)', color: '#f5efe6' },
+    { media: '(prefers-color-scheme: dark)', color: '#070709' },
+    { media: '(prefers-color-scheme: light)', color: '#eae6dd' },
   ],
   width: 'device-width',
   initialScale: 1,
@@ -101,7 +99,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${fraunces.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} antialiased`}
+        className={`${archivoBlack.variable} ${inter.variable} ${ibmPlexMono.variable} antialiased`}
       >
         <script
           type="application/ld+json"
