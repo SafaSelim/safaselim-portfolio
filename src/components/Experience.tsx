@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { ArrowUpRight } from 'lucide-react';
-import { gsap, registerGsap, prefersReducedMotion } from '@/lib/motion';
+import { gsap, registerGsap, ScrollTrigger, prefersReducedMotion } from '@/lib/motion';
 
 const experiences = [
   {
@@ -91,147 +91,110 @@ const experiences = [
 
 export function Experience() {
   const root = useRef<HTMLDivElement>(null);
-  const lineRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     registerGsap();
     const el = root.current;
-    if (!el || prefersReducedMotion()) return;
-
-    const ctx = gsap.context(() => {
-      // progress line fill
-      gsap.fromTo(
-        lineRef.current,
-        { scaleY: 0 },
-        {
-          scaleY: 1,
-          ease: 'none',
-          transformOrigin: 'top',
-          scrollTrigger: { trigger: el, start: 'top 60%', end: 'bottom 80%', scrub: true },
-        }
+    if (!el) return;
+    if (prefersReducedMotion()) {
+      el.querySelectorAll('.xp-row').forEach((r) => r.classList.add('is-active'));
+      return;
+    }
+    const triggers: ScrollTrigger[] = [];
+    el.querySelectorAll<HTMLElement>('.xp-row').forEach((row) => {
+      triggers.push(
+        ScrollTrigger.create({
+          trigger: row,
+          start: 'top 62%',
+          end: 'bottom 38%',
+          onToggle: (self) => row.classList.toggle('is-active', self.isActive),
+        })
       );
-
-      gsap.utils.toArray<HTMLElement>('.exp-row').forEach((row) => {
-        gsap.from(row, {
-          y: 60,
-          opacity: 0,
-          duration: 1,
-          ease: 'power3.out',
-          scrollTrigger: { trigger: row, start: 'top 82%' },
-        });
-        const dot = row.querySelector('.exp-dot');
-        if (dot) {
-          gsap.from(dot, {
-            scale: 0,
-            duration: 0.6,
-            ease: 'back.out(2)',
-            scrollTrigger: { trigger: row, start: 'top 75%' },
-          });
-        }
+      const entrance = gsap.from(row, {
+        y: 50, opacity: 0, duration: 0.9, ease: 'power3.out',
+        scrollTrigger: { trigger: row, start: 'top 85%' },
       });
-    }, el);
-
-    return () => ctx.revert();
+      if (entrance.scrollTrigger) triggers.push(entrance.scrollTrigger);
+    });
+    return () => triggers.forEach((t) => t.kill());
   }, []);
 
   return (
-    <section id="experience" className="section-pad" style={{ background: 'var(--bg-deep)' }}>
+    <section id="experience" className="section-pad">
       <div ref={root} className="container">
-        <div className="exp-head">
-          <span className="eyebrow">(02) — Experience</span>
-          <h2 className="section-title" style={{ marginTop: '1rem' }}>
-            Six years,<br />
-            <span className="italic-accent">five</span> teams.
-          </h2>
-        </div>
+        <span className="section-index" style={{ display: 'block', marginBottom: '1rem' }}>02 — Experience</span>
+        <h2 className="section-title" style={{ marginBottom: 'clamp(3rem, 7vw, 5rem)' }}>
+          Six years, five teams<span style={{ color: 'var(--accent)' }}>.</span>
+        </h2>
 
-        <div className="exp-timeline">
-          <div className="exp-line-track" aria-hidden>
-            <div ref={lineRef} className="exp-line-fill" />
-          </div>
-
-          <div className="exp-list">
-            {experiences.map((exp, i) => (
-              <article key={i} className="exp-row">
-                <span className="exp-dot" aria-hidden />
-                <div className="exp-period mono-label">{exp.period}</div>
-                <div className="exp-body">
-                  <h3 className="exp-title">
-                    {exp.company}
-                    <span style={{ color: 'var(--line-strong)' }}> / </span>
-                    {exp.projectUrl ? (
-                      <a
-                        href={exp.projectUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          color: 'var(--accent)',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '0.15rem',
-                        }}
-                      >
-                        {exp.project}
-                        <ArrowUpRight size={18} />
-                      </a>
-                    ) : (
-                      <span style={{ color: 'var(--accent)' }}>{exp.project}</span>
-                    )}
-                  </h3>
-                  <p className="exp-role">{exp.role}</p>
-                  <p className="exp-desc">{exp.description}</p>
-                  <ul className="exp-impact">
-                    {exp.impact.map((it) => (
-                      <li key={it}>{it}</li>
-                    ))}
-                  </ul>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginTop: '1.1rem' }}>
-                    {exp.tech.map((t) => (
-                      <span key={t} className="tag">
-                        {t}
-                      </span>
-                    ))}
-                  </div>
+        <div>
+          {experiences.map((exp) => (
+            <article key={exp.company} className="xp-row">
+              <div className="xp-head">
+                <h3 className="display-lg xp-company">
+                  {exp.company}
+                  {exp.projectUrl ? (
+                    <a href={exp.projectUrl} target="_blank" rel="noopener noreferrer" className="xp-proj">
+                      {exp.project} <ArrowUpRight size={16} />
+                    </a>
+                  ) : (
+                    <span className="xp-proj">{exp.project}</span>
+                  )}
+                </h3>
+                <span className="mono-label xp-period">{exp.period}</span>
+              </div>
+              <div className="xp-detail">
+                <p style={{ color: 'var(--fg-soft)', fontWeight: 500 }}>{exp.role}</p>
+                <p style={{ color: 'var(--fg-muted)', marginTop: '0.7rem', maxWidth: '60ch', lineHeight: 1.7 }}>
+                  {exp.description}
+                </p>
+                <ul className="xp-impact">
+                  {exp.impact.map((it) => <li key={it}>{it}</li>)}
+                </ul>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginTop: '1.1rem' }}>
+                  {exp.tech.map((t) => <span key={t} className="tag">{t}</span>)}
                 </div>
-              </article>
-            ))}
-          </div>
+              </div>
+            </article>
+          ))}
         </div>
       </div>
 
       <style>{`
-        .exp-head { max-width: 60ch; margin-bottom: clamp(3rem, 7vw, 5rem); }
-        .exp-timeline { position: relative; padding-left: 2.5rem; }
-        .exp-line-track {
-          position: absolute; left: 6px; top: 8px; bottom: 8px; width: 2px;
-          background: var(--line);
+        .xp-row {
+          border-top: 1px solid var(--line);
+          padding: clamp(1.4rem, 3vw, 2.2rem) 0;
+          opacity: 0.35;
+          transition: opacity 0.5s var(--ease-out);
         }
-        .exp-line-fill { width: 100%; height: 100%; background: var(--accent); transform: scaleY(0); }
-        .exp-list { display: flex; flex-direction: column; gap: clamp(3rem, 7vw, 5.5rem); }
-        .exp-row { position: relative; display: grid; grid-template-columns: 200px 1fr; gap: 2.5rem; }
-        .exp-dot {
-          position: absolute; left: calc(-2.5rem + 1px); top: 6px;
-          width: 14px; height: 14px; border-radius: 50%;
-          background: var(--bg-deep); border: 2px solid var(--accent);
+        .xp-row:last-child { border-bottom: 1px solid var(--line); }
+        .xp-row.is-active { opacity: 1; }
+        .xp-head {
+          display: flex; justify-content: space-between; align-items: baseline;
+          flex-wrap: wrap; gap: 0.5rem;
         }
-        .exp-period { padding-top: 4px; }
-        .exp-title {
-          font-family: var(--font-display); font-weight: 500;
-          font-size: clamp(1.5rem, 3vw, 2.3rem); line-height: 1.05; letter-spacing: -0.02em;
+        .xp-company {
+          font-size: clamp(1.7rem, 5vw, 3.6rem); color: var(--fg);
+          display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap;
         }
-        .exp-role { color: var(--fg-soft); font-weight: 500; margin-top: 0.4rem; font-size: 0.95rem; }
-        .exp-desc { color: var(--fg-muted); margin-top: 0.9rem; max-width: 60ch; line-height: 1.7; }
-        .exp-impact { list-style: none; margin-top: 1.1rem; display: grid; gap: 0.5rem; max-width: 62ch; }
-        .exp-impact li {
-          position: relative; padding-left: 1.4rem; color: var(--fg-soft);
+        .xp-proj {
+          font-family: var(--font-mono); font-size: clamp(0.75rem, 1.4vw, 0.95rem);
+          letter-spacing: 0.06em; text-transform: none; color: var(--accent);
+          display: inline-flex; align-items: center; gap: 0.2rem;
+        }
+        .xp-detail {
+          max-height: 0; opacity: 0; overflow: hidden;
+          transition: max-height 0.7s var(--ease-out), opacity 0.6s var(--ease-out), margin-top 0.5s var(--ease-out);
+        }
+        .xp-row.is-active .xp-detail { max-height: 800px; opacity: 1; margin-top: 1.4rem; }
+        .xp-impact { list-style: none; margin-top: 1rem; display: grid; gap: 0.5rem; max-width: 62ch; }
+        .xp-impact li {
+          position: relative; padding-left: 1.3rem; color: var(--fg-soft);
           font-size: 0.92rem; line-height: 1.55;
         }
-        .exp-impact li::before {
-          content: '✦'; position: absolute; left: 0; top: 0; color: var(--accent);
-          font-size: 0.7rem; line-height: 1.6;
-        }
-        @media (max-width: 760px) {
-          .exp-row { grid-template-columns: 1fr; gap: 0.6rem; }
+        .xp-impact li::before {
+          content: '✦'; position: absolute; left: 0; top: 0;
+          color: var(--accent); font-size: 0.65rem; line-height: 1.7;
         }
       `}</style>
     </section>
