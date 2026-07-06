@@ -124,7 +124,10 @@ function sampleName(count: number, area: Area): TargetSet {
   g.fillText('SAFA SELIM', W / 2, H / 2);
   const grid = { width: W, height: H, data: g.getImageData(0, 0, W, H).data };
   const step = Math.max(2, Math.round(size / 52));
-  return nameTarget(textToPoints(grid, step), W, H, count, area);
+  const t = nameTarget(textToPoints(grid, step), W, H, count, area);
+  // shift up so the name sits clear of the hero's HTML copy (lower third)
+  for (let i = 0; i < count; i++) t.positions[i * 3 + 1] += area.h * 0.16;
+  return t;
 }
 
 function buildTargets(count: number, area: Area): TargetSet[] {
@@ -200,8 +203,8 @@ function Particles({ reduced }: { reduced: boolean }) {
   };
 
   /** (Re)generate all target sets and (re)fill attributes for the current form. */
-  const rebuild = () => {
-    const area: Area = { w: viewport.width, h: viewport.height };
+  const rebuild = (w = viewport.width, h = viewport.height) => {
+    const area: Area = { w, h };
     uniforms.uArea.value.set(area.w, area.h);
     targetsRef.current = buildTargets(count, area);
     fillPending.current = true;
@@ -300,20 +303,15 @@ function Particles({ reduced }: { reduced: boolean }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [count, reduced]);
 
-  // regenerate targets when the world viewport resizes (debounced)
-  const lastSize = useRef({ w: 0, h: 0 });
-  useEffect(() => {
+  useFrame((state, delta) => {
+    // self-heal: if targets were built against a stale viewport, rebuild
+    const vp = state.viewport;
     if (
-      Math.abs(viewport.width - lastSize.current.w) > 0.01 ||
-      Math.abs(viewport.height - lastSize.current.h) > 0.01
+      Math.abs(vp.width - uniforms.uArea.value.x) > 0.01 ||
+      Math.abs(vp.height - uniforms.uArea.value.y) > 0.01
     ) {
-      lastSize.current = { w: viewport.width, h: viewport.height };
-      rebuild();
+      rebuild(vp.width, vp.height);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [viewport.width, viewport.height]);
-
-  useFrame((_, delta) => {
     if (fillPending.current) fillCurrent();
     if (!reduced) uniforms.uTime.value += Math.min(delta, 0.05);
     (uniforms.uMouse.value as THREE.Vector2).lerp(mouse.current, 0.08);

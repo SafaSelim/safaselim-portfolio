@@ -28,19 +28,21 @@ export function Hero() {
     gsap.set(el.querySelectorAll('.will-reveal'), { opacity: 0 });
 
     let played = false;
+    let tl: gsap.core.Timeline | null = null;
     const splits: SplitText[] = [];
     const play = () => {
       if (played) return;
       played = true;
-      const tl = gsap.timeline({ delay: 1.2, defaults: { ease: 'power4.out' } }); // after name write-in
+      const t = gsap.timeline({ delay: 1.2, defaults: { ease: 'power4.out' } }); // after name write-in
+      tl = t;
       el.querySelectorAll<HTMLElement>('[data-split="lines"]').forEach((node) => {
         gsap.set(node, { opacity: 1 });
         const split = new SplitText(node, { type: 'lines', linesClass: 'split-line', mask: 'lines' });
         splits.push(split);
         gsap.set(split.lines, { yPercent: 115 });
-        tl.to(split.lines, { yPercent: 0, duration: 1.1, stagger: 0.08 }, '<0.1');
+        t.to(split.lines, { yPercent: 0, duration: 1.1, stagger: 0.08 }, '<0.1');
       });
-      tl.to('[data-fade]', { opacity: 1, y: 0, duration: 0.9, stagger: 0.08, ease: 'power3.out' }, '-=0.6');
+      t.to('[data-fade]', { opacity: 1, y: 0, duration: 0.9, stagger: 0.08, ease: 'power3.out' }, '-=0.6');
     };
     gsap.set(el.querySelectorAll('[data-fade]'), { y: 24 });
     window.addEventListener('preloader:done', play);
@@ -57,6 +59,7 @@ export function Hero() {
     return () => {
       window.removeEventListener('preloader:done', play);
       window.clearTimeout(fallback);
+      tl?.kill();
       splits.forEach((s) => s.revert());
       drift.scrollTrigger?.kill();
       drift.kill();

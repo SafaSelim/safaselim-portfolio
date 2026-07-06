@@ -36,7 +36,7 @@ export function Navbar() {
         </a>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
           <button
-            aria-label={`Switch to ${resolvedTheme === 'dark' ? 'light' : 'dark'} theme`}
+            aria-label="Toggle theme"
             onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
             className="nav-pill"
           >
