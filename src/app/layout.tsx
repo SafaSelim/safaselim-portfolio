@@ -4,6 +4,7 @@ import './globals.css';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { SmoothScrollProvider } from '@/components/SmoothScrollProvider';
 import { Grain } from '@/components/Grain';
+import { Preloader } from '@/components/Preloader';
 
 const archivoBlack = Archivo_Black({
   subsets: ['latin'],
@@ -108,6 +109,7 @@ export default function RootLayout({
           }}
         />
         <ThemeProvider>
+          <Preloader />
           <Grain />
           <SmoothScrollProvider>{children}</SmoothScrollProvider>
         </ThemeProvider>
