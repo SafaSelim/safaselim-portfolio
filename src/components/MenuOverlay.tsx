@@ -18,11 +18,15 @@ export function MenuOverlay({ open, onClose }: { open: boolean; onClose: () => v
 
   const { scrollTo } = useLenis();
 
-  // set initial GSAP-owned transform once on mount
+  // Set initial GSAP-owned transform once on mount.
+  // y: 0 is essential — GSAP parses the pre-existing CSS transform
+  // (translateY(-100%), computed as pixels) into its pixel-y cache; without
+  // clearing it, yPercent composes on top of that cached offset and the
+  // overlay can never reach the viewport.
   useEffect(() => {
     const el = root.current;
     if (!el || prefersReducedMotion()) return;
-    gsap.set(el, { yPercent: -100 });
+    gsap.set(el, { y: 0, yPercent: -100 });
   }, []);
 
   // enter/exit animation
@@ -35,7 +39,7 @@ export function MenuOverlay({ open, onClose }: { open: boolean; onClose: () => v
     const el = root.current;
     if (!el) return;
     if (prefersReducedMotion()) {
-      el.style.transform = open ? 'translateY(0%)' : 'translateY(-100%)';
+      gsap.set(el, { y: 0, yPercent: open ? 0 : -100 });
       return;
     }
     if (open) {
@@ -80,9 +84,9 @@ export function MenuOverlay({ open, onClose }: { open: boolean; onClose: () => v
       aria-modal="true"
       aria-label="Menu"
       inert={!open}
+      className="menu-overlay"
       style={{
         position: 'fixed', inset: 0, zIndex: 90,
-        transform: 'translateY(-100%)',
         background: 'var(--bg)',
         display: 'flex', flexDirection: 'column', justifyContent: 'center',
         pointerEvents: open ? 'auto' : 'none',
@@ -128,6 +132,11 @@ export function MenuOverlay({ open, onClose }: { open: boolean; onClose: () => v
       >
         Close ×
       </button>
+      <style>{`
+        /* Hidden pre-hydration / without JS; GSAP's inline transform
+           overrides this once mounted. */
+        .menu-overlay { transform: translateY(-100%); }
+      `}</style>
     </div>
   );
 }
