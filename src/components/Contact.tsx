@@ -23,7 +23,7 @@ export function Contact() {
     const ctx = gsap.context(() => {
       const headline = el.querySelector<HTMLElement>('[data-contact-headline]');
       if (headline) {
-        const split = new SplitText(headline, { type: 'chars' });
+        const split = new SplitText(headline, { type: 'chars', aria: 'none' });
         gsap.from(split.chars, {
           yPercent: 120, opacity: 0, stagger: 0.03, duration: 0.9, ease: 'power4.out',
           scrollTrigger: { trigger: el, start: 'top 65%' },
@@ -61,8 +61,8 @@ export function Contact() {
         <p className="contact-fade" style={{ color: 'var(--fg-muted)', marginBottom: '1.4rem' }}>
           Available for senior engineering &amp; release-management roles.
         </p>
-        <h2 className="display-xl" style={{ fontSize: 'clamp(3rem, 12vw, 10rem)', color: 'var(--fg)' }}>
-          <span className="line-mask"><span data-contact-headline>Let&apos;s talk<span style={{ color: 'var(--accent)' }}>.</span></span></span>
+        <h2 aria-label="Let's talk." className="display-xl" style={{ fontSize: 'clamp(3rem, 12vw, 10rem)', color: 'var(--fg)' }}>
+          <span className="line-mask" aria-hidden><span data-contact-headline>Let&apos;s talk<span style={{ color: 'var(--accent)' }}>.</span></span></span>
         </h2>
         <a
           ref={mailRef}

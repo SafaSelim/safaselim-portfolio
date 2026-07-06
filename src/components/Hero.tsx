@@ -37,7 +37,7 @@ export function Hero() {
       tl = t;
       el.querySelectorAll<HTMLElement>('[data-split="lines"]').forEach((node) => {
         gsap.set(node, { opacity: 1 });
-        const split = new SplitText(node, { type: 'lines', linesClass: 'split-line', mask: 'lines' });
+        const split = new SplitText(node, { type: 'lines', linesClass: 'split-line', mask: 'lines', aria: 'none' });
         splits.push(split);
         gsap.set(split.lines, { yPercent: 115 });
         t.to(split.lines, { yPercent: 0, duration: 1.1, stagger: 0.08 }, '<0.1');
@@ -92,9 +92,11 @@ export function Hero() {
         </div>
 
         <h1 className="sr-only">Safa Selim — Senior Frontend Engineer</h1>
+        <p className="sr-only">Building enterprise-scale web &amp; mobile platforms.</p>
 
         <p
           data-split="lines"
+          aria-hidden
           className="display-lg will-reveal"
           style={{ fontSize: 'clamp(1.6rem, 4.2vw, 3.4rem)', maxWidth: '18ch', color: 'var(--fg)' }}
         >
