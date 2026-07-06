@@ -50,110 +50,60 @@ export function About() {
   return (
     <section id="about" className="section-pad">
       <div ref={ref} className="container">
-        <span className="eyebrow will-reveal" style={{ display: 'block', marginBottom: '2.5rem' }}>
-          (01) — About
+        <span className="section-index will-reveal" style={{ display: 'block', marginBottom: '2rem' }}>
+          01 — About
         </span>
 
-        <div className="about-grid">
+        <div className="about-copy will-reveal">
           <p
-            className="display will-reveal"
-            style={{
-              fontSize: 'clamp(1.6rem, 3.6vw, 3rem)',
-              fontWeight: 400,
-              lineHeight: 1.18,
-              letterSpacing: '-0.02em',
-            }}
+            className="display-lg"
+            style={{ fontSize: 'clamp(1.5rem, 3.4vw, 2.9rem)', color: 'var(--fg)' }}
           >
             I turn sprawling enterprise codebases into{' '}
-            <span className="italic-accent">structured, scalable</span> systems —
-            specializing in Angular, NGRX, and monorepo architecture, and owning{' '}
-            <span className="italic-accent">release management</span> across
-            multi-application environments.
+            <span className="italic-accent">structured, scalable</span> systems.
           </p>
-
-          <div className="about-side will-reveal">
-            <p
-              style={{
-                color: 'var(--fg-muted)',
-                fontSize: '1rem',
-                lineHeight: 1.75,
-                marginBottom: '1.5rem',
-              }}
-            >
-              For 6+ years I&apos;ve shipped performance-critical platforms across European
-              markets — from lifting a 25-domain e-commerce site off legacy JSP to
-              standardizing design systems in Storybook and securing apps with Keycloak.
-            </p>
-            <ul style={{ listStyle: 'none', display: 'grid', gap: '0.6rem' }}>
-              {[
-                'Angular v4 → v19 across the full release timeline',
-                'Monorepo architecture & shared component libraries',
-                'NGRX state management at enterprise scale',
-                'Release management for multi-app environments',
-              ].map((t) => (
-                <li
-                  key={t}
-                  style={{
-                    display: 'flex',
-                    gap: '0.7rem',
-                    alignItems: 'flex-start',
-                    fontSize: '0.92rem',
-                    color: 'var(--fg-soft)',
-                  }}
-                >
-                  <span style={{ color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>↳</span>
-                  {t}
-                </li>
-              ))}
-            </ul>
-          </div>
+          <p style={{ color: 'var(--fg-soft)', lineHeight: 1.75, marginTop: '1.5rem', maxWidth: '52ch' }}>
+            For 6+ years I&apos;ve shipped performance-critical platforms across European markets —
+            from lifting a 25-domain e-commerce site off legacy JSP to standardizing design systems
+            in Storybook and securing apps with Keycloak. I specialize in Angular, NGRX, and monorepo
+            architecture, and own release management across multi-application environments.
+          </p>
+          <ul style={{ listStyle: 'none', display: 'grid', gap: '0.6rem', marginTop: '1.5rem' }}>
+            {[
+              'Angular v4 → v19 across the full release timeline',
+              'Monorepo architecture & shared component libraries',
+              'NGRX state management at enterprise scale',
+              'Release management for multi-app environments',
+            ].map((t) => (
+              <li key={t} style={{ display: 'flex', gap: '0.7rem', fontSize: '0.92rem', color: 'var(--fg-soft)' }}>
+                <span style={{ color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>↳</span>
+                {t}
+              </li>
+            ))}
+          </ul>
         </div>
 
         <div className="stats-grid will-reveal">
           {stats.map((s) => (
-            <div key={s.label} style={{ borderTop: '1px solid var(--line-strong)', paddingTop: '1.2rem' }}>
-              <div
-                className="display"
-                style={{
-                  fontSize: 'clamp(2.6rem, 6vw, 4.5rem)',
-                  fontWeight: 500,
-                  lineHeight: 1,
-                  color: 'var(--accent)',
-                }}
-              >
+            <div key={s.label} style={{ borderTop: '1px solid var(--line-strong)', paddingTop: '1.1rem' }}>
+              <div className="display-xl" style={{ fontSize: 'clamp(2.4rem, 5.5vw, 4rem)', color: 'var(--fg)' }}>
                 <Counter value={s.value} suffix={s.suffix} />
               </div>
-              <p
-                style={{
-                  marginTop: '0.6rem',
-                  fontSize: '0.85rem',
-                  color: 'var(--fg-muted)',
-                  maxWidth: '18ch',
-                }}
-              >
-                {s.label}
-              </p>
+              <div className="mono-label" style={{ marginTop: '0.5rem' }}>{s.label}</div>
             </div>
           ))}
         </div>
       </div>
 
       <style>{`
-        .about-grid {
-          display: grid;
-          grid-template-columns: 1.4fr 1fr;
-          gap: clamp(2rem, 6vw, 5rem);
-          align-items: start;
-        }
+        .about-copy { max-width: 56%; margin-left: auto; }
         .stats-grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: clamp(1.5rem, 4vw, 3rem);
-          margin-top: clamp(3.5rem, 8vw, 6rem);
+          display: grid; grid-template-columns: repeat(4, 1fr);
+          gap: 1.5rem; margin-top: clamp(4rem, 9vw, 7rem);
         }
-        @media (max-width: 880px) {
-          .about-grid { grid-template-columns: 1fr; }
-          .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+        @media (max-width: 900px) {
+          .about-copy { max-width: 100%; margin-left: 0; padding-top: 42vh; }
+          .stats-grid { grid-template-columns: repeat(2, 1fr); }
         }
       `}</style>
     </section>
