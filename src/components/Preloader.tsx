@@ -13,11 +13,22 @@ export function Preloader() {
     const done = () => {
       if (firedRef.current) return;
       firedRef.current = true;
-      sessionStorage.setItem('ss-preloaded', '1');
+      try {
+        sessionStorage.setItem('ss-preloaded', '1');
+      } catch {
+        // sessionStorage may throw (e.g. cookies disabled) — safe to ignore
+      }
       window.dispatchEvent(new CustomEvent('preloader:done'));
     };
 
-    if (sessionStorage.getItem('ss-preloaded') || prefersReducedMotion()) {
+    let alreadyPreloaded = false;
+    try {
+      alreadyPreloaded = !!sessionStorage.getItem('ss-preloaded');
+    } catch {
+      // sessionStorage may throw (e.g. cookies disabled) — treat as not preloaded
+    }
+
+    if (alreadyPreloaded || prefersReducedMotion()) {
       done();
       return;
     }

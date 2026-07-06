@@ -15,6 +15,7 @@ export function Contact() {
   const root = useRef<HTMLElement>(null);
   const mailRef = useMagnetic<HTMLAnchorElement>(0.25);
   const [copied, setCopied] = useState(false);
+  const copyTimeout = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     registerGsap();
@@ -37,12 +38,17 @@ export function Contact() {
     return () => ctx.revert();
   }, []);
 
+  useEffect(() => {
+    return () => window.clearTimeout(copyTimeout.current);
+  }, []);
+
   const copyEmail = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (!navigator.clipboard) return; // fall through to mailto
     e.preventDefault();
     navigator.clipboard.writeText('safaselim.ss@gmail.com').then(() => {
+      window.clearTimeout(copyTimeout.current);
       setCopied(true);
-      window.setTimeout(() => setCopied(false), 1800);
+      copyTimeout.current = window.setTimeout(() => setCopied(false), 1800);
     }).catch(() => {});
   };
 

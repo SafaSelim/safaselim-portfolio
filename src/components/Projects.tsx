@@ -239,7 +239,7 @@ export function Projects() {
         .proj-name a:hover { color: var(--accent); }
         .proj-arrow { opacity: 0; transform: translate(-8px, 8px); transition: all 0.35s var(--ease-out); }
         .proj-name a:hover .proj-arrow { opacity: 1; transform: translate(0, 0); }
-        .proj-tagline { color: var(--fg-muted); font-family: var(--font-mono); font-size: 0.8rem; margin-top: 0.7rem; letter-spacing: 0.02em; }
+        .proj-tagline { color: var(--fg-muted); font-family: var(--font-mono-stack); font-size: 0.8rem; margin-top: 0.7rem; letter-spacing: 0.02em; }
         .proj-detail {
           display: grid; grid-template-columns: 60px 1fr; gap: 1.5rem;
           max-height: 0; opacity: 0; overflow: hidden;
@@ -263,7 +263,7 @@ export function Projects() {
         }
         .proj-impact { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.6rem; }
         .proj-impact__item {
-          font-family: var(--font-mono); font-size: 0.74rem; color: var(--accent);
+          font-family: var(--font-mono-stack); font-size: 0.74rem; color: var(--accent);
           padding: 0.35rem 0.7rem; border-radius: 100px; background: var(--accent-soft);
         }
         @media (hover: none) {

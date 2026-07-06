@@ -25,7 +25,7 @@ function MarqueeGroup() {
             display: 'inline-flex',
             alignItems: 'center',
             gap: '2.5rem',
-            fontFamily: 'var(--font-mono)',
+            fontFamily: 'var(--font-mono-stack)',
             fontSize: 'clamp(0.8rem, 1.6vw, 1rem)',
             fontWeight: 500,
             letterSpacing: '0.14em',

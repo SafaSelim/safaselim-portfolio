@@ -57,6 +57,8 @@ export function SmoothScrollProvider({ children }: { children: React.ReactNode }
     } else if (typeof target === 'string') {
       const el = document.querySelector(target);
       el?.scrollIntoView({ behavior: 'smooth' });
+    } else if (typeof target === 'number') {
+      window.scrollTo({ top: target, behavior: 'smooth' });
     }
   };
 

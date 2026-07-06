@@ -111,7 +111,7 @@ export function Experience() {
         })
       );
       const entrance = gsap.from(row, {
-        y: 50, opacity: 0, duration: 0.9, ease: 'power3.out',
+        y: 50, duration: 0.9, ease: 'power3.out',
         scrollTrigger: { trigger: row, start: 'top 85%' },
       });
       if (entrance.scrollTrigger) triggers.push(entrance.scrollTrigger);
@@ -178,7 +178,7 @@ export function Experience() {
           display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap;
         }
         .xp-proj {
-          font-family: var(--font-mono); font-size: clamp(0.75rem, 1.4vw, 0.95rem);
+          font-family: var(--font-mono-stack); font-size: clamp(0.75rem, 1.4vw, 0.95rem);
           letter-spacing: 0.06em; text-transform: none; color: var(--accent);
           display: inline-flex; align-items: center; gap: 0.2rem;
         }

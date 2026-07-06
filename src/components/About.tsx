@@ -76,7 +76,7 @@ export function About() {
               'Release management for multi-app environments',
             ].map((t) => (
               <li key={t} style={{ display: 'flex', gap: '0.7rem', fontSize: '0.92rem', color: 'var(--fg-soft)' }}>
-                <span style={{ color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>↳</span>
+                <span style={{ color: 'var(--accent)', fontFamily: 'var(--font-mono-stack)' }}>↳</span>
                 {t}
               </li>
             ))}

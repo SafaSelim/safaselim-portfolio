@@ -7,8 +7,9 @@ import { useLenis } from '@/components/SmoothScrollProvider';
 const LINKS = [
   { label: 'Work', href: '#work', index: '01' },
   { label: 'Experience', href: '#experience', index: '02' },
-  { label: 'About', href: '#about', index: '03' },
-  { label: 'Contact', href: '#contact', index: '04' },
+  { label: 'Skills', href: '#skills', index: '03' },
+  { label: 'About', href: '#about', index: '04' },
+  { label: 'Contact', href: '#contact', index: '05' },
 ];
 
 export function MenuOverlay({ open, onClose }: { open: boolean; onClose: () => void }) {

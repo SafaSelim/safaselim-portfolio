@@ -22,9 +22,9 @@
   --p3: #78350f;
   --grain-opacity: 0.04;
 
-  --font-display: var(--font-display), 'Arial Black', sans-serif;
-  --font-sans: var(--font-sans), system-ui, sans-serif;
-  --font-mono: var(--font-mono), ui-monospace, monospace;
+  --font-display-stack: var(--font-display), 'Arial Black', sans-serif;
+  --font-sans-stack: var(--font-sans), system-ui, sans-serif;
+  --font-mono-stack: var(--font-mono), ui-monospace, monospace;
 
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
@@ -76,7 +76,7 @@ html.lenis body {
 body {
   background-color: var(--bg);
   color: var(--fg);
-  font-family: var(--font-sans);
+  font-family: var(--font-sans-stack);
   font-size: 16px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
@@ -106,7 +106,7 @@ canvas {
    ============================================================ */
 
 .display-xl {
-  font-family: var(--font-display);
+  font-family: var(--font-display-stack);
   font-weight: 400;
   text-transform: uppercase;
   line-height: 0.85;
@@ -114,7 +114,7 @@ canvas {
 }
 
 .display-lg {
-  font-family: var(--font-display);
+  font-family: var(--font-display-stack);
   font-weight: 400;
   text-transform: uppercase;
   line-height: 0.92;
@@ -122,7 +122,7 @@ canvas {
 }
 
 .section-index {
-  font-family: var(--font-mono);
+  font-family: var(--font-mono-stack);
   font-size: 0.7rem;
   font-weight: 500;
   letter-spacing: 0.22em;
@@ -131,7 +131,7 @@ canvas {
 }
 
 .eyebrow {
-  font-family: var(--font-mono);
+  font-family: var(--font-mono-stack);
   font-size: 0.72rem;
   font-weight: 500;
   letter-spacing: 0.28em;
@@ -140,7 +140,7 @@ canvas {
 }
 
 .mono-label {
-  font-family: var(--font-mono);
+  font-family: var(--font-mono-stack);
   font-size: 0.7rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -148,7 +148,7 @@ canvas {
 }
 
 .section-title {
-  font-family: var(--font-display);
+  font-family: var(--font-display-stack);
   font-weight: 400;
   text-transform: uppercase;
   font-size: clamp(2.2rem, 6.5vw, 5rem);
@@ -219,7 +219,7 @@ html:not(.reduced) .js-ready .will-reveal {
   gap: 0.6rem;
   padding: 1rem 1.8rem;
   border-radius: 100px;
-  font-family: var(--font-sans);
+  font-family: var(--font-sans-stack);
   font-weight: 500;
   font-size: 0.92rem;
   letter-spacing: 0.01em;
@@ -282,7 +282,7 @@ html:not(.reduced) .js-ready .will-reveal {
   align-items: center;
   padding: 0.35rem 0.8rem;
   border-radius: 100px;
-  font-family: var(--font-mono);
+  font-family: var(--font-mono-stack);
   font-size: 0.72rem;
   letter-spacing: 0.04em;
   color: var(--fg-soft);

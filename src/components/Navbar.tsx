@@ -23,7 +23,6 @@ export function Navbar() {
           position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           padding: '1.1rem clamp(1.25rem, 5vw, 4rem)',
-          mixBlendMode: open ? 'normal' : undefined,
         }}
       >
         <a
@@ -34,7 +33,7 @@ export function Navbar() {
         >
           SS — 2026
         </a>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', visibility: open ? 'hidden' : 'visible' }}>
           <button
             aria-label="Toggle theme"
             onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}

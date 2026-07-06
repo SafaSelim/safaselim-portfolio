@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
@@ -115,10 +115,10 @@ function sampleName(count: number, area: Area): TargetSet {
   const g = c.getContext('2d');
   if (!g) return nameTarget([], W, H, count, area);
   let size = 100;
-  g.font = `400 ${size}px ${getComputedStyle(document.body).getPropertyValue('--font-display') || 'Arial Black'}`;
+  g.font = `400 ${size}px ${getComputedStyle(document.body).getPropertyValue('--font-display-stack') || 'Arial Black'}`;
   const ratio = g.measureText('SAFA SELIM').width / size;
   size = Math.min((W * 0.94) / ratio, H * 0.7);
-  g.font = `400 ${size}px ${getComputedStyle(document.body).getPropertyValue('--font-display') || 'Arial Black'}`;
+  g.font = `400 ${size}px ${getComputedStyle(document.body).getPropertyValue('--font-display-stack') || 'Arial Black'}`;
   g.textAlign = 'center';
   g.textBaseline = 'middle';
   g.fillText('SAFA SELIM', W / 2, H / 2);
@@ -152,6 +152,8 @@ function Particles({ reduced }: { reduced: boolean }) {
   const areaRef = useRef<Area>({ w: 10, h: 6 });
   const idleHandle = useRef<number | undefined>(undefined);
   const mouse = useRef(new THREE.Vector2(-999, -999));
+  const healTimer = useRef<number | undefined>(undefined);
+  const latestVp = useRef({ width: 10, height: 6 });
 
   const isMobile = size.width < 768 || window.matchMedia('(pointer: coarse)').matches;
   const count = isMobile ? 5000 : 14000;
@@ -286,6 +288,16 @@ function Particles({ reduced }: { reduced: boolean }) {
     };
     window.addEventListener('preloader:done', startWrite);
     const fallback = window.setTimeout(startWrite, 2500);
+    try {
+      if (sessionStorage.getItem('ss-preloaded')) startWrite();
+    } catch {
+      // sessionStorage may throw (e.g. cookies disabled) — fallback timer covers it
+    }
+
+    let cancelled = false;
+    document.fonts?.ready?.then(() => {
+      if (!cancelled) rebuild();
+    });
 
     const triggers: ScrollTrigger[] = [];
     Object.entries(SECTION_FOR_FORM).forEach(([formIdx, sel]) => {
@@ -314,12 +326,14 @@ function Particles({ reduced }: { reduced: boolean }) {
     }
 
     return () => {
+      cancelled = true;
       window.removeEventListener('preloader:done', startWrite);
       window.removeEventListener('pointermove', onMove);
       window.clearTimeout(fallback);
       triggers.forEach((t) => t.kill());
       mo.disconnect();
       window.clearTimeout(idleHandle.current);
+      window.clearTimeout(healTimer.current);
       gsap.killTweensOf(uniforms.uWrite);
       gsap.killTweensOf(uniforms.uMix);
     };
@@ -327,13 +341,19 @@ function Particles({ reduced }: { reduced: boolean }) {
   }, [count, reduced]);
 
   useFrame((state, delta) => {
-    // self-heal: if targets were built against a stale viewport, rebuild
+    // self-heal: if targets were built against a stale viewport, rebuild.
+    // Width stays sensitive (rotation changes it meaningfully); height
+    // tolerates ~6% drift so mobile URL-bar show/hide doesn't thrash it.
     const vp = state.viewport;
-    if (
-      Math.abs(vp.width - uniforms.uArea.value.x) > 0.01 ||
-      Math.abs(vp.height - uniforms.uArea.value.y) > 0.01
-    ) {
-      rebuild(vp.width, vp.height);
+    latestVp.current = { width: vp.width, height: vp.height };
+    const uArea = uniforms.uArea.value;
+    const widthDrift = Math.abs(vp.width - uArea.x) / uArea.x > 0.01;
+    const heightDrift = Math.abs(vp.height - uArea.y) / uArea.y > 0.06;
+    if ((widthDrift || heightDrift) && healTimer.current === undefined) {
+      healTimer.current = window.setTimeout(() => {
+        healTimer.current = undefined;
+        rebuild(latestVp.current.width, latestVp.current.height);
+      }, 250);
     }
     if (fillPending.current) fillCurrent();
     if (!reduced) uniforms.uTime.value += Math.min(delta, 0.05);
@@ -381,12 +401,19 @@ function Particles({ reduced }: { reduced: boolean }) {
 
 function ParticleCanvasInner() {
   const reduced = prefersReducedMotion();
+  const [webgl, setWebgl] = useState(true);
 
   useEffect(() => {
     const test = document.createElement('canvas');
     const gl = test.getContext('webgl2') || test.getContext('webgl');
-    if (!gl) document.body.classList.add('no-webgl');
+    if (!gl) {
+      document.body.classList.add('no-webgl');
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time capability check; must gate whether Canvas mounts at all
+      setWebgl(false);
+    }
   }, []);
+
+  if (!webgl) return null;
 
   return (
     <div aria-hidden style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
