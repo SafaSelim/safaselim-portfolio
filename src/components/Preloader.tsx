@@ -7,9 +7,12 @@ export function Preloader() {
   const [show, setShow] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const numRef = useRef<HTMLSpanElement>(null);
+  const firedRef = useRef(false);
 
   useEffect(() => {
     const done = () => {
+      if (firedRef.current) return;
+      firedRef.current = true;
       sessionStorage.setItem('ss-preloaded', '1');
       window.dispatchEvent(new CustomEvent('preloader:done'));
     };
