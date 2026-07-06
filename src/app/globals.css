@@ -22,10 +22,6 @@
   --p3: #78350f;
   --grain-opacity: 0.04;
 
-  --font-display-stack: var(--font-display), 'Arial Black', sans-serif;
-  --font-sans-stack: var(--font-sans), system-ui, sans-serif;
-  --font-mono-stack: var(--font-mono), ui-monospace, monospace;
-
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --maxw: 1400px;
@@ -74,6 +70,13 @@ html.lenis body {
 }
 
 body {
+  /* Composed font stacks live on body (not :root): var() references in
+     custom properties resolve on the DECLARING element, and next/font
+     defines --font-display/--font-sans/--font-mono on body via className. */
+  --font-display-stack: var(--font-display), 'Arial Black', sans-serif;
+  --font-sans-stack: var(--font-sans), system-ui, sans-serif;
+  --font-mono-stack: var(--font-mono), ui-monospace, monospace;
+
   background-color: var(--bg);
   color: var(--fg);
   font-family: var(--font-sans-stack);
