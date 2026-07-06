@@ -1,6 +1,6 @@
+import ParticleCanvas from '@/components/ParticleCanvas';
 import { Navbar } from '@/components/Navbar';
 import { Hero } from '@/components/Hero';
-import { Marquee } from '@/components/Marquee';
 import { About } from '@/components/About';
 import { Experience } from '@/components/Experience';
 import { Skills } from '@/components/Skills';
@@ -11,10 +11,10 @@ import { Footer } from '@/components/Footer';
 export default function Home() {
   return (
     <>
+      <ParticleCanvas />
       <Navbar />
-      <main>
+      <main style={{ position: 'relative', zIndex: 1 }}>
         <Hero />
-        <Marquee />
         <About />
         <Experience />
         <Skills />
