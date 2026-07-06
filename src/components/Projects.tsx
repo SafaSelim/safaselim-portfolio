@@ -73,6 +73,7 @@ const projects = [
 
 export function Projects() {
   const root = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
   const [preview, setPreview] = useState<string[] | null>(null);
 
@@ -96,7 +97,7 @@ export function Projects() {
   }, []);
 
   useEffect(() => {
-    const el = root.current;
+    const el = sectionRef.current;
     const card = previewRef.current;
     if (!el || !card) return;
     if (prefersReducedMotion() || window.matchMedia('(hover: none)').matches) return;
@@ -113,6 +114,7 @@ export function Projects() {
 
   return (
     <section
+      ref={sectionRef}
       id="work"
       className="section-pad"
       style={{ position: 'relative', overflow: 'hidden' }}
