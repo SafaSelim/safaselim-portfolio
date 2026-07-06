@@ -63,7 +63,7 @@ const vertexShader = /* glsl */ `
     // cursor repulsion (world space, z=0 plane)
     vec2 d = pos.xy - uMouse;
     float dist = length(d);
-    float f = smoothstep(uMouseR, 0.0, dist);
+    float f = uMouseR > 0.0 ? smoothstep(uMouseR, 0.0, dist) : 0.0;
     pos.xy += (d / max(dist, 0.0001)) * f * uArea.y * 0.06;
 
     vRamp = mix(aRampA, aRampB, m);
