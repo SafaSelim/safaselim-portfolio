@@ -90,12 +90,12 @@ Persistent canvas behind; sections are normal-flow HTML. Morphs trigger at secti
 | # | Section | Particle form | Layout & motion |
 |---|---|---|---|
 | 00 | **Hero** | Dust → **"SAFA SELIM"** | Particle name center-stage; eyebrow (`● SENIOR FRONTEND ENGINEER — MUNICH/ISTANBUL`), role statement in display type lower-left; marquee strip (stack keywords) pinned at hero bottom; scroll cue + `00/05` index. |
-| 01 | **About** | Name → **Globe** | Editorial paragraph (line-mask reveals), stat counters (9+ years, countries, 10M+ users) count up on enter. Globe sits opposite the copy. |
-| 02 | **Experience** | Globe → **Side Ribbon** | Roles as giant type rows (company + years); active row full opacity, others dimmed; hover/scroll expands details + external link. |
+| 01 | **About** | Name → **Side Ribbon** | Editorial paragraph (line-mask reveals), stat counters count up on enter; copy left-aligned, ribbon on the right edge. |
+| 02 | **Experience** | Side Ribbon (persists) | Roles as giant type rows (company + years); active row full opacity, others dimmed; hover/scroll expands details + external link. |
 | 03 | **Skills** | Side Ribbon (persists) | One big typographic wall: skills weighted by seniority tier (full / 65% / 35% opacity), CSS accent hover. |
 | 04 | **Projects** | Side Ribbon (persists) | Editorial index rows (name, mono meta, `001–004`); hover: floating preview card follows cursor (desktop), inline detail (mobile). |
 
-> **Rev 2026-07-07 (user feedback):** the mid-page Thread/Lattice/Constellation forms were replaced by one sinuous **vertical ribbon along the right edge** that persists across Experience → Skills → Projects (readability: particles no longer sit behind body text) and pours into the Contact ring. Morph tweens slowed (2.8s, wider stagger, stronger swirl) so particle travel is visible instead of reading as teleporting.
+> **Rev 2026-07-07 (user feedback):** the Globe/Thread/Lattice/Constellation forms were replaced by one sinuous **vertical ribbon along the right edge** that starts right after the hero and persists across About → Experience → Skills → Projects (readability: particles no longer sit behind body text), then pours into the Contact ring. Morph tweens slowed (2.8s, wider stagger, stronger swirl) so particle travel is visible instead of reading as teleporting.
 | 05 | **Contact** | Constellation → **Ring** | Story closes: ring orbits "LET'S TALK." + magnetic email CTA (copy-to-clipboard + mailto). Compact footer: mono micro-labels, socials, cat-model credit removed with old hero, CC credit dropped along with the GLB asset. |
 
 ### Chrome (persistent UI)
