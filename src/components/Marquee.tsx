@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { gsap, registerGsap, prefersReducedMotion } from '@/lib/motion';
 
 const items = [
-  'Angular v2–v20',
+  'Angular',
   'NGRX',
   'Monorepo Architecture',
   'TypeScript',
