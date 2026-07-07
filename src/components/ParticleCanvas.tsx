@@ -6,7 +6,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { gsap, registerGsap, ScrollTrigger, prefersReducedMotion } from '@/lib/motion';
 import {
-  textToPoints, nameTarget, globeTarget, sideThreadTarget, ringTarget,
+  textToPoints, nameTarget, sideThreadTarget, ringTarget,
   type Area, type TargetSet,
 } from '@/lib/particles/targets';
 
@@ -134,8 +134,8 @@ const FORM_COUNT = 6;
 function buildForm(i: number, count: number, area: Area): TargetSet {
   switch (i) {
     case 0: return sampleName(count, area);
-    case 1: return globeTarget(count, area);
-    // forms 2–4: one persistent side ribbon behind the mid sections
+    // forms 1–4: one persistent side ribbon from right after the hero
+    case 1:
     case 2:
     case 3:
     case 4: return sideThreadTarget(count, area);
@@ -211,18 +211,20 @@ function Particles({ reduced }: { reduced: boolean }) {
 
   /**
    * Get (building if needed) the target set for form `i` at the current area.
-   * Forms 2–4 share one persistent side-ribbon set: built once, aliased to all
-   * three slots so morphs between them are visual no-ops (intended — the
-   * ribbon persists through the mid sections until the Contact ring).
+   * Forms 1–4 share one persistent side-ribbon set: built once, aliased to all
+   * four slots so morphs between them are visual no-ops (intended — the
+   * ribbon starts right after the hero and persists until the Contact ring).
    */
   const ensureForm = (i: number): TargetSet => {
     const cached = targetsRef.current[i];
     if (cached) return cached;
-    if (i >= 2 && i <= 4) {
+    if (i >= 1 && i <= 4) {
       const ribbon =
-        targetsRef.current[2] ?? targetsRef.current[3] ?? targetsRef.current[4] ??
+        targetsRef.current[1] ?? targetsRef.current[2] ??
+        targetsRef.current[3] ?? targetsRef.current[4] ??
         buildForm(i, count, areaRef.current);
-      targetsRef.current[2] = targetsRef.current[3] = targetsRef.current[4] = ribbon;
+      targetsRef.current[1] = targetsRef.current[2] =
+        targetsRef.current[3] = targetsRef.current[4] = ribbon;
       return ribbon;
     }
     const t = buildForm(i, count, areaRef.current);

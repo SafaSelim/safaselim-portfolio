@@ -72,26 +72,6 @@ export function nameTarget(
   return t;
 }
 
-/** Fibonacci sphere. Ramp = depth (z), order = index. */
-export function globeTarget(count: number, area: Area): TargetSet {
-  const t = makeSet(count);
-  const R = Math.min(area.w, area.h) * 0.3;
-  const GA = Math.PI * (3 - Math.sqrt(5));
-  const denom = Math.max(count - 1, 1);
-  for (let i = 0; i < count; i++) {
-    const y = 1 - (2 * i) / denom;
-    const r = Math.sqrt(Math.max(0, 1 - y * y));
-    const th = GA * i;
-    const x = Math.cos(th) * r, z = Math.sin(th) * r;
-    t.positions[i * 3] = x * R;
-    t.positions[i * 3 + 1] = y * R;
-    t.positions[i * 3 + 2] = z * R;
-    t.ramp[i] = (z + 1) / 2;
-    t.order[i] = i / count;
-  }
-  return t;
-}
-
 /** Sinuous vertical ribbon along the right edge. Ramp/order = top→bottom progress. */
 export function sideThreadTarget(count: number, area: Area): TargetSet {
   const t = makeSet(count);

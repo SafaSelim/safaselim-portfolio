@@ -96,13 +96,12 @@ export function About() {
       </div>
 
       <style>{`
-        .about-copy { max-width: 56%; margin-left: auto; }
+        .about-copy { max-width: 56ch; }
         .stats-grid {
           display: grid; grid-template-columns: repeat(4, 1fr);
           gap: 1.5rem; margin-top: clamp(4rem, 9vw, 7rem);
         }
         @media (max-width: 900px) {
-          .about-copy { max-width: 100%; margin-left: 0; padding-top: 42vh; }
           .stats-grid { grid-template-columns: repeat(2, 1fr); }
         }
       `}</style>

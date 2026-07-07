@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import {
   textToPoints,
   nameTarget,
-  globeTarget,
   sideThreadTarget,
   ringTarget,
   type AlphaGrid,
@@ -60,7 +59,6 @@ function checkShape(t: { positions: Float32Array; ramp: Float32Array; order: Flo
 
 describe('geometry targets', () => {
   it.each([
-    ['globe', globeTarget],
     ['sideThread', sideThreadTarget],
     ['ring', ringTarget],
   ])('%s produces well-formed TargetSet', (_, fn) => {
@@ -68,7 +66,7 @@ describe('geometry targets', () => {
   });
 
   it('targets stay inside the area bounds (with 10% margin)', () => {
-    for (const fn of [globeTarget, sideThreadTarget, ringTarget]) {
+    for (const fn of [sideThreadTarget, ringTarget]) {
       const t = fn(N, AREA);
       for (let i = 0; i < N; i++) {
         expect(Math.abs(t.positions[i * 3])).toBeLessThanOrEqual(AREA.w * 0.55);
@@ -81,15 +79,6 @@ describe('geometry targets', () => {
     const t = sideThreadTarget(N, AREA);
     for (let i = 0; i < N; i++) {
       expect(t.positions[i * 3]).toBeGreaterThan(AREA.w * 0.3);
-    }
-  });
-
-  it('globe is a sphere: constant radius from center', () => {
-    const t = globeTarget(N, AREA);
-    const r0 = Math.hypot(t.positions[0], t.positions[1], t.positions[2]);
-    for (let i = 1; i < N; i++) {
-      const r = Math.hypot(t.positions[i * 3], t.positions[i * 3 + 1], t.positions[i * 3 + 2]);
-      expect(r).toBeCloseTo(r0, 5);
     }
   });
 
