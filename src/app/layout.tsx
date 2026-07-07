@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   description:
-    'Senior Software Engineer with 6+ years building enterprise-scale web and mobile applications — Angular, React, Next.js, React Native and Node/Elysia backends, with deep experience in monorepo architecture and large-scale migrations across European markets.',
+    'Senior Software Engineer with 7+ years building enterprise-scale web and mobile applications — Angular, React, Next.js, React Native and Node/Elysia backends, with deep experience in monorepo architecture and large-scale migrations across European markets.',
   keywords: [
     'Safa Selim',
     'Senior Software Engineer',
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Safa Selim — Senior Software Engineer',
     description:
-      'Senior Software Engineer with 6+ years building enterprise-scale web and mobile applications across European markets.',
+      'Senior Software Engineer with 7+ years building enterprise-scale web and mobile applications across European markets.',
     type: 'website',
     locale: 'en_US',
     siteName: 'Safa Selim',
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Safa Selim — Senior Software Engineer',
     description:
-      'Senior Software Engineer with 6+ years building enterprise-scale web and mobile applications.',
+      'Senior Software Engineer with 7+ years building enterprise-scale web and mobile applications.',
   },
 };
 
@@ -79,7 +79,7 @@ const personJsonLd = {
   url: 'https://www.safaselim.com',
   jobTitle: 'Senior Software Engineer',
   description:
-    'Senior Software Engineer with 6+ years building enterprise-scale web and mobile applications across the frontend and backend.',
+    'Senior Software Engineer with 7+ years building enterprise-scale web and mobile applications across the frontend and backend.',
   knowsAbout: [
     'Software Engineering',
     'Frontend Engineering',

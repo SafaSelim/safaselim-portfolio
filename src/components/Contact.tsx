@@ -1,13 +1,12 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { ArrowUpRight, Github, Linkedin, Mail, MapPin, Phone } from 'lucide-react';
+import { ArrowUpRight, Github, Linkedin, Mail, MapPin } from 'lucide-react';
 import { gsap, registerGsap, SplitText, prefersReducedMotion } from '@/lib/motion';
 import { useMagnetic } from '@/hooks/useMagnetic';
 
 const details = [
   { icon: MapPin, label: 'Based in', value: 'Istanbul, Turkey' },
-  { icon: Phone, label: 'Phone', value: '+90 546 195 1456', href: 'tel:+905461951456' },
   { icon: Mail, label: 'Email', value: 'safaselim.ss@gmail.com', href: 'mailto:safaselim.ss@gmail.com' },
 ];
 

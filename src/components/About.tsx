@@ -5,7 +5,7 @@ import { gsap, registerGsap, ScrollTrigger, prefersReducedMotion } from '@/lib/m
 import { useReveal } from '@/hooks/useReveal';
 
 const stats = [
-  { value: 6, suffix: '+', label: 'Years of experience' },
+  { value: 7, suffix: '+', label: 'Years of experience' },
   { value: 10, suffix: '', label: 'Enterprise apps in one monorepo' },
   { value: 25, suffix: '', label: 'Country domains shipped' },
   { value: 20, suffix: '+', label: 'Languages localized' },
@@ -63,7 +63,7 @@ export function About() {
             <span className="italic-accent">structured, scalable</span> systems.
           </p>
           <p style={{ color: 'var(--fg-soft)', lineHeight: 1.75, marginTop: '1.5rem', maxWidth: '52ch' }}>
-            For 6+ years I&apos;ve shipped performance-critical platforms across European markets —
+            For 7+ years I&apos;ve shipped performance-critical platforms across European markets —
             from lifting a 25-domain e-commerce site off legacy JSP to standardizing design systems
             in Storybook and securing apps with Keycloak. I specialize in Angular, NGRX, and monorepo
             architecture, and own release management across multi-application environments.

@@ -124,7 +124,7 @@ export function Experience() {
       <div ref={root} className="container">
         <span className="section-index" style={{ display: 'block', marginBottom: '1rem' }}>02 — Experience</span>
         <h2 className="section-title" style={{ marginBottom: 'clamp(3rem, 7vw, 5rem)' }}>
-          Six years, five teams<span style={{ color: 'var(--accent)' }}>.</span>
+          Seven years, five teams<span style={{ color: 'var(--accent)' }}>.</span>
         </h2>
 
         <div>
