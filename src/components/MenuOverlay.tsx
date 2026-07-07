@@ -16,6 +16,11 @@ export function MenuOverlay({ open, onClose }: { open: boolean; onClose: () => v
   const root = useRef<HTMLDivElement>(null);
   const prevFocusRef = useRef<HTMLElement | null>(null);
   const firstRun = useRef(true);
+  const onCloseRef = useRef(onClose);
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
   const { scrollTo } = useLenis();
 
@@ -63,7 +68,7 @@ export function MenuOverlay({ open, onClose }: { open: boolean; onClose: () => v
     const focusables = el?.querySelectorAll<HTMLElement>('a, button');
     focusables?.[0]?.focus();
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') onCloseRef.current();
       if (e.key === 'Tab' && focusables && focusables.length > 0) {
         const first = focusables[0];
         const last = focusables[focusables.length - 1];
@@ -76,7 +81,7 @@ export function MenuOverlay({ open, onClose }: { open: boolean; onClose: () => v
       window.removeEventListener('keydown', onKey);
       prevFocusRef.current?.focus?.();
     };
-  }, [open, onClose]);
+  }, [open]);
 
   return (
     <div

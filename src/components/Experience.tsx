@@ -183,10 +183,11 @@ export function Experience() {
           display: inline-flex; align-items: center; gap: 0.2rem;
         }
         .xp-detail {
-          max-height: 0; opacity: 0; overflow: hidden;
+          overflow: hidden; margin-top: 1.4rem;
           transition: max-height 0.7s var(--ease-out), opacity 0.6s var(--ease-out), margin-top 0.5s var(--ease-out);
         }
-        .xp-row.is-active .xp-detail { max-height: 800px; opacity: 1; margin-top: 1.4rem; }
+        body.js-ready .xp-row:not(.is-active) .xp-detail { max-height: 0; opacity: 0; margin-top: 0; }
+        body.js-ready .xp-row.is-active .xp-detail { max-height: 800px; }
         .xp-impact { list-style: none; margin-top: 1rem; display: grid; gap: 0.5rem; max-width: 62ch; }
         .xp-impact li {
           position: relative; padding-left: 1.3rem; color: var(--fg-soft);

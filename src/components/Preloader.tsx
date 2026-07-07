@@ -9,18 +9,19 @@ export function Preloader() {
   const numRef = useRef<HTMLSpanElement>(null);
   const firedRef = useRef(false);
 
-  useEffect(() => {
-    const done = () => {
-      if (firedRef.current) return;
-      firedRef.current = true;
-      try {
-        sessionStorage.setItem('ss-preloaded', '1');
-      } catch {
-        // sessionStorage may throw (e.g. cookies disabled) — safe to ignore
-      }
-      window.dispatchEvent(new CustomEvent('preloader:done'));
-    };
+  function done() {
+    if (firedRef.current) return;
+    firedRef.current = true;
+    try {
+      sessionStorage.setItem('ss-preloaded', '1');
+    } catch {
+      // sessionStorage may throw (e.g. cookies disabled) — safe to ignore
+    }
+    window.dispatchEvent(new CustomEvent('preloader:done'));
+  }
 
+  // Decide, once on mount, whether the intro should run at all.
+  useEffect(() => {
     let alreadyPreloaded = false;
     try {
       alreadyPreloaded = !!sessionStorage.getItem('ss-preloaded');
@@ -35,6 +36,11 @@ export function Preloader() {
 
     // eslint-disable-next-line react-hooks/set-state-in-effect -- must reveal the overlay only when the intro will actually run (post session/reduced-motion check)
     setShow(true);
+  }, []);
+
+  // Build the timeline only once the overlay's root div is actually committed.
+  useEffect(() => {
+    if (!show) return;
     document.documentElement.style.overflow = 'hidden';
 
     const obj = { n: 0 };
@@ -59,7 +65,7 @@ export function Preloader() {
       tl.kill();
       document.documentElement.style.overflow = '';
     };
-  }, []);
+  }, [show]);
 
   if (!show) return null;
 

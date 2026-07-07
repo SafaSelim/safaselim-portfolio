@@ -106,24 +106,36 @@ function isDarkTheme(): boolean {
   return document.documentElement.classList.contains('dark');
 }
 
+/** Viewport-independent glyph raster of "SAFA SELIM" — built once, reused across rebuilds. */
+let glyphCache: { pts: Array<[number, number]>; W: number; H: number } | null = null;
+function invalidateGlyphCache() {
+  glyphCache = null;
+}
+
 /** Render "SAFA SELIM" to an offscreen canvas and sample it. */
 function sampleName(count: number, area: Area): TargetSet {
-  const W = 900, H = 300;
-  const c = document.createElement('canvas');
-  c.width = W; c.height = H;
-  const g = c.getContext('2d');
-  if (!g) return nameTarget([], W, H, count, area);
-  let size = 100;
-  g.font = `400 ${size}px ${getComputedStyle(document.body).getPropertyValue('--font-display-stack') || 'Arial Black'}`;
-  const ratio = g.measureText('SAFA SELIM').width / size;
-  size = Math.min((W * 0.94) / ratio, H * 0.7);
-  g.font = `400 ${size}px ${getComputedStyle(document.body).getPropertyValue('--font-display-stack') || 'Arial Black'}`;
-  g.textAlign = 'center';
-  g.textBaseline = 'middle';
-  g.fillText('SAFA SELIM', W / 2, H / 2);
-  const grid = { width: W, height: H, data: g.getImageData(0, 0, W, H).data };
-  const step = Math.max(2, Math.round(size / 52));
-  const t = nameTarget(textToPoints(grid, step), W, H, count, area);
+  if (!glyphCache) {
+    const W = 900, H = 300;
+    const c = document.createElement('canvas');
+    c.width = W; c.height = H;
+    const g = c.getContext('2d');
+    if (!g) {
+      glyphCache = { pts: [], W, H };
+    } else {
+      let size = 100;
+      g.font = `400 ${size}px ${getComputedStyle(document.body).getPropertyValue('--font-display-stack') || 'Arial Black'}`;
+      const ratio = g.measureText('SAFA SELIM').width / size;
+      size = Math.min((W * 0.94) / ratio, H * 0.7);
+      g.font = `400 ${size}px ${getComputedStyle(document.body).getPropertyValue('--font-display-stack') || 'Arial Black'}`;
+      g.textAlign = 'center';
+      g.textBaseline = 'middle';
+      g.fillText('SAFA SELIM', W / 2, H / 2);
+      const grid = { width: W, height: H, data: g.getImageData(0, 0, W, H).data };
+      const step = Math.max(2, Math.round(size / 52));
+      glyphCache = { pts: textToPoints(grid, step), W, H };
+    }
+  }
+  const t = nameTarget(glyphCache.pts, glyphCache.W, glyphCache.H, count, area);
   // shift up so the name sits clear of the hero's HTML copy (lower third)
   for (let i = 0; i < count; i++) t.positions[i * 3 + 1] += area.h * 0.16;
   return t;
@@ -131,17 +143,16 @@ function sampleName(count: number, area: Area): TargetSet {
 
 const FORM_COUNT = 6;
 
-function buildForm(i: number, count: number, area: Area): TargetSet {
-  switch (i) {
-    case 0: return sampleName(count, area);
-    // forms 1–4: one persistent side ribbon from right after the hero
-    case 1:
-    case 2:
-    case 3:
-    case 4: return sideThreadTarget(count, area);
-    default: return ringTarget(count, area);
-  }
-}
+const RIBBON_FORMS = [1, 2, 3, 4] as const;
+const FORM_DEFS: Record<number, { build: (count: number, area: Area) => TargetSet; sharedWith?: readonly number[] }> = {
+  0: { build: (c, a) => sampleName(c, a) },
+  // forms 1–4: one persistent side ribbon from right after the hero
+  1: { build: sideThreadTarget, sharedWith: RIBBON_FORMS },
+  2: { build: sideThreadTarget, sharedWith: RIBBON_FORMS },
+  3: { build: sideThreadTarget, sharedWith: RIBBON_FORMS },
+  4: { build: sideThreadTarget, sharedWith: RIBBON_FORMS },
+  5: { build: ringTarget },
+};
 
 function Particles({ reduced }: { reduced: boolean }) {
   const mat = useRef<THREE.ShaderMaterial>(null);
@@ -153,7 +164,8 @@ function Particles({ reduced }: { reduced: boolean }) {
   const idleHandle = useRef<number | undefined>(undefined);
   const mouse = useRef(new THREE.Vector2(-999, -999));
   const healTimer = useRef<number | undefined>(undefined);
-  const latestVp = useRef({ width: 10, height: 6 });
+  const vpW = useRef(10);
+  const vpH = useRef(6);
 
   const isMobile = size.width < 768 || window.matchMedia('(pointer: coarse)').matches;
   const count = isMobile ? 5000 : 14000;
@@ -218,17 +230,9 @@ function Particles({ reduced }: { reduced: boolean }) {
   const ensureForm = (i: number): TargetSet => {
     const cached = targetsRef.current[i];
     if (cached) return cached;
-    if (i >= 1 && i <= 4) {
-      const ribbon =
-        targetsRef.current[1] ?? targetsRef.current[2] ??
-        targetsRef.current[3] ?? targetsRef.current[4] ??
-        buildForm(i, count, areaRef.current);
-      targetsRef.current[1] = targetsRef.current[2] =
-        targetsRef.current[3] = targetsRef.current[4] = ribbon;
-      return ribbon;
-    }
-    const t = buildForm(i, count, areaRef.current);
-    targetsRef.current[i] = t;
+    const def = FORM_DEFS[i];
+    const t = def.build(count, areaRef.current);
+    for (const j of def.sharedWith ?? [i]) targetsRef.current[j] = t;
     return t;
   };
 
@@ -312,9 +316,13 @@ function Particles({ reduced }: { reduced: boolean }) {
     }
 
     let cancelled = false;
-    document.fonts?.ready?.then(() => {
-      if (!cancelled) rebuild();
-    });
+    if (typeof document !== 'undefined' && document.fonts && document.fonts.status !== 'loaded') {
+      document.fonts.ready.then(() => {
+        if (cancelled) return;
+        invalidateGlyphCache();
+        rebuild(uniforms.uArea.value.x, uniforms.uArea.value.y);
+      });
+    }
 
     const triggers: ScrollTrigger[] = [];
     Object.entries(SECTION_FOR_FORM).forEach(([formIdx, sel]) => {
@@ -362,14 +370,15 @@ function Particles({ reduced }: { reduced: boolean }) {
     // Width stays sensitive (rotation changes it meaningfully); height
     // tolerates ~6% drift so mobile URL-bar show/hide doesn't thrash it.
     const vp = state.viewport;
-    latestVp.current = { width: vp.width, height: vp.height };
+    vpW.current = vp.width;
+    vpH.current = vp.height;
     const uArea = uniforms.uArea.value;
     const widthDrift = Math.abs(vp.width - uArea.x) / uArea.x > 0.01;
     const heightDrift = Math.abs(vp.height - uArea.y) / uArea.y > 0.06;
     if ((widthDrift || heightDrift) && healTimer.current === undefined) {
       healTimer.current = window.setTimeout(() => {
         healTimer.current = undefined;
-        rebuild(latestVp.current.width, latestVp.current.height);
+        rebuild(vpW.current, vpH.current);
       }, 250);
     }
     if (fillPending.current) fillCurrent();

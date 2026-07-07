@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import { Moon, Sun } from 'lucide-react';
 import { MenuOverlay } from '@/components/MenuOverlay';
@@ -15,6 +15,8 @@ export function Navbar() {
   // Hydration guard: theme icon must only render after mount.
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
+
+  const closeMenu = useCallback(() => setOpen(false), []);
 
   return (
     <>
@@ -52,7 +54,7 @@ export function Navbar() {
           </button>
         </div>
       </header>
-      <MenuOverlay open={open} onClose={() => setOpen(false)} />
+      <MenuOverlay open={open} onClose={closeMenu} />
       <style>{`
         .nav-pill {
           display: inline-flex; align-items: center; gap: 0.4rem;
