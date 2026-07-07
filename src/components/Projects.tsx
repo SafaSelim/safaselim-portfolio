@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import { gsap, registerGsap, prefersReducedMotion } from '@/lib/motion';
 
@@ -73,6 +73,9 @@ const projects = [
 
 export function Projects() {
   const root = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const previewRef = useRef<HTMLDivElement>(null);
+  const [preview, setPreview] = useState<string[] | null>(null);
 
   useEffect(() => {
     registerGsap();
@@ -93,8 +96,30 @@ export function Projects() {
     return () => ctx.revert();
   }, []);
 
+  useEffect(() => {
+    const el = sectionRef.current;
+    const card = previewRef.current;
+    if (!el || !card) return;
+    if (prefersReducedMotion() || window.matchMedia('(hover: none)').matches) return;
+    const xTo = gsap.quickTo(card, 'x', { duration: 0.45, ease: 'power3' });
+    const yTo = gsap.quickTo(card, 'y', { duration: 0.45, ease: 'power3' });
+    const onMove = (e: PointerEvent) => {
+      const r = el.getBoundingClientRect();
+      xTo(e.clientX - r.left + 24);
+      yTo(e.clientY - r.top - 40);
+    };
+    el.addEventListener('pointermove', onMove);
+    return () => el.removeEventListener('pointermove', onMove);
+  }, []);
+
   return (
-    <section id="work" className="section-pad" style={{ background: 'var(--bg-deep)' }}>
+    <section
+      ref={sectionRef}
+      id="work"
+      className="section-pad"
+      style={{ position: 'relative', overflow: 'hidden' }}
+      onMouseLeave={() => setPreview(null)}
+    >
       <div ref={root} className="container">
         <div
           style={{
@@ -107,12 +132,11 @@ export function Projects() {
           }}
         >
           <div>
-            <span className="eyebrow" style={{ display: 'block', marginBottom: '1rem' }}>
-              (04) — Selected Work
+            <span className="section-index" style={{ display: 'block', marginBottom: '1rem' }}>
+              04 — Selected Work
             </span>
             <h2 className="section-title">
-              Things I&apos;ve<br />
-              <span className="italic-accent">shipped</span>.
+              Things I&apos;ve shipped<span style={{ color: 'var(--accent)' }}>.</span>
             </h2>
           </div>
           <p style={{ color: 'var(--fg-muted)', maxWidth: '32ch', fontSize: '0.95rem' }}>
@@ -122,11 +146,16 @@ export function Projects() {
 
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           {projects.map((p) => (
-            <article key={p.index} className="proj-card">
+            <article
+              key={p.index}
+              className="proj-card"
+              onMouseEnter={() => setPreview(p.impact)}
+              onMouseLeave={() => setPreview(null)}
+            >
               <div className="proj-top">
                 <span className="proj-index mono-label">{p.index}</span>
                 <div className="proj-headline">
-                  <h3 className="proj-name">
+                  <h3 className="proj-name display-lg">
                     {p.url ? (
                       <a href={p.url} target="_blank" rel="noopener noreferrer">
                         {p.name}
@@ -167,6 +196,32 @@ export function Projects() {
         </div>
       </div>
 
+      <div
+        ref={previewRef}
+        aria-hidden
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          zIndex: 2,
+          pointerEvents: 'none',
+          opacity: preview ? 1 : 0,
+          transition: 'opacity 0.25s var(--ease-out)',
+          background: 'var(--bg-elev)',
+          border: '1px solid var(--line-strong)',
+          borderRadius: '10px',
+          padding: '0.9rem 1.1rem',
+          maxWidth: '240px',
+          boxShadow: '0 24px 60px -24px rgba(0,0,0,0.5)',
+        }}
+      >
+        {preview?.map((it) => (
+          <div key={it} className="mono-label" style={{ color: 'var(--accent)', marginBottom: '0.3rem' }}>
+            {it}
+          </div>
+        ))}
+      </div>
+
       <style>{`
         .proj-card {
           border-top: 1px solid var(--line-strong);
@@ -178,14 +233,13 @@ export function Projects() {
         }
         .proj-index { padding-top: 0.6rem; }
         .proj-name {
-          font-family: var(--font-display); font-weight: 500;
-          font-size: clamp(2rem, 6vw, 4.5rem); line-height: 1; letter-spacing: -0.03em;
+          font-size: clamp(1.9rem, 5.5vw, 4rem);
         }
         .proj-name a { display: inline-flex; align-items: center; gap: 0.4rem; transition: color 0.3s ease; }
         .proj-name a:hover { color: var(--accent); }
         .proj-arrow { opacity: 0; transform: translate(-8px, 8px); transition: all 0.35s var(--ease-out); }
         .proj-name a:hover .proj-arrow { opacity: 1; transform: translate(0, 0); }
-        .proj-tagline { color: var(--fg-muted); font-family: var(--font-mono); font-size: 0.8rem; margin-top: 0.7rem; letter-spacing: 0.02em; }
+        .proj-tagline { color: var(--fg-muted); font-family: var(--font-mono-stack); font-size: 0.8rem; margin-top: 0.7rem; letter-spacing: 0.02em; }
         .proj-detail {
           display: grid; grid-template-columns: 60px 1fr; gap: 1.5rem;
           max-height: 0; opacity: 0; overflow: hidden;
@@ -209,7 +263,7 @@ export function Projects() {
         }
         .proj-impact { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.6rem; }
         .proj-impact__item {
-          font-family: var(--font-mono); font-size: 0.74rem; color: var(--accent);
+          font-family: var(--font-mono-stack); font-size: 0.74rem; color: var(--accent);
           padding: 0.35rem 0.7rem; border-radius: 100px; background: var(--accent-soft);
         }
         @media (hover: none) {

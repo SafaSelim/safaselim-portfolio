@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { gsap, registerGsap, prefersReducedMotion } from '@/lib/motion';
 
 const items = [
-  'Angular v2–v20',
+  'Angular',
   'NGRX',
   'Monorepo Architecture',
   'TypeScript',
@@ -25,11 +25,12 @@ function MarqueeGroup() {
             display: 'inline-flex',
             alignItems: 'center',
             gap: '2.5rem',
-            fontFamily: 'var(--font-display)',
-            fontSize: 'clamp(1.4rem, 3.5vw, 2.6rem)',
+            fontFamily: 'var(--font-mono-stack)',
+            fontSize: 'clamp(0.8rem, 1.6vw, 1rem)',
             fontWeight: 500,
-            letterSpacing: '-0.01em',
-            color: 'var(--fg-soft)',
+            letterSpacing: '0.14em',
+            textTransform: 'uppercase' as const,
+            color: 'inherit',
           }}
         >
           {it}
@@ -80,10 +81,9 @@ export function Marquee() {
   return (
     <div
       style={{
-        borderTop: '1px solid var(--line)',
-        borderBottom: '1px solid var(--line)',
-        padding: '1.6rem 0',
-        background: 'var(--bg-deep)',
+        background: 'var(--fg)',
+        color: 'var(--bg)',
+        padding: '0.9rem 0',
       }}
     >
       <div className="marquee">
