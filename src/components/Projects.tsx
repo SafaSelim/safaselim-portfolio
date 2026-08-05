@@ -170,6 +170,7 @@ export function Projects() {
               </div>
 
               <div className="proj-detail">
+                <div className="proj-detail__inner">
                 <p className="proj-desc">{p.description}</p>
                 <ul className="proj-highlights">
                   {p.highlights.map((h) => (
@@ -189,6 +190,7 @@ export function Projects() {
                       {t}
                     </span>
                   ))}
+                </div>
                 </div>
               </div>
             </article>
@@ -240,16 +242,22 @@ export function Projects() {
         .proj-arrow { opacity: 0; transform: translate(-8px, 8px); transition: all 0.35s var(--ease-out); }
         .proj-name a:hover .proj-arrow { opacity: 1; transform: translate(0, 0); }
         .proj-tagline { color: var(--fg-muted); font-family: var(--font-mono-stack); font-size: 0.8rem; margin-top: 0.7rem; letter-spacing: 0.02em; }
+        /* grid-rows collapse animates on the compositor-friendly track size
+           instead of max-height/margin (layout thrash) */
         .proj-detail {
-          display: grid; grid-template-columns: 60px 1fr; gap: 1.5rem;
-          max-height: 0; opacity: 0; overflow: hidden;
-          transition: max-height 0.6s var(--ease-out), opacity 0.5s var(--ease-out), margin-top 0.5s var(--ease-out);
           grid-column: 1 / -1;
+          display: grid; grid-template-rows: 0fr; opacity: 0;
+          transition: grid-template-rows 0.6s var(--ease-out), opacity 0.5s var(--ease-out);
         }
-        .proj-detail > * { grid-column: 2; }
+        .proj-detail__inner {
+          overflow: hidden; min-height: 0;
+          display: grid; grid-template-columns: 60px 1fr; gap: 1.5rem;
+        }
+        .proj-detail__inner > * { grid-column: 2; }
+        .proj-detail__inner > :first-child { margin-top: 1.6rem; }
         .proj-card:hover .proj-detail,
         .proj-card:focus-within .proj-detail {
-          max-height: 900px; opacity: 1; margin-top: 1.6rem;
+          grid-template-rows: 1fr; opacity: 1;
         }
         .proj-desc { color: var(--fg-soft); max-width: 70ch; line-height: 1.7; }
         .proj-highlights { list-style: none; margin-top: 1.4rem; display: grid; gap: 0.55rem; max-width: 70ch; }
@@ -267,11 +275,11 @@ export function Projects() {
           padding: 0.35rem 0.7rem; border-radius: 100px; background: var(--accent-soft);
         }
         @media (hover: none) {
-          .proj-detail { max-height: 800px; opacity: 1; margin-top: 1.6rem; }
+          .proj-detail { grid-template-rows: 1fr; opacity: 1; }
         }
         @media (max-width: 760px) {
-          .proj-top, .proj-detail { grid-template-columns: 1fr; gap: 0.6rem; }
-          .proj-detail > * { grid-column: 1; }
+          .proj-top, .proj-detail__inner { grid-template-columns: 1fr; gap: 0.6rem; }
+          .proj-detail__inner > * { grid-column: 1; }
           .proj-index { padding-top: 0; }
         }
       `}</style>

@@ -146,7 +146,7 @@ export function Hero() {
       <Marquee />
 
       <style>{`
-        .split-line { display: block; will-change: transform; }
+        .split-line { display: block; }
         .hero-social {
           display: inline-flex; align-items: center; justify-content: center;
           width: 2.9rem; height: 2.9rem; border-radius: 50%;
