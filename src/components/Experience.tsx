@@ -179,7 +179,7 @@ export function Experience() {
         }
         .xp-proj {
           font-family: var(--font-mono-stack); font-size: clamp(0.75rem, 1.4vw, 0.95rem);
-          letter-spacing: 0.06em; text-transform: none; color: var(--accent);
+          letter-spacing: 0.06em; text-transform: none; color: var(--accent-text);
           display: inline-flex; align-items: center; gap: 0.2rem;
           padding: 0.9rem 0.5rem; margin: -0.9rem -0.5rem;
         }

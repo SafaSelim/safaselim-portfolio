@@ -310,7 +310,9 @@ function Particles({ reduced }: { reduced: boolean }) {
         mat.current.blending = isDarkTheme() ? THREE.AdditiveBlending : THREE.NormalBlending;
         mat.current.needsUpdate = true;
       }
-      uniforms.uOpacity.value = isDarkTheme() ? 0.9 : 0.8;
+      // light needs more opacity: normal blending dilutes the ramp toward the
+      // cream bg through the point alpha falloff, washing the glyphs out
+      uniforms.uOpacity.value = isDarkTheme() ? 0.9 : 0.95;
     };
     applyTheme();
     const mo = new MutationObserver(applyTheme);

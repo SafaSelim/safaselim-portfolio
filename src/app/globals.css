@@ -11,14 +11,17 @@
   --bg-elev: #f2eee6;
   --fg: #16130e;
   --fg-soft: #4a443a;
-  --fg-muted: #6f6759;
+  --fg-muted: #6a6254;
   --accent: #e8480c;
+  /* accent dark enough for SMALL text on --bg (WCAG AA 4.5:1); --accent
+     stays for large display glyphs, particles, and non-text graphics */
+  --accent-text: #bc3605;
   --accent-soft: rgba(232, 72, 12, 0.1);
   --on-accent: #f5f5f2;
   --line: rgba(22, 19, 14, 0.12);
   --line-strong: rgba(22, 19, 14, 0.26);
   --p1: #e8480c;
-  --p2: #b45309;
+  --p2: #9c4507;
   --p3: #78350f;
   --grain-opacity: 0.04;
 
@@ -36,6 +39,7 @@
   --fg-soft: #c9c9c2;
   --fg-muted: #8a8a82;
   --accent: #ff7a34;
+  --accent-text: #ff7a34; /* 7.75:1 on dark bg — already AA for small text */
   --accent-soft: rgba(255, 122, 52, 0.13);
   --on-accent: #070709;
   --line: rgba(245, 245, 242, 0.1);
@@ -89,7 +93,7 @@ body {
 }
 
 ::selection {
-  background: var(--accent);
+  background: var(--accent-text);
   color: var(--bg);
 }
 
@@ -130,7 +134,7 @@ canvas {
   font-weight: 500;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .eyebrow {
@@ -139,7 +143,7 @@ canvas {
   font-weight: 500;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .mono-label {
@@ -235,7 +239,7 @@ html:not(.reduced) .js-ready .will-reveal {
 }
 
 .btn-primary {
-  background: var(--accent);
+  background: var(--accent-text);
   color: var(--on-accent);
 }
 .btn-primary::after {
@@ -263,14 +267,14 @@ html:not(.reduced) .js-ready .will-reveal {
   content: '';
   position: absolute;
   inset: 0;
-  background: var(--accent);
+  background: var(--accent-text);
   transform: translateY(101%);
   transition: transform 0.5s var(--ease-out);
   z-index: -1;
 }
 .btn-ghost:hover {
   color: var(--on-accent);
-  border-color: var(--accent);
+  border-color: var(--accent-text);
 }
 .btn-ghost:hover::after {
   transform: translateY(0);
@@ -295,7 +299,7 @@ html:not(.reduced) .js-ready .will-reveal {
 }
 .tag:hover {
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 /* ============================================================

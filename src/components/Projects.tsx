@@ -216,7 +216,7 @@ export function Projects() {
         }}
       >
         {preview?.map((it) => (
-          <div key={it} className="mono-label" style={{ color: 'var(--accent)', marginBottom: '0.3rem' }}>
+          <div key={it} className="mono-label" style={{ color: 'var(--accent-text)', marginBottom: '0.3rem' }}>
             {it}
           </div>
         ))}
@@ -263,7 +263,7 @@ export function Projects() {
         }
         .proj-impact { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.6rem; }
         .proj-impact__item {
-          font-family: var(--font-mono-stack); font-size: 0.74rem; color: var(--accent);
+          font-family: var(--font-mono-stack); font-size: 0.74rem; color: var(--accent-text);
           padding: 0.35rem 0.7rem; border-radius: 100px; background: var(--accent-soft);
         }
         @media (hover: none) {
