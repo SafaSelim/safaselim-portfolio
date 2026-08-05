@@ -108,7 +108,14 @@ function isDarkTheme(): boolean {
 
 /** Glyph raster of "SAFA SELIM" — cached per layout mode, reused across rebuilds. */
 type NameLayout = 'line' | 'stack';
-let glyphCache: { pts: Array<[number, number]>; W: number; H: number; layout: NameLayout } | null = null;
+let glyphCache: {
+  pts: Array<[number, number]>;
+  W: number;
+  H: number;
+  layout: NameLayout;
+  minY: number;
+  maxY: number;
+} | null = null;
 function invalidateGlyphCache() {
   glyphCache = null;
 }
@@ -127,7 +134,7 @@ function sampleName(count: number, area: Area): TargetSet {
     c.width = W; c.height = H;
     const g = c.getContext('2d');
     if (!g) {
-      glyphCache = { pts: [], W, H, layout };
+      glyphCache = { pts: [], W, H, layout, minY: 0, maxY: 0 };
     } else {
       const family = getComputedStyle(document.body).getPropertyValue('--font-display-stack') || 'Arial Black';
       const setFont = (size: number) => { g.font = `400 ${size}px ${family}`; };
@@ -149,13 +156,31 @@ function sampleName(count: number, area: Area): TargetSet {
       }
       const grid = { width: W, height: H, data: g.getImageData(0, 0, W, H).data };
       const step = Math.max(2, Math.round(size / 52));
-      glyphCache = { pts: textToPoints(grid, step), W, H, layout };
+      const pts = textToPoints(grid, step);
+      let minY = H, maxY = 0;
+      for (const p of pts) {
+        if (p[1] < minY) minY = p[1];
+        if (p[1] > maxY) maxY = p[1];
+      }
+      glyphCache = { pts, W, H, layout, minY, maxY };
     }
   }
   const t = nameTarget(glyphCache.pts, glyphCache.W, glyphCache.H, count, area);
-  // shift up so the name sits clear of the hero's HTML copy (lower third);
-  // the stacked layout is taller, so it needs more headroom
-  const lift = area.h * (layout === 'stack' ? 0.2 : 0.16);
+  // Lift the name clear of the hero's HTML copy. A fixed fraction fails on
+  // short landscape viewports (the copy block rises past it), so measure the
+  // real .hero-copy top and place the glyph bottom above it, capped so the
+  // glyph top stays below the navbar.
+  let lift = area.h * (layout === 'stack' ? 0.2 : 0.16);
+  const hero = document.querySelector('.hero-copy');
+  if (glyphCache.pts.length && hero && window.innerHeight > 0) {
+    const scale = Math.min((area.w * 0.9) / glyphCache.W, (area.h * 0.55) / glyphCache.H);
+    const heroTopWorld = (0.5 - hero.getBoundingClientRect().top / window.innerHeight) * area.h;
+    const glyphBottomRel = -(glyphCache.maxY - glyphCache.H / 2) * scale;
+    const glyphTopRel = (glyphCache.H / 2 - glyphCache.minY) * scale;
+    const needed = heroTopWorld + area.h * 0.02 - glyphBottomRel;
+    const cap = area.h * 0.38 - glyphTopRel;
+    lift = Math.max(0, Math.min(needed, cap));
+  }
   for (let i = 0; i < count; i++) t.positions[i * 3 + 1] += lift;
   return t;
 }
@@ -405,6 +430,11 @@ function Particles({ reduced }: { reduced: boolean }) {
     if (fillPending.current) fillCurrent();
     if (!reduced) uniforms.uTime.value += Math.min(delta, 0.05);
     (uniforms.uMouse.value as THREE.Vector2).lerp(mouse.current, 0.08);
+    // point size tracks viewport width: fixed-size points over a wider glyph
+    // area read sparse and dim on large screens
+    uniforms.uSize.value = isMobile
+      ? 30
+      : 26 * Math.min(Math.max(state.size.width / 1440, 1), 1.5);
   });
 
   // Stable array identities: fresh arrays per render (e.g. via .slice()) would
