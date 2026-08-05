@@ -108,7 +108,7 @@ export function Skills() {
       <style>{`
         .skill-wall p { font-size: clamp(1.5rem, 4.6vw, 3.8rem); color: var(--fg); }
         .skill-wall .tier-2 { opacity: 0.65; }
-        .skill-wall .tier-3 { opacity: 0.35; }
+        .skill-wall .tier-3 { opacity: 0.5; }
         .skill-item { transition: color 0.3s var(--ease-out); }
         .skill-item:hover { color: var(--accent); }
         .skill-sep { color: var(--line-strong); }

@@ -100,10 +100,16 @@ export function Contact() {
               )}
             </div>
           ))}
-          <a href="https://github.com/SafaSelim" target="_blank" rel="noopener noreferrer" className="mono-label" style={{ color: 'var(--fg-soft)', padding: '0.85rem 0.3rem', margin: '-0.85rem -0.3rem' }}><Github size={14} style={{ verticalAlign: '-2px', marginRight: '0.4rem', color: 'var(--accent)' }} />GitHub</a>
-          <a href="https://linkedin.com/in/safaselim" target="_blank" rel="noopener noreferrer" className="mono-label" style={{ color: 'var(--fg-soft)', padding: '0.85rem 0.3rem', margin: '-0.85rem -0.3rem' }}><Linkedin size={14} style={{ verticalAlign: '-2px', marginRight: '0.4rem', color: 'var(--accent)' }} />LinkedIn</a>
+          <a href="https://github.com/SafaSelim" target="_blank" rel="noopener noreferrer" className="mono-label contact-social" style={{ padding: '0.85rem 0.3rem', margin: '-0.85rem -0.3rem' }}><Github size={14} style={{ color: 'var(--accent)' }} />GitHub</a>
+          <a href="https://linkedin.com/in/safaselim" target="_blank" rel="noopener noreferrer" className="mono-label contact-social" style={{ padding: '0.85rem 0.3rem', margin: '-0.85rem -0.3rem' }}><Linkedin size={14} style={{ color: 'var(--accent)' }} />LinkedIn</a>
         </div>
       </div>
+      <style>{`
+        .contact-social {
+          display: inline-flex; align-items: center; gap: 0.4rem;
+          white-space: nowrap; color: var(--fg-soft);
+        }
+      `}</style>
     </section>
   );
 }

@@ -23,6 +23,7 @@
   --p1: #e8480c;
   --p2: #9c4507;
   --p3: #78350f;
+  --shadow-lift: 0 24px 60px -24px rgba(0, 0, 0, 0.35);
   --grain-opacity: 0.04;
 
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
@@ -47,6 +48,7 @@
   --p1: #ff7a34;
   --p2: #ffb26b;
   --p3: #ffd9a8;
+  --shadow-lift: 0 24px 60px -24px rgba(0, 0, 0, 0.6);
   --grain-opacity: 0.055;
 }
 
@@ -100,6 +102,11 @@ body {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 3px;
 }
 
 img,
@@ -374,15 +381,23 @@ html:not(.reduced) .js-ready .will-reveal {
    Reduced motion
    ============================================================ */
 
+/* Scoped, not a blanket kill: decorative animation and structural motion
+   stop; short color/opacity feedback (hovers, theme fade, "Copied") stays.
+   GSAP-driven motion is guarded separately via prefersReducedMotion(). */
 @media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
+  html {
     scroll-behavior: auto !important;
   }
   .grain {
     animation: none;
+  }
+  .marquee__track {
+    will-change: auto;
+  }
+  .btn::after,
+  .xp-detail,
+  .proj-detail {
+    transition-duration: 0.001ms !important;
   }
   .will-reveal {
     opacity: 1 !important;

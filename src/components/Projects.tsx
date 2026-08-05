@@ -214,7 +214,7 @@ export function Projects() {
           borderRadius: '10px',
           padding: '0.9rem 1.1rem',
           maxWidth: '240px',
-          boxShadow: '0 24px 60px -24px rgba(0,0,0,0.5)',
+          boxShadow: 'var(--shadow-lift)',
         }}
       >
         {preview?.map((it) => (

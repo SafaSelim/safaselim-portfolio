@@ -29,8 +29,8 @@ export function Navbar() {
       >
         <a
           href="#top"
-          className="mono-label"
-          style={{ color: 'var(--fg)', fontWeight: 600, padding: '0.85rem 0.6rem', margin: '-0.85rem -0.6rem' }}
+          className="mono-label nav-pill"
+          style={{ fontWeight: 600 }}
           onClick={(e) => { e.preventDefault(); setOpen(false); scrollTo(0); }}
         >
           SS — 2026
