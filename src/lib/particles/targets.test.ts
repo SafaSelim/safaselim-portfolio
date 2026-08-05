@@ -99,6 +99,44 @@ describe('geometry targets', () => {
   });
 });
 
+describe('portrait viewports (content clearance)', () => {
+  const PORTRAIT = { w: 7, h: 12 };
+
+  it('sideThread straddles the right edge so the text column stays clear', () => {
+    const t = sideThreadTarget(N, PORTRAIT);
+    for (let i = 0; i < N; i++) {
+      // inner edge of the band must stay right of ~48% of width
+      // (content column ends around 45% on narrow screens)
+      expect(t.positions[i * 3]).toBeGreaterThan(PORTRAIT.w * 0.47);
+    }
+  });
+
+  it('ring frames the content instead of crossing it', () => {
+    const t = ringTarget(N, PORTRAIT);
+    const R = Math.max(PORTRAIT.w, PORTRAIT.h) * 0.4;
+    for (let i = 0; i < N; i++) {
+      const x = t.positions[i * 3];
+      const y = t.positions[i * 3 + 1];
+      // annulus radius scales with the LONG axis in portrait
+      expect(Math.hypot(x, y)).toBeGreaterThan(R * 0.8);
+      // any point over the central text column must sit above/below the copy band
+      if (Math.abs(x) <= PORTRAIT.w * 0.35) {
+        expect(Math.abs(y)).toBeGreaterThan(PORTRAIT.h * 0.28);
+      }
+    }
+  });
+
+  it('landscape ring is unchanged', () => {
+    const t = ringTarget(N, AREA);
+    const R = Math.min(AREA.w, AREA.h) * 0.32;
+    for (let i = 0; i < N; i++) {
+      const r = Math.hypot(t.positions[i * 3], t.positions[i * 3 + 1]);
+      expect(r).toBeGreaterThan(R * 0.8);
+      expect(r).toBeLessThan(R * 1.2);
+    }
+  });
+});
+
 describe('nameTarget', () => {
   it('maps pixel points into area space with left-to-right order', () => {
     const pts = textToPoints(blockGrid(), 1);

@@ -30,7 +30,7 @@ export function Navbar() {
         <a
           href="#top"
           className="mono-label"
-          style={{ color: 'var(--fg)', fontWeight: 600 }}
+          style={{ color: 'var(--fg)', fontWeight: 600, padding: '0.85rem 0.6rem', margin: '-0.85rem -0.6rem' }}
           onClick={(e) => { e.preventDefault(); setOpen(false); scrollTo(0); }}
         >
           SS — 2026
@@ -61,7 +61,7 @@ export function Navbar() {
           background: color-mix(in srgb, var(--bg) 65%, transparent);
           backdrop-filter: blur(10px);
           border: 1px solid var(--line-strong); border-radius: 100px;
-          padding: 0.55rem 1.1rem; cursor: pointer; color: var(--fg);
+          min-height: 44px; padding: 0.55rem 1.2rem; cursor: pointer; color: var(--fg);
           transition: border-color .3s var(--ease-out), color .3s var(--ease-out);
         }
         .nav-pill:hover { border-color: var(--accent); color: var(--accent); }

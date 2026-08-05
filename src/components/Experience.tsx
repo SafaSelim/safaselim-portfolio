@@ -181,6 +181,11 @@ export function Experience() {
           font-family: var(--font-mono-stack); font-size: clamp(0.75rem, 1.4vw, 0.95rem);
           letter-spacing: 0.06em; text-transform: none; color: var(--accent);
           display: inline-flex; align-items: center; gap: 0.2rem;
+          padding: 0.9rem 0.5rem; margin: -0.9rem -0.5rem;
+        }
+        /* keep the right-aligned period clear of the particle ribbon band */
+        @media (min-width: 900px) {
+          .xp-period { margin-right: clamp(0px, 10vw, 140px); }
         }
         .xp-detail {
           overflow: hidden; margin-top: 1.4rem;

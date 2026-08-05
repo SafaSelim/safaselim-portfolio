@@ -106,38 +106,57 @@ function isDarkTheme(): boolean {
   return document.documentElement.classList.contains('dark');
 }
 
-/** Viewport-independent glyph raster of "SAFA SELIM" — built once, reused across rebuilds. */
-let glyphCache: { pts: Array<[number, number]>; W: number; H: number } | null = null;
+/** Glyph raster of "SAFA SELIM" — cached per layout mode, reused across rebuilds. */
+type NameLayout = 'line' | 'stack';
+let glyphCache: { pts: Array<[number, number]>; W: number; H: number; layout: NameLayout } | null = null;
 function invalidateGlyphCache() {
   glyphCache = null;
 }
 
-/** Render "SAFA SELIM" to an offscreen canvas and sample it. */
+/**
+ * Render the name to an offscreen canvas and sample it.
+ * Landscape: one line. Portrait: "SAFA" / "SELIM" stacked — a single line at
+ * phone width shrinks the glyphs until they blob together.
+ */
 function sampleName(count: number, area: Area): TargetSet {
-  if (!glyphCache) {
-    const W = 900, H = 300;
+  const layout: NameLayout = area.h > area.w ? 'stack' : 'line';
+  if (!glyphCache || glyphCache.layout !== layout) {
+    const W = layout === 'line' ? 900 : 600;
+    const H = layout === 'line' ? 300 : 520;
     const c = document.createElement('canvas');
     c.width = W; c.height = H;
     const g = c.getContext('2d');
     if (!g) {
-      glyphCache = { pts: [], W, H };
+      glyphCache = { pts: [], W, H, layout };
     } else {
+      const family = getComputedStyle(document.body).getPropertyValue('--font-display-stack') || 'Arial Black';
+      const setFont = (size: number) => { g.font = `400 ${size}px ${family}`; };
       let size = 100;
-      g.font = `400 ${size}px ${getComputedStyle(document.body).getPropertyValue('--font-display-stack') || 'Arial Black'}`;
-      const ratio = g.measureText('SAFA SELIM').width / size;
-      size = Math.min((W * 0.94) / ratio, H * 0.7);
-      g.font = `400 ${size}px ${getComputedStyle(document.body).getPropertyValue('--font-display-stack') || 'Arial Black'}`;
+      setFont(size);
       g.textAlign = 'center';
       g.textBaseline = 'middle';
-      g.fillText('SAFA SELIM', W / 2, H / 2);
+      if (layout === 'line') {
+        const ratio = g.measureText('SAFA SELIM').width / size;
+        size = Math.min((W * 0.94) / ratio, H * 0.7);
+        setFont(size);
+        g.fillText('SAFA SELIM', W / 2, H / 2);
+      } else {
+        const ratio = g.measureText('SELIM').width / size; // wider word governs
+        size = Math.min((W * 0.9) / ratio, H * 0.3);
+        setFont(size);
+        g.fillText('SAFA', W / 2, H * 0.32);
+        g.fillText('SELIM', W / 2, H * 0.68);
+      }
       const grid = { width: W, height: H, data: g.getImageData(0, 0, W, H).data };
       const step = Math.max(2, Math.round(size / 52));
-      glyphCache = { pts: textToPoints(grid, step), W, H };
+      glyphCache = { pts: textToPoints(grid, step), W, H, layout };
     }
   }
   const t = nameTarget(glyphCache.pts, glyphCache.W, glyphCache.H, count, area);
-  // shift up so the name sits clear of the hero's HTML copy (lower third)
-  for (let i = 0; i < count; i++) t.positions[i * 3 + 1] += area.h * 0.16;
+  // shift up so the name sits clear of the hero's HTML copy (lower third);
+  // the stacked layout is taller, so it needs more headroom
+  const lift = area.h * (layout === 'stack' ? 0.2 : 0.16);
+  for (let i = 0; i < count; i++) t.positions[i * 3 + 1] += lift;
   return t;
 }
 

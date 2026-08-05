@@ -75,9 +75,9 @@ export function Contact() {
           onClick={copyEmail}
           className="contact-fade mono-label"
           style={{
-            display: 'inline-flex', alignItems: 'center', gap: '0.5rem', marginTop: '2rem',
+            display: 'inline-flex', alignItems: 'center', gap: '0.5rem', marginTop: '1.2rem',
             fontSize: '0.95rem', color: 'var(--fg)', borderBottom: '1px solid var(--accent)',
-            paddingBottom: '0.3rem', letterSpacing: '0.08em',
+            paddingTop: '0.8rem', paddingBottom: '0.3rem', letterSpacing: '0.08em',
           }}
         >
           {copied ? 'Copied ✓' : 'safaselim.ss@gmail.com'} <ArrowUpRight size={15} />
@@ -94,14 +94,14 @@ export function Contact() {
             <div key={d.label} style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
               <d.icon size={14} style={{ color: 'var(--accent)' }} />
               {d.href ? (
-                <a href={d.href} className="mono-label" style={{ color: 'var(--fg-soft)' }}>{d.value}</a>
+                <a href={d.href} className="mono-label" style={{ color: 'var(--fg-soft)', padding: '0.85rem 0.3rem', margin: '-0.85rem -0.3rem' }}>{d.value}</a>
               ) : (
                 <span className="mono-label" style={{ color: 'var(--fg-soft)' }}>{d.value}</span>
               )}
             </div>
           ))}
-          <a href="https://github.com/SafaSelim" target="_blank" rel="noopener noreferrer" className="mono-label" style={{ color: 'var(--fg-soft)' }}><Github size={14} style={{ verticalAlign: '-2px', marginRight: '0.4rem', color: 'var(--accent)' }} />GitHub</a>
-          <a href="https://linkedin.com/in/safaselim" target="_blank" rel="noopener noreferrer" className="mono-label" style={{ color: 'var(--fg-soft)' }}><Linkedin size={14} style={{ verticalAlign: '-2px', marginRight: '0.4rem', color: 'var(--accent)' }} />LinkedIn</a>
+          <a href="https://github.com/SafaSelim" target="_blank" rel="noopener noreferrer" className="mono-label" style={{ color: 'var(--fg-soft)', padding: '0.85rem 0.3rem', margin: '-0.85rem -0.3rem' }}><Github size={14} style={{ verticalAlign: '-2px', marginRight: '0.4rem', color: 'var(--accent)' }} />GitHub</a>
+          <a href="https://linkedin.com/in/safaselim" target="_blank" rel="noopener noreferrer" className="mono-label" style={{ color: 'var(--fg-soft)', padding: '0.85rem 0.3rem', margin: '-0.85rem -0.3rem' }}><Linkedin size={14} style={{ verticalAlign: '-2px', marginRight: '0.4rem', color: 'var(--accent)' }} />LinkedIn</a>
         </div>
       </div>
     </section>

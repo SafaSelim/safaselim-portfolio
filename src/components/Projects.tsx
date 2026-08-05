@@ -235,7 +235,7 @@ export function Projects() {
         .proj-name {
           font-size: clamp(1.9rem, 5.5vw, 4rem);
         }
-        .proj-name a { display: inline-flex; align-items: center; gap: 0.4rem; transition: color 0.3s ease; }
+        .proj-name a { display: inline-flex; align-items: center; gap: 0.4rem; transition: color 0.3s ease; padding: 0.5rem 0; margin: -0.5rem 0; }
         .proj-name a:hover { color: var(--accent); }
         .proj-arrow { opacity: 0; transform: translate(-8px, 8px); transition: all 0.35s var(--ease-out); }
         .proj-name a:hover .proj-arrow { opacity: 1; transform: translate(0, 0); }
