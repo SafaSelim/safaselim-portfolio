@@ -42,3 +42,6 @@ next-env.d.ts
 
 # brainstorm companion sessions
 .superpowers/
+
+# machine-local Claude Code settings
+.claude/settings.local.json
