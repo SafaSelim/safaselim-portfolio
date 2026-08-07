@@ -21,6 +21,12 @@ export function SmoothScrollProvider({ children }: { children: React.ReactNode }
     const reduced = prefersReducedMotion();
     document.documentElement.classList.toggle('reduced', reduced);
     document.body.classList.add('js-ready');
+    // Commit the js-ready collapsed layout in one synchronous style pass,
+    // THEN enable collapse transitions (gated on js-anim). Otherwise the
+    // initial collapse animates and ScrollTrigger.refresh() below measures
+    // mid-transition, leaving triggers further down the page stale.
+    void document.body.offsetHeight;
+    document.body.classList.add('js-anim');
 
     if (reduced) {
       ScrollTrigger.refresh();

@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // impeccable's bundled skill scripts are vendored, not project code
+    ".claude/**",
   ]),
 ]);
 

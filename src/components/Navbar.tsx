@@ -25,17 +25,20 @@ export function Navbar() {
           position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           padding: '1.1rem clamp(1.25rem, 5vw, 4rem)',
+          // the bar spans the full width above the menu overlay (z 90) — without
+          // this it swallows clicks aimed at the overlay's Close button
+          pointerEvents: 'none',
         }}
       >
         <a
           href="#top"
-          className="mono-label"
-          style={{ color: 'var(--fg)', fontWeight: 600 }}
+          className="mono-label nav-pill"
+          style={{ fontWeight: 600, pointerEvents: 'auto' }}
           onClick={(e) => { e.preventDefault(); setOpen(false); scrollTo(0); }}
         >
           SS — 2026
         </a>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', visibility: open ? 'hidden' : 'visible' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', pointerEvents: 'auto', visibility: open ? 'hidden' : 'visible' }}>
           <button
             aria-label="Toggle theme"
             onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
@@ -61,7 +64,7 @@ export function Navbar() {
           background: color-mix(in srgb, var(--bg) 65%, transparent);
           backdrop-filter: blur(10px);
           border: 1px solid var(--line-strong); border-radius: 100px;
-          padding: 0.55rem 1.1rem; cursor: pointer; color: var(--fg);
+          min-height: 44px; padding: 0.55rem 1.2rem; cursor: pointer; color: var(--fg);
           transition: border-color .3s var(--ease-out), color .3s var(--ease-out);
         }
         .nav-pill:hover { border-color: var(--accent); color: var(--accent); }

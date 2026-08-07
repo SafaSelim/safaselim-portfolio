@@ -98,7 +98,7 @@ function readRamp(): [THREE.Color, THREE.Color, THREE.Color] {
   return [
     new THREE.Color(cs.getPropertyValue('--p1').trim() || '#ff7a34'),
     new THREE.Color(cs.getPropertyValue('--p2').trim() || '#ffb26b'),
-    new THREE.Color(cs.getPropertyValue('--p3').trim() || '#ffd9a8'),
+    new THREE.Color(cs.getPropertyValue('--p3').trim() || '#cfe0d8'),
   ];
 }
 
@@ -106,38 +106,84 @@ function isDarkTheme(): boolean {
   return document.documentElement.classList.contains('dark');
 }
 
-/** Viewport-independent glyph raster of "SAFA SELIM" — built once, reused across rebuilds. */
-let glyphCache: { pts: Array<[number, number]>; W: number; H: number } | null = null;
+/** Glyph raster of "SAFA SELIM" — cached per layout mode, reused across rebuilds. */
+type NameLayout = 'line' | 'stack';
+let glyphCache: {
+  pts: Array<[number, number]>;
+  W: number;
+  H: number;
+  layout: NameLayout;
+  minY: number;
+  maxY: number;
+} | null = null;
 function invalidateGlyphCache() {
   glyphCache = null;
 }
 
-/** Render "SAFA SELIM" to an offscreen canvas and sample it. */
+/**
+ * Render the name to an offscreen canvas and sample it.
+ * Landscape: one line. Portrait: "SAFA" / "SELIM" stacked — a single line at
+ * phone width shrinks the glyphs until they blob together.
+ */
 function sampleName(count: number, area: Area): TargetSet {
-  if (!glyphCache) {
-    const W = 900, H = 300;
+  const layout: NameLayout = area.h > area.w ? 'stack' : 'line';
+  if (!glyphCache || glyphCache.layout !== layout) {
+    // 1.5x raster over the original 900x300 / 600x520: a finer glyph grid
+    // (paired with the /64 sampling step) resolves the stems and counters
+    const W = layout === 'line' ? 1350 : 900;
+    const H = layout === 'line' ? 450 : 780;
     const c = document.createElement('canvas');
     c.width = W; c.height = H;
     const g = c.getContext('2d');
     if (!g) {
-      glyphCache = { pts: [], W, H };
+      glyphCache = { pts: [], W, H, layout, minY: 0, maxY: 0 };
     } else {
+      const family = getComputedStyle(document.body).getPropertyValue('--font-display-stack') || 'Arial Black';
+      const setFont = (size: number) => { g.font = `400 ${size}px ${family}`; };
       let size = 100;
-      g.font = `400 ${size}px ${getComputedStyle(document.body).getPropertyValue('--font-display-stack') || 'Arial Black'}`;
-      const ratio = g.measureText('SAFA SELIM').width / size;
-      size = Math.min((W * 0.94) / ratio, H * 0.7);
-      g.font = `400 ${size}px ${getComputedStyle(document.body).getPropertyValue('--font-display-stack') || 'Arial Black'}`;
+      setFont(size);
       g.textAlign = 'center';
       g.textBaseline = 'middle';
-      g.fillText('SAFA SELIM', W / 2, H / 2);
+      if (layout === 'line') {
+        const ratio = g.measureText('SAFA SELIM').width / size;
+        size = Math.min((W * 0.94) / ratio, H * 0.7);
+        setFont(size);
+        g.fillText('SAFA SELIM', W / 2, H / 2);
+      } else {
+        const ratio = g.measureText('SELIM').width / size; // wider word governs
+        size = Math.min((W * 0.9) / ratio, H * 0.3);
+        setFont(size);
+        g.fillText('SAFA', W / 2, H * 0.32);
+        g.fillText('SELIM', W / 2, H * 0.68);
+      }
       const grid = { width: W, height: H, data: g.getImageData(0, 0, W, H).data };
-      const step = Math.max(2, Math.round(size / 52));
-      glyphCache = { pts: textToPoints(grid, step), W, H };
+      const step = Math.max(2, Math.round(size / 64));
+      const pts = textToPoints(grid, step);
+      let minY = H, maxY = 0;
+      for (const p of pts) {
+        if (p[1] < minY) minY = p[1];
+        if (p[1] > maxY) maxY = p[1];
+      }
+      glyphCache = { pts, W, H, layout, minY, maxY };
     }
   }
   const t = nameTarget(glyphCache.pts, glyphCache.W, glyphCache.H, count, area);
-  // shift up so the name sits clear of the hero's HTML copy (lower third)
-  for (let i = 0; i < count; i++) t.positions[i * 3 + 1] += area.h * 0.16;
+  // Lift the name clear of the hero's HTML copy. A fixed fraction fails on
+  // short landscape viewports (the copy block rises past it), so measure the
+  // real .hero-copy top and place the glyph bottom above it, capped so the
+  // glyph top stays below the navbar.
+  let lift = area.h * (layout === 'stack' ? 0.2 : 0.16);
+  const hero = document.querySelector('.hero-copy');
+  if (glyphCache.pts.length && hero && window.innerHeight > 0) {
+    const scale = Math.min((area.w * 0.9) / glyphCache.W, (area.h * 0.55) / glyphCache.H);
+    const heroTopWorld = (0.5 - hero.getBoundingClientRect().top / window.innerHeight) * area.h;
+    const glyphBottomRel = -(glyphCache.maxY - glyphCache.H / 2) * scale;
+    const glyphTopRel = (glyphCache.H / 2 - glyphCache.minY) * scale;
+    const needed = heroTopWorld + area.h * 0.02 - glyphBottomRel;
+    const cap = area.h * 0.38 - glyphTopRel;
+    lift = Math.max(0, Math.min(needed, cap));
+  }
+  for (let i = 0; i < count; i++) t.positions[i * 3 + 1] += lift;
   return t;
 }
 
@@ -168,7 +214,7 @@ function Particles({ reduced }: { reduced: boolean }) {
   const vpH = useRef(6);
 
   const isMobile = size.width < 768 || window.matchMedia('(pointer: coarse)').matches;
-  const count = isMobile ? 5000 : 14000;
+  const count = isMobile ? 8000 : 18000;
 
   const seeds = useMemo(() => {
     const a = new Float32Array(count);
@@ -183,7 +229,7 @@ function Particles({ reduced }: { reduced: boolean }) {
   }, [count]);
 
   const uniforms = useMemo(() => {
-    const [c1, c2, c3] = [new THREE.Color('#ff7a34'), new THREE.Color('#ffb26b'), new THREE.Color('#ffd9a8')];
+    const [c1, c2, c3] = [new THREE.Color('#ff7a34'), new THREE.Color('#ffb26b'), new THREE.Color('#cfe0d8')];
     return {
       uMix: { value: 1 },
       uTime: { value: 0 },
@@ -291,7 +337,9 @@ function Particles({ reduced }: { reduced: boolean }) {
         mat.current.blending = isDarkTheme() ? THREE.AdditiveBlending : THREE.NormalBlending;
         mat.current.needsUpdate = true;
       }
-      uniforms.uOpacity.value = isDarkTheme() ? 0.9 : 0.8;
+      // light needs more opacity: normal blending dilutes the ramp toward the
+      // cream bg through the point alpha falloff, washing the glyphs out
+      uniforms.uOpacity.value = isDarkTheme() ? 0.9 : 0.95;
     };
     applyTheme();
     const mo = new MutationObserver(applyTheme);
@@ -384,6 +432,11 @@ function Particles({ reduced }: { reduced: boolean }) {
     if (fillPending.current) fillCurrent();
     if (!reduced) uniforms.uTime.value += Math.min(delta, 0.05);
     (uniforms.uMouse.value as THREE.Vector2).lerp(mouse.current, 0.08);
+    // point size tracks viewport width: fixed-size points over a wider glyph
+    // area read sparse and dim on large screens
+    uniforms.uSize.value = isMobile
+      ? 30
+      : 26 * Math.min(Math.max(state.size.width / 1440, 1), 1.5);
   });
 
   // Stable array identities: fresh arrays per render (e.g. via .slice()) would

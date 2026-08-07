@@ -11,15 +11,24 @@
   --bg-elev: #f2eee6;
   --fg: #16130e;
   --fg-soft: #4a443a;
-  --fg-muted: #6f6759;
+  --fg-muted: #6a6254;
   --accent: #e8480c;
+  /* accent dark enough for SMALL text on --bg (WCAG AA 4.5:1); --accent
+     stays for large display glyphs, particles, and non-text graphics */
+  --accent-text: #bc3605;
   --accent-soft: rgba(232, 72, 12, 0.1);
   --on-accent: #f5f5f2;
+  /* Ember & Slate: ember = act, slate = annotate. --secondary carries labels
+     and annotations; --secondary-inverse is for the inverted (ink) strip. */
+  --secondary: #1f5f56;
+  --secondary-soft: rgba(31, 95, 86, 0.1);
+  --secondary-inverse: #8fb8ac;
   --line: rgba(22, 19, 14, 0.12);
   --line-strong: rgba(22, 19, 14, 0.26);
   --p1: #e8480c;
   --p2: #b45309;
-  --p3: #78350f;
+  --p3: #1f5f56;
+  --shadow-lift: 0 24px 60px -24px rgba(0, 0, 0, 0.35);
   --grain-opacity: 0.04;
 
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
@@ -36,13 +45,18 @@
   --fg-soft: #c9c9c2;
   --fg-muted: #8a8a82;
   --accent: #ff7a34;
+  --accent-text: #ff7a34; /* 7.75:1 on dark bg — already AA for small text */
   --accent-soft: rgba(255, 122, 52, 0.13);
   --on-accent: #070709;
+  --secondary: #8fb8ac;
+  --secondary-soft: rgba(143, 184, 172, 0.12);
+  --secondary-inverse: #1f5f56;
   --line: rgba(245, 245, 242, 0.1);
   --line-strong: rgba(245, 245, 242, 0.22);
   --p1: #ff7a34;
   --p2: #ffb26b;
-  --p3: #ffd9a8;
+  --p3: #cfe0d8;
+  --shadow-lift: 0 24px 60px -24px rgba(0, 0, 0, 0.6);
   --grain-opacity: 0.055;
 }
 
@@ -89,13 +103,18 @@ body {
 }
 
 ::selection {
-  background: var(--accent);
+  background: var(--accent-text);
   color: var(--bg);
 }
 
 a {
   color: inherit;
   text-decoration: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 3px;
 }
 
 img,
@@ -130,7 +149,7 @@ canvas {
   font-weight: 500;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--secondary);
 }
 
 .eyebrow {
@@ -139,7 +158,18 @@ canvas {
   font-weight: 500;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--secondary);
+}
+
+/* The middle voice between display and body: sans, heavier, slightly larger.
+   Mono is reserved for true labels (eyebrow, section index, .mono-label,
+   .tag, marquee, the contact address). */
+.subhead {
+  font-family: var(--font-sans-stack);
+  font-size: 1.3rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--fg);
 }
 
 .mono-label {
@@ -235,7 +265,7 @@ html:not(.reduced) .js-ready .will-reveal {
 }
 
 .btn-primary {
-  background: var(--accent);
+  background: var(--accent-text);
   color: var(--on-accent);
 }
 .btn-primary::after {
@@ -263,14 +293,14 @@ html:not(.reduced) .js-ready .will-reveal {
   content: '';
   position: absolute;
   inset: 0;
-  background: var(--accent);
+  background: var(--accent-text);
   transform: translateY(101%);
   transition: transform 0.5s var(--ease-out);
   z-index: -1;
 }
 .btn-ghost:hover {
   color: var(--on-accent);
-  border-color: var(--accent);
+  border-color: var(--accent-text);
 }
 .btn-ghost:hover::after {
   transform: translateY(0);
@@ -295,7 +325,7 @@ html:not(.reduced) .js-ready .will-reveal {
 }
 .tag:hover {
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 /* ============================================================
@@ -370,15 +400,24 @@ html:not(.reduced) .js-ready .will-reveal {
    Reduced motion
    ============================================================ */
 
+/* Scoped, not a blanket kill: decorative animation and structural motion
+   stop; short color/opacity feedback (hovers, theme fade, "Copied") stays.
+   GSAP-driven motion is guarded separately via prefersReducedMotion(). */
 @media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
+  html {
     scroll-behavior: auto !important;
   }
   .grain {
     animation: none;
+  }
+  .marquee__track {
+    will-change: auto;
+  }
+  .btn::after,
+  .xp-detail,
+  .proj-toggle,
+  .proj-detail {
+    transition-duration: 0.001ms !important;
   }
   .will-reveal {
     opacity: 1 !important;

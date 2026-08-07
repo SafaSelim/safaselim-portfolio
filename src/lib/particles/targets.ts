@@ -60,11 +60,13 @@ export function nameTarget(
   for (let i = 0; i < count; i++) {
     const idx = Math.floor((i / count) * pts.length);
     const [px, py] = pts[Math.min(idx, pts.length - 1)];
-    const jx = (rand(i) - 0.5) * scale * 1.2;
-    const jy = (rand(i + 5e4) - 0.5) * scale * 1.2;
+    // tight jitter + shallow z keep the letterforms crisp; wider spreads
+    // blur the counters of S/A/E at small glyph sizes
+    const jx = (rand(i) - 0.5) * scale * 0.7;
+    const jy = (rand(i + 5e4) - 0.5) * scale * 0.7;
     t.positions[i * 3] = (px - gridW / 2) * scale + jx;
     t.positions[i * 3 + 1] = -(py - gridH / 2) * scale + jy;
-    t.positions[i * 3 + 2] = (rand(i + 2e5) - 0.5) * 0.3;
+    t.positions[i * 3 + 2] = (rand(i + 2e5) - 0.5) * 0.15;
     const o = i / count; // pts are x-sorted, so index order == write order
     t.order[i] = o;
     t.ramp[i] = o;
@@ -72,13 +74,20 @@ export function nameTarget(
   return t;
 }
 
-/** Sinuous vertical ribbon along the right edge. Ramp/order = top→bottom progress. */
+/**
+ * Sinuous vertical ribbon along the right edge. Ramp/order = top→bottom progress.
+ * Portrait viewports straddle the screen edge (half the band off-canvas) so the
+ * full-width text column stays legible; landscape floats just inside it.
+ */
 export function sideThreadTarget(count: number, area: Area): TargetSet {
   const t = makeSet(count);
-  const x0 = area.w * 0.42;
+  const portrait = area.h > area.w;
+  const x0 = area.w * (portrait ? 0.505 : 0.42);
+  const amp = area.w * (portrait ? 0.016 : 0.025);
+  const jit = area.w * (portrait ? 0.008 : 0.014);
   for (let i = 0; i < count; i++) {
     const u = i / count;
-    t.positions[i * 3] = x0 + Math.sin(u * 9 + rand(i) * 0.9) * area.w * 0.025 + (rand(i + 4e4) - 0.5) * area.w * 0.014;
+    t.positions[i * 3] = x0 + Math.sin(u * 9 + rand(i) * 0.9) * amp + (rand(i + 4e4) - 0.5) * jit;
     t.positions[i * 3 + 1] = (0.5 - u) * area.h * 1.04;
     t.positions[i * 3 + 2] = (rand(i + 7e4) - 0.5) * 0.4;
     t.ramp[i] = u;
@@ -87,10 +96,17 @@ export function sideThreadTarget(count: number, area: Area): TargetSet {
   return t;
 }
 
-/** Circle band. Ramp = vertical position around the ring. */
+/**
+ * Circle band. Ramp = vertical position around the ring.
+ * Portrait viewports scale the ring past the screen sides so its arcs frame the
+ * centered contact copy from above and below instead of crossing through it.
+ * Landscape uses 0.41 of the short axis for the same reason — at 0.32 the ring
+ * ran straight through "Let's talk".
+ */
 export function ringTarget(count: number, area: Area): TargetSet {
   const t = makeSet(count);
-  const R = Math.min(area.w, area.h) * 0.32;
+  const portrait = area.h > area.w;
+  const R = portrait ? Math.max(area.w, area.h) * 0.4 : Math.min(area.w, area.h) * 0.41;
   for (let i = 0; i < count; i++) {
     const ang = (i / count) * Math.PI * 2;
     const r = R * (1 + (rand(i) - 0.5) * 0.12);

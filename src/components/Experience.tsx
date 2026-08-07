@@ -144,7 +144,8 @@ export function Experience() {
                 <span className="mono-label xp-period">{exp.period}</span>
               </div>
               <div className="xp-detail">
-                <p style={{ color: 'var(--fg-soft)', fontWeight: 500 }}>{exp.role}</p>
+                <div className="xp-detail__inner">
+                <p className="subhead">{exp.role}</p>
                 <p style={{ color: 'var(--fg-muted)', marginTop: '0.7rem', maxWidth: '60ch', lineHeight: 1.7 }}>
                   {exp.description}
                 </p>
@@ -153,6 +154,7 @@ export function Experience() {
                 </ul>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginTop: '1.1rem' }}>
                   {exp.tech.map((t) => <span key={t} className="tag">{t}</span>)}
+                </div>
                 </div>
               </div>
             </article>
@@ -179,23 +181,35 @@ export function Experience() {
         }
         .xp-proj {
           font-family: var(--font-mono-stack); font-size: clamp(0.75rem, 1.4vw, 0.95rem);
-          letter-spacing: 0.06em; text-transform: none; color: var(--accent);
+          letter-spacing: 0.06em; text-transform: none; color: var(--accent-text);
           display: inline-flex; align-items: center; gap: 0.2rem;
+          padding: 0.9rem 0.5rem; margin: -0.9rem -0.5rem;
         }
+        /* keep the right-aligned period clear of the particle ribbon band */
+        @media (min-width: 900px) {
+          .xp-period { margin-right: clamp(0px, 10vw, 140px); }
+        }
+        /* grid-rows collapse animates on the compositor-friendly track size
+           instead of max-height/margin (layout thrash) */
         .xp-detail {
-          overflow: hidden; margin-top: 1.4rem;
-          transition: max-height 0.7s var(--ease-out), opacity 0.6s var(--ease-out), margin-top 0.5s var(--ease-out);
+          display: grid; grid-template-rows: 1fr;
         }
-        body.js-ready .xp-row:not(.is-active) .xp-detail { max-height: 0; opacity: 0; margin-top: 0; }
-        body.js-ready .xp-row.is-active .xp-detail { max-height: 800px; }
+        /* transitions only after the initial js-ready collapse has committed
+           (js-anim), so boot ScrollTrigger measurements see final layout */
+        body.js-anim .xp-detail {
+          transition: grid-template-rows 0.7s var(--ease-out), opacity 0.6s var(--ease-out);
+        }
+        .xp-detail__inner { overflow: hidden; min-height: 0; }
+        .xp-detail__inner > :first-child { margin-top: 1.4rem; }
+        body.js-ready .xp-row:not(.is-active) .xp-detail { grid-template-rows: 0fr; opacity: 0; }
         .xp-impact { list-style: none; margin-top: 1rem; display: grid; gap: 0.5rem; max-width: 62ch; }
         .xp-impact li {
           position: relative; padding-left: 1.3rem; color: var(--fg-soft);
-          font-size: 0.92rem; line-height: 1.55;
+          font-size: 0.95rem; line-height: 1.55;
         }
         .xp-impact li::before {
           content: '✦'; position: absolute; left: 0; top: 0;
-          color: var(--accent); font-size: 0.65rem; line-height: 1.7;
+          color: var(--secondary); font-size: 0.65rem; line-height: 1.7;
         }
       `}</style>
     </section>

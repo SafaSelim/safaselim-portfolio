@@ -76,6 +76,13 @@ export function Projects() {
   const sectionRef = useRef<HTMLElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
   const [preview, setPreview] = useState<string[] | null>(null);
+  // Disclosure is open when the pointer is over the card OR the card was
+  // toggled open explicitly. Tracking hover in state (rather than a CSS
+  // :hover rule) is what lets aria-expanded stay truthful for both paths.
+  const [hovered, setHovered] = useState<string | null>(null);
+  const [pinned, setPinned] = useState<string[]>([]);
+  const togglePinned = (index: string) =>
+    setPinned((p) => (p.includes(index) ? p.filter((i) => i !== index) : [...p, index]));
 
   useEffect(() => {
     registerGsap();
@@ -145,15 +152,31 @@ export function Projects() {
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {projects.map((p) => (
+          {projects.map((p) => {
+            const open = pinned.includes(p.index) || hovered === p.index;
+            const detailId = `proj-detail-${p.index}`;
+            return (
             <article
               key={p.index}
-              className="proj-card"
-              onMouseEnter={() => setPreview(p.impact)}
-              onMouseLeave={() => setPreview(null)}
+              className={`proj-card${open ? ' is-open' : ''}`}
+              onMouseEnter={() => { setPreview(p.impact); setHovered(p.index); }}
+              onMouseLeave={() => { setPreview(null); setHovered((h) => (h === p.index ? null : h)); }}
             >
               <div className="proj-top">
-                <span className="proj-index mono-label">{p.index}</span>
+                <div className="proj-idx-col">
+                  <span className="proj-index mono-label">{p.index}</span>
+                  {/* sibling of the name link, never its parent */}
+                  <button
+                    type="button"
+                    className="proj-toggle"
+                    aria-expanded={open}
+                    aria-controls={detailId}
+                    aria-label={`${open ? 'Hide' : 'Show'} details for ${p.name}`}
+                    onClick={() => togglePinned(p.index)}
+                  >
+                    <span aria-hidden>+</span>
+                  </button>
+                </div>
                 <div className="proj-headline">
                   <h3 className="proj-name display-lg">
                     {p.url ? (
@@ -169,7 +192,8 @@ export function Projects() {
                 </div>
               </div>
 
-              <div className="proj-detail">
+              <div className="proj-detail" id={detailId}>
+                <div className="proj-detail__inner">
                 <p className="proj-desc">{p.description}</p>
                 <ul className="proj-highlights">
                   {p.highlights.map((h) => (
@@ -190,9 +214,11 @@ export function Projects() {
                     </span>
                   ))}
                 </div>
+                </div>
               </div>
             </article>
-          ))}
+            );
+          })}
         </div>
       </div>
 
@@ -212,11 +238,11 @@ export function Projects() {
           borderRadius: '10px',
           padding: '0.9rem 1.1rem',
           maxWidth: '240px',
-          boxShadow: '0 24px 60px -24px rgba(0,0,0,0.5)',
+          boxShadow: 'var(--shadow-lift)',
         }}
       >
         {preview?.map((it) => (
-          <div key={it} className="mono-label" style={{ color: 'var(--accent)', marginBottom: '0.3rem' }}>
+          <div key={it} className="mono-label" style={{ color: 'var(--secondary)', marginBottom: '0.3rem' }}>
             {it}
           </div>
         ))}
@@ -231,47 +257,66 @@ export function Projects() {
         .proj-top {
           display: grid; grid-template-columns: 60px 1fr; gap: 1.5rem; align-items: baseline;
         }
+        .proj-idx-col {
+          display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;
+        }
         .proj-index { padding-top: 0.6rem; }
+        .proj-toggle {
+          display: inline-flex; align-items: center; justify-content: center;
+          width: 44px; height: 44px; margin-left: -0.7rem;
+          background: none; border: 1px solid var(--line-strong); border-radius: 50%;
+          color: var(--secondary); font-size: 1.1rem; line-height: 1; cursor: pointer;
+          transition: color 0.3s var(--ease-out), border-color 0.3s var(--ease-out),
+            transform 0.35s var(--ease-out);
+        }
+        .proj-toggle:hover { color: var(--accent-text); border-color: var(--accent); }
+        .proj-card.is-open .proj-toggle { transform: rotate(45deg); }
         .proj-name {
           font-size: clamp(1.9rem, 5.5vw, 4rem);
         }
-        .proj-name a { display: inline-flex; align-items: center; gap: 0.4rem; transition: color 0.3s ease; }
+        .proj-name a { display: inline-flex; align-items: center; gap: 0.4rem; transition: color 0.3s ease; padding: 0.5rem 0; margin: -0.5rem 0; }
         .proj-name a:hover { color: var(--accent); }
         .proj-arrow { opacity: 0; transform: translate(-8px, 8px); transition: all 0.35s var(--ease-out); }
         .proj-name a:hover .proj-arrow { opacity: 1; transform: translate(0, 0); }
-        .proj-tagline { color: var(--fg-muted); font-family: var(--font-mono-stack); font-size: 0.8rem; margin-top: 0.7rem; letter-spacing: 0.02em; }
+        .proj-tagline { color: var(--fg-soft); font-size: 1.05rem; margin-top: 0.7rem; }
+        /* grid-rows collapse animates on the compositor-friendly track size
+           instead of max-height/margin (layout thrash) */
         .proj-detail {
-          display: grid; grid-template-columns: 60px 1fr; gap: 1.5rem;
-          max-height: 0; opacity: 0; overflow: hidden;
-          transition: max-height 0.6s var(--ease-out), opacity 0.5s var(--ease-out), margin-top 0.5s var(--ease-out);
           grid-column: 1 / -1;
+          display: grid; grid-template-rows: 0fr; opacity: 0;
+          transition: grid-template-rows 0.6s var(--ease-out), opacity 0.5s var(--ease-out);
         }
-        .proj-detail > * { grid-column: 2; }
-        .proj-card:hover .proj-detail,
-        .proj-card:focus-within .proj-detail {
-          max-height: 900px; opacity: 1; margin-top: 1.6rem;
+        .proj-detail__inner {
+          overflow: hidden; min-height: 0;
+          display: grid; grid-template-columns: 60px 1fr; gap: 1.5rem;
         }
+        .proj-detail__inner > * { grid-column: 2; }
+        .proj-detail__inner > :first-child { margin-top: 1.6rem; }
+        .proj-card.is-open .proj-detail { grid-template-rows: 1fr; opacity: 1; }
         .proj-desc { color: var(--fg-soft); max-width: 70ch; line-height: 1.7; }
         .proj-highlights { list-style: none; margin-top: 1.4rem; display: grid; gap: 0.55rem; max-width: 70ch; }
         .proj-highlights li {
           position: relative; padding-left: 1.4rem; color: var(--fg-muted);
-          font-size: 0.92rem; line-height: 1.6;
+          font-size: 0.95rem; line-height: 1.6;
         }
         .proj-highlights li::before {
-          content: '✦'; position: absolute; left: 0; top: 0; color: var(--accent);
+          content: '✦'; position: absolute; left: 0; top: 0; color: var(--secondary);
           font-size: 0.7rem; line-height: 1.7;
         }
         .proj-impact { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.6rem; }
         .proj-impact__item {
-          font-family: var(--font-mono-stack); font-size: 0.74rem; color: var(--accent);
-          padding: 0.35rem 0.7rem; border-radius: 100px; background: var(--accent-soft);
+          font-family: var(--font-mono-stack); font-size: 0.74rem; color: var(--secondary);
+          padding: 0.35rem 0.7rem; border-radius: 100px; background: var(--secondary-soft);
         }
+        /* touch: everything is already expanded, so the control would be a
+           lie — hide it rather than report a state it doesn't drive */
         @media (hover: none) {
-          .proj-detail { max-height: 800px; opacity: 1; margin-top: 1.6rem; }
+          .proj-detail { grid-template-rows: 1fr; opacity: 1; }
+          .proj-toggle { display: none; }
         }
         @media (max-width: 760px) {
-          .proj-top, .proj-detail { grid-template-columns: 1fr; gap: 0.6rem; }
-          .proj-detail > * { grid-column: 1; }
+          .proj-top, .proj-detail__inner { grid-template-columns: 1fr; gap: 0.6rem; }
+          .proj-detail__inner > * { grid-column: 1; }
           .proj-index { padding-top: 0; }
         }
       `}</style>

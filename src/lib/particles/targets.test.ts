@@ -84,7 +84,7 @@ describe('geometry targets', () => {
 
   it('ring points lie on an annulus in xy', () => {
     const t = ringTarget(N, AREA);
-    const R = Math.min(AREA.w, AREA.h) * 0.32;
+    const R = Math.min(AREA.w, AREA.h) * 0.41;
     for (let i = 0; i < N; i++) {
       const r = Math.hypot(t.positions[i * 3], t.positions[i * 3 + 1]);
       expect(r).toBeGreaterThan(R * 0.8);
@@ -96,6 +96,48 @@ describe('geometry targets', () => {
     const a = sideThreadTarget(N, AREA).positions;
     const b = sideThreadTarget(N, AREA).positions;
     expect(Array.from(a)).toEqual(Array.from(b));
+  });
+});
+
+describe('portrait viewports (content clearance)', () => {
+  const PORTRAIT = { w: 7, h: 12 };
+
+  it('sideThread straddles the right edge so the text column stays clear', () => {
+    const t = sideThreadTarget(N, PORTRAIT);
+    for (let i = 0; i < N; i++) {
+      // inner edge of the band must stay right of ~48% of width
+      // (content column ends around 45% on narrow screens)
+      expect(t.positions[i * 3]).toBeGreaterThan(PORTRAIT.w * 0.47);
+    }
+  });
+
+  it('ring frames the content instead of crossing it', () => {
+    const t = ringTarget(N, PORTRAIT);
+    const R = Math.max(PORTRAIT.w, PORTRAIT.h) * 0.4;
+    for (let i = 0; i < N; i++) {
+      const x = t.positions[i * 3];
+      const y = t.positions[i * 3 + 1];
+      // annulus radius scales with the LONG axis in portrait
+      expect(Math.hypot(x, y)).toBeGreaterThan(R * 0.8);
+      // any point over the central text column must sit above/below the copy band
+      if (Math.abs(x) <= PORTRAIT.w * 0.35) {
+        expect(Math.abs(y)).toBeGreaterThan(PORTRAIT.h * 0.28);
+      }
+    }
+  });
+
+  it('landscape ring clears the centered contact copy', () => {
+    const t = ringTarget(N, AREA);
+    const R = Math.min(AREA.w, AREA.h) * 0.41;
+    for (let i = 0; i < N; i++) {
+      const x = t.positions[i * 3];
+      const y = t.positions[i * 3 + 1];
+      expect(Math.hypot(x, y)).toBeGreaterThan(R * 0.8);
+      expect(Math.hypot(x, y)).toBeLessThan(R * 1.2);
+    }
+    // the arcs must reach past the contact copy vertically to frame it
+    const maxY = Math.max(...Array.from({ length: N }, (_, i) => Math.abs(t.positions[i * 3 + 1])));
+    expect(maxY).toBeGreaterThan(AREA.h * 0.38);
   });
 });
 
@@ -122,9 +164,9 @@ describe('nameTarget', () => {
     const t = nameTarget(pts, 10, 10, N, AREA);
     // scale as computed internally by nameTarget for this gridW/gridH/area
     const scale = Math.min((AREA.w * 0.9) / 10, (AREA.h * 0.55) / 10);
-    // jitter is (rand - 0.5) * scale * 1.2, i.e. up to ±0.6*scale per point;
+    // jitter is (rand - 0.5) * scale * 0.7, i.e. up to ±0.35*scale per point;
     // allow the combined swing between two adjacent samples
-    const jitterTolerance = scale * 1.2;
+    const jitterTolerance = scale * 0.7;
     for (let i = 0; i < N - 1; i++) {
       const xi = t.positions[i * 3];
       const xNext = t.positions[(i + 1) * 3];
