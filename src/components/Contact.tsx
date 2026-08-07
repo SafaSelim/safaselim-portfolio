@@ -92,7 +92,7 @@ export function Contact() {
         >
           {details.map((d) => (
             <div key={d.label} style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
-              <d.icon size={14} style={{ color: 'var(--accent)' }} />
+              <d.icon size={14} style={{ color: 'var(--secondary)' }} />
               {d.href ? (
                 <a href={d.href} className="mono-label" style={{ color: 'var(--fg-soft)', padding: '0.85rem 0.3rem', margin: '-0.85rem -0.3rem' }}>{d.value}</a>
               ) : (
@@ -100,8 +100,8 @@ export function Contact() {
               )}
             </div>
           ))}
-          <a href="https://github.com/SafaSelim" target="_blank" rel="noopener noreferrer" className="mono-label contact-social" style={{ padding: '0.85rem 0.3rem', margin: '-0.85rem -0.3rem' }}><Github size={14} style={{ color: 'var(--accent)' }} />GitHub</a>
-          <a href="https://linkedin.com/in/safaselim" target="_blank" rel="noopener noreferrer" className="mono-label contact-social" style={{ padding: '0.85rem 0.3rem', margin: '-0.85rem -0.3rem' }}><Linkedin size={14} style={{ color: 'var(--accent)' }} />LinkedIn</a>
+          <a href="https://github.com/SafaSelim" target="_blank" rel="noopener noreferrer" className="mono-label contact-social" style={{ padding: '0.85rem 0.3rem', margin: '-0.85rem -0.3rem' }}><Github size={14} style={{ color: 'var(--secondary)' }} />GitHub</a>
+          <a href="https://linkedin.com/in/safaselim" target="_blank" rel="noopener noreferrer" className="mono-label contact-social" style={{ padding: '0.85rem 0.3rem', margin: '-0.85rem -0.3rem' }}><Linkedin size={14} style={{ color: 'var(--secondary)' }} />LinkedIn</a>
         </div>
       </div>
       <style>{`

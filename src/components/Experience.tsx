@@ -209,7 +209,7 @@ export function Experience() {
         }
         .xp-impact li::before {
           content: '✦'; position: absolute; left: 0; top: 0;
-          color: var(--accent); font-size: 0.65rem; line-height: 1.7;
+          color: var(--secondary); font-size: 0.65rem; line-height: 1.7;
         }
       `}</style>
     </section>

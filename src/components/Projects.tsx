@@ -218,7 +218,7 @@ export function Projects() {
         }}
       >
         {preview?.map((it) => (
-          <div key={it} className="mono-label" style={{ color: 'var(--accent-text)', marginBottom: '0.3rem' }}>
+          <div key={it} className="mono-label" style={{ color: 'var(--secondary)', marginBottom: '0.3rem' }}>
             {it}
           </div>
         ))}
@@ -266,13 +266,13 @@ export function Projects() {
           font-size: 0.92rem; line-height: 1.6;
         }
         .proj-highlights li::before {
-          content: '✦'; position: absolute; left: 0; top: 0; color: var(--accent);
+          content: '✦'; position: absolute; left: 0; top: 0; color: var(--secondary);
           font-size: 0.7rem; line-height: 1.7;
         }
         .proj-impact { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.6rem; }
         .proj-impact__item {
-          font-family: var(--font-mono-stack); font-size: 0.74rem; color: var(--accent-text);
-          padding: 0.35rem 0.7rem; border-radius: 100px; background: var(--accent-soft);
+          font-family: var(--font-mono-stack); font-size: 0.74rem; color: var(--secondary);
+          padding: 0.35rem 0.7rem; border-radius: 100px; background: var(--secondary-soft);
         }
         @media (hover: none) {
           .proj-detail { grid-template-rows: 1fr; opacity: 1; }

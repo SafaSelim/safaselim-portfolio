@@ -98,7 +98,7 @@ function readRamp(): [THREE.Color, THREE.Color, THREE.Color] {
   return [
     new THREE.Color(cs.getPropertyValue('--p1').trim() || '#ff7a34'),
     new THREE.Color(cs.getPropertyValue('--p2').trim() || '#ffb26b'),
-    new THREE.Color(cs.getPropertyValue('--p3').trim() || '#ffd9a8'),
+    new THREE.Color(cs.getPropertyValue('--p3').trim() || '#cfe0d8'),
   ];
 }
 
@@ -227,7 +227,7 @@ function Particles({ reduced }: { reduced: boolean }) {
   }, [count]);
 
   const uniforms = useMemo(() => {
-    const [c1, c2, c3] = [new THREE.Color('#ff7a34'), new THREE.Color('#ffb26b'), new THREE.Color('#ffd9a8')];
+    const [c1, c2, c3] = [new THREE.Color('#ff7a34'), new THREE.Color('#ffb26b'), new THREE.Color('#cfe0d8')];
     return {
       uMix: { value: 1 },
       uTime: { value: 0 },

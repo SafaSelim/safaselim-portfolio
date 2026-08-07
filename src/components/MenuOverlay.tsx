@@ -117,7 +117,7 @@ export function MenuOverlay({ open, onClose }: { open: boolean; onClose: () => v
               onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--accent)'; }}
               onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--fg)'; }}
             >
-              <span className="mono-label" style={{ color: 'var(--accent-text)' }}>{l.index}</span>
+              <span className="mono-label" style={{ color: 'var(--secondary)' }}>{l.index}</span>
               {l.label}
             </a>
           </div>

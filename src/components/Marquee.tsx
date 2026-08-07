@@ -34,7 +34,8 @@ function MarqueeGroup() {
           }}
         >
           {it}
-          <span style={{ color: 'var(--accent)', fontSize: '0.7em' }}>✦</span>
+          {/* strip is inverted (fg bg), so the star needs the inverse slate */}
+          <span style={{ color: 'var(--secondary-inverse)', fontSize: '0.7em' }}>✦</span>
         </span>
       ))}
     </div>
