@@ -25,17 +25,20 @@ export function Navbar() {
           position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           padding: '1.1rem clamp(1.25rem, 5vw, 4rem)',
+          // the bar spans the full width above the menu overlay (z 90) — without
+          // this it swallows clicks aimed at the overlay's Close button
+          pointerEvents: 'none',
         }}
       >
         <a
           href="#top"
           className="mono-label nav-pill"
-          style={{ fontWeight: 600 }}
+          style={{ fontWeight: 600, pointerEvents: 'auto' }}
           onClick={(e) => { e.preventDefault(); setOpen(false); scrollTo(0); }}
         >
           SS — 2026
         </a>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', visibility: open ? 'hidden' : 'visible' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', pointerEvents: 'auto', visibility: open ? 'hidden' : 'visible' }}>
           <button
             aria-label="Toggle theme"
             onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
