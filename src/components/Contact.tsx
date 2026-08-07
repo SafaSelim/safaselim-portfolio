@@ -41,9 +41,10 @@ export function Contact() {
     return () => window.clearTimeout(copyTimeout.current);
   }, []);
 
-  const copyEmail = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (!navigator.clipboard) return; // fall through to mailto
-    e.preventDefault();
+  // The click always opens mailto natively; copying rides along as a bonus,
+  // so a denied/absent clipboard leaves no dead action.
+  const copyEmail = () => {
+    if (!navigator.clipboard) return;
     navigator.clipboard.writeText('safaselim.ss@gmail.com').then(() => {
       window.clearTimeout(copyTimeout.current);
       setCopied(true);

@@ -100,11 +100,13 @@ export function sideThreadTarget(count: number, area: Area): TargetSet {
  * Circle band. Ramp = vertical position around the ring.
  * Portrait viewports scale the ring past the screen sides so its arcs frame the
  * centered contact copy from above and below instead of crossing through it.
+ * Landscape uses 0.41 of the short axis for the same reason — at 0.32 the ring
+ * ran straight through "Let's talk".
  */
 export function ringTarget(count: number, area: Area): TargetSet {
   const t = makeSet(count);
   const portrait = area.h > area.w;
-  const R = portrait ? Math.max(area.w, area.h) * 0.4 : Math.min(area.w, area.h) * 0.32;
+  const R = portrait ? Math.max(area.w, area.h) * 0.4 : Math.min(area.w, area.h) * 0.41;
   for (let i = 0; i < count; i++) {
     const ang = (i / count) * Math.PI * 2;
     const r = R * (1 + (rand(i) - 0.5) * 0.12);

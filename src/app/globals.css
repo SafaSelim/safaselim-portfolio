@@ -415,6 +415,7 @@ html:not(.reduced) .js-ready .will-reveal {
   }
   .btn::after,
   .xp-detail,
+  .proj-toggle,
   .proj-detail {
     transition-duration: 0.001ms !important;
   }

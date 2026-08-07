@@ -4,11 +4,12 @@ import { useEffect, useRef } from 'react';
 import { gsap, prefersReducedMotion } from '@/lib/motion';
 import { useLenis } from '@/components/SmoothScrollProvider';
 
+// numbering matches the page order and the section indexes on the page
 const LINKS = [
-  { label: 'Work', href: '#work', index: '01' },
+  { label: 'About', href: '#about', index: '01' },
   { label: 'Experience', href: '#experience', index: '02' },
   { label: 'Skills', href: '#skills', index: '03' },
-  { label: 'About', href: '#about', index: '04' },
+  { label: 'Work', href: '#work', index: '04' },
   { label: 'Contact', href: '#contact', index: '05' },
 ];
 

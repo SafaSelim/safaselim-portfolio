@@ -76,6 +76,13 @@ export function Projects() {
   const sectionRef = useRef<HTMLElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
   const [preview, setPreview] = useState<string[] | null>(null);
+  // Disclosure is open when the pointer is over the card OR the card was
+  // toggled open explicitly. Tracking hover in state (rather than a CSS
+  // :hover rule) is what lets aria-expanded stay truthful for both paths.
+  const [hovered, setHovered] = useState<string | null>(null);
+  const [pinned, setPinned] = useState<string[]>([]);
+  const togglePinned = (index: string) =>
+    setPinned((p) => (p.includes(index) ? p.filter((i) => i !== index) : [...p, index]));
 
   useEffect(() => {
     registerGsap();
@@ -145,15 +152,31 @@ export function Projects() {
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {projects.map((p) => (
+          {projects.map((p) => {
+            const open = pinned.includes(p.index) || hovered === p.index;
+            const detailId = `proj-detail-${p.index}`;
+            return (
             <article
               key={p.index}
-              className="proj-card"
-              onMouseEnter={() => setPreview(p.impact)}
-              onMouseLeave={() => setPreview(null)}
+              className={`proj-card${open ? ' is-open' : ''}`}
+              onMouseEnter={() => { setPreview(p.impact); setHovered(p.index); }}
+              onMouseLeave={() => { setPreview(null); setHovered((h) => (h === p.index ? null : h)); }}
             >
               <div className="proj-top">
-                <span className="proj-index mono-label">{p.index}</span>
+                <div className="proj-idx-col">
+                  <span className="proj-index mono-label">{p.index}</span>
+                  {/* sibling of the name link, never its parent */}
+                  <button
+                    type="button"
+                    className="proj-toggle"
+                    aria-expanded={open}
+                    aria-controls={detailId}
+                    aria-label={`${open ? 'Hide' : 'Show'} details for ${p.name}`}
+                    onClick={() => togglePinned(p.index)}
+                  >
+                    <span aria-hidden>+</span>
+                  </button>
+                </div>
                 <div className="proj-headline">
                   <h3 className="proj-name display-lg">
                     {p.url ? (
@@ -169,7 +192,7 @@ export function Projects() {
                 </div>
               </div>
 
-              <div className="proj-detail">
+              <div className="proj-detail" id={detailId}>
                 <div className="proj-detail__inner">
                 <p className="proj-desc">{p.description}</p>
                 <ul className="proj-highlights">
@@ -194,7 +217,8 @@ export function Projects() {
                 </div>
               </div>
             </article>
-          ))}
+            );
+          })}
         </div>
       </div>
 
@@ -233,7 +257,20 @@ export function Projects() {
         .proj-top {
           display: grid; grid-template-columns: 60px 1fr; gap: 1.5rem; align-items: baseline;
         }
+        .proj-idx-col {
+          display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;
+        }
         .proj-index { padding-top: 0.6rem; }
+        .proj-toggle {
+          display: inline-flex; align-items: center; justify-content: center;
+          width: 44px; height: 44px; margin-left: -0.7rem;
+          background: none; border: 1px solid var(--line-strong); border-radius: 50%;
+          color: var(--secondary); font-size: 1.1rem; line-height: 1; cursor: pointer;
+          transition: color 0.3s var(--ease-out), border-color 0.3s var(--ease-out),
+            transform 0.35s var(--ease-out);
+        }
+        .proj-toggle:hover { color: var(--accent-text); border-color: var(--accent); }
+        .proj-card.is-open .proj-toggle { transform: rotate(45deg); }
         .proj-name {
           font-size: clamp(1.9rem, 5.5vw, 4rem);
         }
@@ -255,10 +292,7 @@ export function Projects() {
         }
         .proj-detail__inner > * { grid-column: 2; }
         .proj-detail__inner > :first-child { margin-top: 1.6rem; }
-        .proj-card:hover .proj-detail,
-        .proj-card:focus-within .proj-detail {
-          grid-template-rows: 1fr; opacity: 1;
-        }
+        .proj-card.is-open .proj-detail { grid-template-rows: 1fr; opacity: 1; }
         .proj-desc { color: var(--fg-soft); max-width: 70ch; line-height: 1.7; }
         .proj-highlights { list-style: none; margin-top: 1.4rem; display: grid; gap: 0.55rem; max-width: 70ch; }
         .proj-highlights li {
@@ -274,8 +308,11 @@ export function Projects() {
           font-family: var(--font-mono-stack); font-size: 0.74rem; color: var(--secondary);
           padding: 0.35rem 0.7rem; border-radius: 100px; background: var(--secondary-soft);
         }
+        /* touch: everything is already expanded, so the control would be a
+           lie — hide it rather than report a state it doesn't drive */
         @media (hover: none) {
           .proj-detail { grid-template-rows: 1fr; opacity: 1; }
+          .proj-toggle { display: none; }
         }
         @media (max-width: 760px) {
           .proj-top, .proj-detail__inner { grid-template-columns: 1fr; gap: 0.6rem; }

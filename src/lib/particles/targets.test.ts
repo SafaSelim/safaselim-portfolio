@@ -84,7 +84,7 @@ describe('geometry targets', () => {
 
   it('ring points lie on an annulus in xy', () => {
     const t = ringTarget(N, AREA);
-    const R = Math.min(AREA.w, AREA.h) * 0.32;
+    const R = Math.min(AREA.w, AREA.h) * 0.41;
     for (let i = 0; i < N; i++) {
       const r = Math.hypot(t.positions[i * 3], t.positions[i * 3 + 1]);
       expect(r).toBeGreaterThan(R * 0.8);
@@ -126,14 +126,18 @@ describe('portrait viewports (content clearance)', () => {
     }
   });
 
-  it('landscape ring is unchanged', () => {
+  it('landscape ring clears the centered contact copy', () => {
     const t = ringTarget(N, AREA);
-    const R = Math.min(AREA.w, AREA.h) * 0.32;
+    const R = Math.min(AREA.w, AREA.h) * 0.41;
     for (let i = 0; i < N; i++) {
-      const r = Math.hypot(t.positions[i * 3], t.positions[i * 3 + 1]);
-      expect(r).toBeGreaterThan(R * 0.8);
-      expect(r).toBeLessThan(R * 1.2);
+      const x = t.positions[i * 3];
+      const y = t.positions[i * 3 + 1];
+      expect(Math.hypot(x, y)).toBeGreaterThan(R * 0.8);
+      expect(Math.hypot(x, y)).toBeLessThan(R * 1.2);
     }
+    // the arcs must reach past the contact copy vertically to frame it
+    const maxY = Math.max(...Array.from({ length: N }, (_, i) => Math.abs(t.positions[i * 3 + 1])));
+    expect(maxY).toBeGreaterThan(AREA.h * 0.38);
   });
 });
 
