@@ -88,10 +88,10 @@ export function Hero() {
               background: 'var(--accent)', boxShadow: '0 0 0 4px var(--accent-soft)',
             }}
           />
-          <span className="eyebrow">Senior Frontend Engineer — Istanbul / Europe</span>
+          <span className="eyebrow">Senior Software Engineer — Istanbul / Europe</span>
         </div>
 
-        <h1 className="sr-only">Safa Selim — Senior Frontend Engineer</h1>
+        <h1 className="sr-only">Safa Selim — Senior Software Engineer</h1>
         <p className="sr-only">Building enterprise-scale web &amp; mobile platforms.</p>
 
         <p
