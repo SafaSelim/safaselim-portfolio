@@ -241,7 +241,7 @@ export function Projects() {
         .proj-name a:hover { color: var(--accent); }
         .proj-arrow { opacity: 0; transform: translate(-8px, 8px); transition: all 0.35s var(--ease-out); }
         .proj-name a:hover .proj-arrow { opacity: 1; transform: translate(0, 0); }
-        .proj-tagline { color: var(--fg-muted); font-family: var(--font-mono-stack); font-size: 0.8rem; margin-top: 0.7rem; letter-spacing: 0.02em; }
+        .proj-tagline { color: var(--fg-soft); font-size: 1.05rem; margin-top: 0.7rem; }
         /* grid-rows collapse animates on the compositor-friendly track size
            instead of max-height/margin (layout thrash) */
         .proj-detail {
@@ -263,7 +263,7 @@ export function Projects() {
         .proj-highlights { list-style: none; margin-top: 1.4rem; display: grid; gap: 0.55rem; max-width: 70ch; }
         .proj-highlights li {
           position: relative; padding-left: 1.4rem; color: var(--fg-muted);
-          font-size: 0.92rem; line-height: 1.6;
+          font-size: 0.95rem; line-height: 1.6;
         }
         .proj-highlights li::before {
           content: '✦'; position: absolute; left: 0; top: 0; color: var(--secondary);

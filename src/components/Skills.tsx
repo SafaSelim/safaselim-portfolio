@@ -112,6 +112,8 @@ export function Skills() {
         .skill-item { transition: color 0.3s var(--ease-out); }
         .skill-item:hover { color: var(--accent); }
         .skill-sep { color: var(--line-strong); }
+        /* cap the measure — the two-column grid otherwise runs 85–96ch */
+        .skill-groups p, .lang-row p { max-width: 55ch; }
         .skill-groups {
           display: grid; grid-template-columns: repeat(2, 1fr);
           gap: 1.6rem 3rem; margin-top: clamp(3rem, 7vw, 5rem);

@@ -161,6 +161,17 @@ canvas {
   color: var(--secondary);
 }
 
+/* The middle voice between display and body: sans, heavier, slightly larger.
+   Mono is reserved for true labels (eyebrow, section index, .mono-label,
+   .tag, marquee, the contact address). */
+.subhead {
+  font-family: var(--font-sans-stack);
+  font-size: 1.3rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--fg);
+}
+
 .mono-label {
   font-family: var(--font-mono-stack);
   font-size: 0.7rem;

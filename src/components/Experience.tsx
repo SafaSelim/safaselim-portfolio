@@ -145,7 +145,7 @@ export function Experience() {
               </div>
               <div className="xp-detail">
                 <div className="xp-detail__inner">
-                <p style={{ color: 'var(--fg-soft)', fontWeight: 500 }}>{exp.role}</p>
+                <p className="subhead">{exp.role}</p>
                 <p style={{ color: 'var(--fg-muted)', marginTop: '0.7rem', maxWidth: '60ch', lineHeight: 1.7 }}>
                   {exp.description}
                 </p>
@@ -205,7 +205,7 @@ export function Experience() {
         .xp-impact { list-style: none; margin-top: 1rem; display: grid; gap: 0.5rem; max-width: 62ch; }
         .xp-impact li {
           position: relative; padding-left: 1.3rem; color: var(--fg-soft);
-          font-size: 0.92rem; line-height: 1.55;
+          font-size: 0.95rem; line-height: 1.55;
         }
         .xp-impact li::before {
           content: '✦'; position: absolute; left: 0; top: 0;
