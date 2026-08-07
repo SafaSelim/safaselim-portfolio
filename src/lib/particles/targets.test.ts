@@ -160,9 +160,9 @@ describe('nameTarget', () => {
     const t = nameTarget(pts, 10, 10, N, AREA);
     // scale as computed internally by nameTarget for this gridW/gridH/area
     const scale = Math.min((AREA.w * 0.9) / 10, (AREA.h * 0.55) / 10);
-    // jitter is (rand - 0.5) * scale * 1.2, i.e. up to ±0.6*scale per point;
+    // jitter is (rand - 0.5) * scale * 0.7, i.e. up to ±0.35*scale per point;
     // allow the combined swing between two adjacent samples
-    const jitterTolerance = scale * 1.2;
+    const jitterTolerance = scale * 0.7;
     for (let i = 0; i < N - 1; i++) {
       const xi = t.positions[i * 3];
       const xNext = t.positions[(i + 1) * 3];

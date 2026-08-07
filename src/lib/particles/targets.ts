@@ -60,11 +60,13 @@ export function nameTarget(
   for (let i = 0; i < count; i++) {
     const idx = Math.floor((i / count) * pts.length);
     const [px, py] = pts[Math.min(idx, pts.length - 1)];
-    const jx = (rand(i) - 0.5) * scale * 1.2;
-    const jy = (rand(i + 5e4) - 0.5) * scale * 1.2;
+    // tight jitter + shallow z keep the letterforms crisp; wider spreads
+    // blur the counters of S/A/E at small glyph sizes
+    const jx = (rand(i) - 0.5) * scale * 0.7;
+    const jy = (rand(i + 5e4) - 0.5) * scale * 0.7;
     t.positions[i * 3] = (px - gridW / 2) * scale + jx;
     t.positions[i * 3 + 1] = -(py - gridH / 2) * scale + jy;
-    t.positions[i * 3 + 2] = (rand(i + 2e5) - 0.5) * 0.3;
+    t.positions[i * 3 + 2] = (rand(i + 2e5) - 0.5) * 0.15;
     const o = i / count; // pts are x-sorted, so index order == write order
     t.order[i] = o;
     t.ramp[i] = o;

@@ -128,8 +128,10 @@ function invalidateGlyphCache() {
 function sampleName(count: number, area: Area): TargetSet {
   const layout: NameLayout = area.h > area.w ? 'stack' : 'line';
   if (!glyphCache || glyphCache.layout !== layout) {
-    const W = layout === 'line' ? 900 : 600;
-    const H = layout === 'line' ? 300 : 520;
+    // 1.5x raster over the original 900x300 / 600x520: a finer glyph grid
+    // (paired with the /64 sampling step) resolves the stems and counters
+    const W = layout === 'line' ? 1350 : 900;
+    const H = layout === 'line' ? 450 : 780;
     const c = document.createElement('canvas');
     c.width = W; c.height = H;
     const g = c.getContext('2d');
@@ -155,7 +157,7 @@ function sampleName(count: number, area: Area): TargetSet {
         g.fillText('SELIM', W / 2, H * 0.68);
       }
       const grid = { width: W, height: H, data: g.getImageData(0, 0, W, H).data };
-      const step = Math.max(2, Math.round(size / 52));
+      const step = Math.max(2, Math.round(size / 64));
       const pts = textToPoints(grid, step);
       let minY = H, maxY = 0;
       for (const p of pts) {
@@ -212,7 +214,7 @@ function Particles({ reduced }: { reduced: boolean }) {
   const vpH = useRef(6);
 
   const isMobile = size.width < 768 || window.matchMedia('(pointer: coarse)').matches;
-  const count = isMobile ? 5000 : 14000;
+  const count = isMobile ? 8000 : 18000;
 
   const seeds = useMemo(() => {
     const a = new Float32Array(count);
